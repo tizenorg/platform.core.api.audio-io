@@ -33,7 +33,21 @@ SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--as-needed -Wl,--rpath=/usr/lib")
 aux_source_directory(src SOURCES)
 ADD_LIBRARY(${fw_name} SHARED ${SOURCES})
 
+SET_TARGET_PROPERTIES(${fw_name}
+     PROPERTIES
+     VERSION ${FULLVER}
+     SOVERSION ${MAJORVER}
+     CLEAN_DIRECT_OUTPUT 1
+)
+
 TARGET_LINK_LIBRARIES(${fw_name} ${${fw_name}_LDFLAGS})
+
+SET_TARGET_PROPERTIES(${fw_name}
+     PROPERTIES
+     VERSION ${FULLVER}
+     SOVERSION ${MAJORVER}
+     CLEAN_DIRECT_OUTPUT 1
+)
 
 INSTALL(TARGETS ${fw_name} DESTINATION lib)
 INSTALL(
