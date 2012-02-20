@@ -40,7 +40,7 @@
 /*
 * Internal Implementation
 */
-int _convert_error_code(int code, char *func_name)
+static int __convert_error_code(int code, char *func_name)
 {
 	int ret = AUDIO_IO_ERROR_NONE;
 	char* msg="AUDIO_IO_ERROR_NONE";
@@ -81,7 +81,7 @@ int _convert_error_code(int code, char *func_name)
 	return ret;	
 }
 
-int _check_parameter(int sample_rate, audio_channel_e channel, audio_sample_type_e type)
+static int __check_parameter(int sample_rate, audio_channel_e channel, audio_sample_type_e type)
 {
 	if(sample_rate<8000 || sample_rate > 44100)
 	{
@@ -107,7 +107,7 @@ int _check_parameter(int sample_rate, audio_channel_e channel, audio_sample_type
 int audio_in_create(int sample_rate, audio_channel_e channel, audio_sample_type_e type , audio_in_h* input)
 {
 	AUDIO_IO_NULL_ARG_CHECK(input);
-	if(_check_parameter(sample_rate, channel, type)!=AUDIO_IO_ERROR_NONE)
+	if(__check_parameter(sample_rate, channel, type)!=AUDIO_IO_ERROR_NONE)
 		return AUDIO_IO_ERROR_INVALID_PARAMETER;
 
 	audio_in_s * handle;
@@ -122,7 +122,7 @@ int audio_in_create(int sample_rate, audio_channel_e channel, audio_sample_type_
 	int ret = mm_sound_pcm_capture_open( &handle->mm_handle,sample_rate, channel, type);
 	if( ret < 0)
 	{
-		return _convert_error_code(ret, (char*)__FUNCTION__);
+		return __convert_error_code(ret, (char*)__FUNCTION__);
 	}
 	else
 	{
@@ -142,7 +142,7 @@ int audio_in_destroy(audio_in_h input)
 	int ret = mm_sound_pcm_capture_close(handle->mm_handle);
 	if (ret != MM_ERROR_NONE)
 	{
-		return _convert_error_code(ret, (char*)__FUNCTION__);
+		return __convert_error_code(ret, (char*)__FUNCTION__);
 	}
 	else
 	{
@@ -160,7 +160,7 @@ int audio_in_read(audio_in_h input, void *buffer, unsigned int length )
 	ret = mm_sound_pcm_capture_read(handle->mm_handle, (void*) buffer, length);
 	if(ret <0)
 	{
-		return _convert_error_code(ret, (char*)__FUNCTION__);
+		return __convert_error_code(ret, (char*)__FUNCTION__);
 	}
 	else
 	{
@@ -209,7 +209,7 @@ int audio_in_get_sample_type(audio_in_h input, audio_sample_type_e *type)
 int audio_out_create(int sample_rate, audio_channel_e channel, audio_sample_type_e type, sound_type_e sound_type,  audio_out_h* output)
 {
 	AUDIO_IO_NULL_ARG_CHECK(output);
-	if(_check_parameter(sample_rate, channel, type)!=AUDIO_IO_ERROR_NONE)
+	if(__check_parameter(sample_rate, channel, type)!=AUDIO_IO_ERROR_NONE)
 		return AUDIO_IO_ERROR_INVALID_PARAMETER;
 	if(sound_type < SOUND_TYPE_SYSTEM || sound_type > SOUND_TYPE_CALL)
 	{
@@ -229,7 +229,7 @@ int audio_out_create(int sample_rate, audio_channel_e channel, audio_sample_type
 	int ret = mm_sound_pcm_play_open(&handle->mm_handle,sample_rate, channel, type, sound_type);
 	if( ret < 0)
 	{
-			return _convert_error_code(ret, (char*)__FUNCTION__);
+			return __convert_error_code(ret, (char*)__FUNCTION__);
 	}
 	else
 	{
@@ -250,7 +250,7 @@ int audio_out_destroy(audio_out_h output)
 	int ret = mm_sound_pcm_play_close(handle->mm_handle);
 	if (ret != MM_ERROR_NONE)
 	{
-		return _convert_error_code(ret, (char*)__FUNCTION__);
+		return __convert_error_code(ret, (char*)__FUNCTION__);
 	}
 	else
 	{
@@ -269,7 +269,7 @@ int audio_out_write(audio_out_h output, void* buffer, unsigned int length)
 	ret = mm_sound_pcm_play_write(handle->mm_handle, (void*) buffer, length);
 	if(ret <0)
 	{
-		return _convert_error_code(ret, (char*)__FUNCTION__);
+		return __convert_error_code(ret, (char*)__FUNCTION__);
 	}
 	else
 	{
