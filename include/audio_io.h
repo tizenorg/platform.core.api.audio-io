@@ -118,7 +118,7 @@ typedef enum{
  *
  * @remarks @a input must be release audio_in_destroy() by you.
  *
- * @param[in]  sample_rate	The audio sample rate in 8000[Hz] ~ 44100[Hz]
+ * @param[in]  sample_rate	The audio sample rate in 8000[Hz] ~ 48000[Hz]
  * @param[in]  channel	The audio channel type, mono, or stereo
  * @param[in]  type	The type of audio sample (8- or 16-bit)
  * @param[out] input	An audio input handle will be created, if successful
@@ -151,7 +151,31 @@ int audio_in_destroy(audio_in_h input);
 
 
 /**
- * @brief    Starts reading and buffering the audio data from the device
+ * @brief   Prepare reading audio in by starting buffering the audio data from the device
+ * @param[in]	input	The handle to the audio input
+ * @return 0 on success, otherwise a negative error value.
+ * @retval #AUDIO_IO_ERROR_NONE Successful
+ * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
+ * @see audio_in_unprepare()
+ */
+int audio_in_prepare(audio_in_h input);
+
+
+
+/**
+ * @brief    Unprepare reading audio in by stopping buffering the audio data from the device
+ * @param[in]	input	The handle to the audio input
+ * @return 0 on success, otherwise a negative error value.
+ * @retval #AUDIO_IO_ERROR_NONE Successful
+ * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
+ * @see audio_in_prepare()
+ */
+int audio_in_unprepare(audio_in_h input);
+
+
+
+/**
+ * @brief   Reads audio data from the audio input buffer
  *
  * @param[in]	input	The handle to the audio input
  * @param[out]	buffer	The PCM buffer address
@@ -161,6 +185,8 @@ int audio_in_destroy(audio_in_h input);
  * @retval  #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval  #AUDIO_IO_ERROR_INVALID_BUFFER  Invalid buffer pointer
  * @retval  #AUDIO_IO_ERROR_SOUND_POLICY    Sound policy error
+ * @retval  #AUDIO_IO_ERROR_INVALID_OPERATION Invalid operation
+ * @pre audio_in_start_recording() 
 */
 int audio_in_read(audio_in_h input, void *buffer, unsigned int length);
 
@@ -174,7 +200,7 @@ int audio_in_read(audio_in_h input, void *buffer, unsigned int length);
  * @return  0 on success, otherwise a negative error value.
  * @retval  #AUDIO_IO_ERROR_NONE Successful
  * @retval  #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
- * @see audio_in_read() 
+ * @see audio_in_read()
 */
 int audio_in_get_buffer_size(audio_in_h input, int *size);
 
@@ -184,7 +210,7 @@ int audio_in_get_buffer_size(audio_in_h input, int *size);
  * @brief    Gets the sample rate of the audio input data stream
  *
  * @param[in]   input	The handle to the audio input
- * @param[out]  sample_rate  The audio sample rate in Hertz (8000 ~ 44100)
+ * @param[out]  sample_rate  The audio sample rate in Hertz (8000 ~ 48000)
  *
  * @return  0 on success, otherwise a negative error value.
  * @retval  #AUDIO_IO_ERROR_NONE Successful
@@ -243,7 +269,7 @@ int audio_in_get_sample_type(audio_in_h input, audio_sample_type_e *type);
  * @details  This function is used for audio output initialization. 
  * @remarks @a output must be released audio_out_destroy() by you.
  *
- * @param[in]  sample_rate  The audio sample rate in 8000[Hz] ~ 44100[Hz]
+ * @param[in]  sample_rate  The audio sample rate in 8000[Hz] ~ 48000[Hz]
  * @param[in]  channel      The audio channel type, mono, or stereo
  * @param[in]  type         The type of audio sample (8- or 16-bit)
  * @param[in]  sound_type   The type of sound (#sound_type_e)
@@ -276,6 +302,29 @@ int audio_out_create(int sample_rate, audio_channel_e channel, audio_sample_type
  * @see audio_out_create()
 */
 int audio_out_destroy(audio_out_h output);
+
+/**
+ * @brief   Prepare playing audio out, this must be called before audio_out_write()
+ * @param[in]	input	The handle to the audio output
+ * @return 0 on success, otherwise a negative error value.
+ * @retval #AUDIO_IO_ERROR_NONE Successful
+ * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
+ * @see audio_out_unprepare()
+ */
+int audio_out_prepare(audio_out_h output);
+
+
+
+/**
+ * @brief    Unprepare playing audio out.
+ * @param[in]	input	The handle to the audio output
+ * @return 0 on success, otherwise a negative error value.
+ * @retval #AUDIO_IO_ERROR_NONE Successful
+ * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
+ * @see audio_out_prepare()
+ */
+int audio_out_unprepare(audio_out_h output);
+
 
 
 
@@ -314,7 +363,7 @@ int audio_out_get_buffer_size(audio_out_h output, int *size);
  * @brief    Gets the sample rate of audio output data stream
  *
  * @param[in]   output       The handle to the audio output
- * @param[out]  sample_rate  The audio sample rate in Hertz (8000 ~ 44100)
+ * @param[out]  sample_rate  The audio sample rate in Hertz (8000 ~ 48000)
  *
  * @return  0 on success, otherwise a negative error value.
  * @retval  #AUDIO_IO_ERROR_NONE Successful

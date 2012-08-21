@@ -83,9 +83,9 @@ static int __convert_error_code(int code, char *func_name)
 
 static int __check_parameter(int sample_rate, audio_channel_e channel, audio_sample_type_e type)
 {
-	if(sample_rate<8000 || sample_rate > 44100)
+	if(sample_rate<8000 || sample_rate > 48000)
 	{
-		LOGE("[%s] AUDIO_IO_ERROR_INVALID_PARAMETER(0x%08x) :  Invalid sample rate (8000~44100Hz) : %d",__FUNCTION__, AUDIO_IO_ERROR_INVALID_PARAMETER,sample_rate);
+		LOGE("[%s] AUDIO_IO_ERROR_INVALID_PARAMETER(0x%08x) :  Invalid sample rate (8000~48000Hz) : %d",__FUNCTION__, AUDIO_IO_ERROR_INVALID_PARAMETER,sample_rate);
 		return AUDIO_IO_ERROR_INVALID_PARAMETER;
 	}
 	if (channel < AUDIO_CHANNEL_MONO || channel > AUDIO_CHANNEL_STEREO)
@@ -151,22 +151,58 @@ int audio_in_destroy(audio_in_h input)
 	}
 }
 
+int audio_in_prepare(audio_in_h input)
+{
+	AUDIO_IO_NULL_ARG_CHECK(input);
+	audio_in_s  * handle = (audio_in_s  *) input;
+	int ret = mm_sound_pcm_capture_start(handle->mm_handle);
+	if (ret != MM_ERROR_NONE)
+	{
+		return __convert_error_code(ret, (char*)__FUNCTION__);
+	}
+	else
+		return AUDIO_IO_ERROR_NONE;
+}
+
+int audio_in_unprepare(audio_in_h input)
+{
+	AUDIO_IO_NULL_ARG_CHECK(input);
+	audio_in_s  * handle = (audio_in_s  *) input;
+	int ret = mm_sound_pcm_capture_stop(handle->mm_handle);
+	if (ret != MM_ERROR_NONE)
+	{
+		return __convert_error_code(ret, (char*)__FUNCTION__);
+	}
+	else
+		return AUDIO_IO_ERROR_NONE;
+}
+
 int audio_in_read(audio_in_h input, void *buffer, unsigned int length )
 {
 	AUDIO_IO_NULL_ARG_CHECK(input);
 	AUDIO_IO_NULL_ARG_CHECK(buffer);
 	audio_in_s  * handle = (audio_in_s  *) input;
 	int ret;
+	int result;
 	ret = mm_sound_pcm_capture_read(handle->mm_handle, (void*) buffer, length);
-	if(ret <0)
-	{
-		return __convert_error_code(ret, (char*)__FUNCTION__);
-	}
-	else
+
+	if (ret >0)
 	{
 		LOGI("[%s] %d bytes read" ,__FUNCTION__, ret);
 		return ret;
 	}
+
+	switch(ret)
+	{
+		case MM_ERROR_SOUND_INVALID_STATE:
+			result = AUDIO_IO_ERROR_INVALID_OPERATION;
+			LOGE("[%s] (0x%08x) : Not recording started yet.",(char*)__FUNCTION__, AUDIO_IO_ERROR_INVALID_OPERATION);
+			break;
+		default:
+			result = __convert_error_code(ret, (char*)__FUNCTION__);
+			break;
+	}
+	return result;
 }
 
 int audio_in_get_buffer_size(audio_in_h input, int *size)
@@ -259,6 +295,33 @@ int audio_out_destroy(audio_out_h output)
 	}
 }
 
+int audio_out_prepare(audio_out_h output)
+{
+	AUDIO_IO_NULL_ARG_CHECK(output);
+	audio_out_s  * handle = (audio_out_s  *) output;
+	int ret = mm_sound_pcm_play_start(handle->mm_handle);
+	if (ret != MM_ERROR_NONE)
+	{
+		return __convert_error_code(ret, (char*)__FUNCTION__);
+	}
+	else
+		return AUDIO_IO_ERROR_NONE;
+}
+
+int audio_out_unprepare(audio_out_h output)
+{
+	AUDIO_IO_NULL_ARG_CHECK(output);
+	audio_out_s  * handle = (audio_out_s  *) output;
+	int ret = mm_sound_pcm_play_stop(handle->mm_handle);
+	if (ret != MM_ERROR_NONE)
+	{
+		return __convert_error_code(ret, (char*)__FUNCTION__);
+	}
+	else
+		return AUDIO_IO_ERROR_NONE;
+}
+
+
 
 int audio_out_write(audio_out_h output, void* buffer, unsigned int length)
 {
@@ -267,15 +330,22 @@ int audio_out_write(audio_out_h output, void* buffer, unsigned int length)
 	audio_out_s  * handle = (audio_out_s  *) output;
 	int ret;
 	ret = mm_sound_pcm_play_write(handle->mm_handle, (void*) buffer, length);
-	if(ret <0)
-	{
-		return __convert_error_code(ret, (char*)__FUNCTION__);
-	}
-	else
+	if (ret >0)
 	{
 		LOGI("[%s] %d bytes written" ,__FUNCTION__, ret);
 		return ret;
 	}
+	switch(ret)
+	{
+		case MM_ERROR_SOUND_INVALID_STATE:
+			ret = AUDIO_IO_ERROR_INVALID_OPERATION;
+			LOGE("[%s] (0x%08x) : Not playing started yet.",(char*)__FUNCTION__, AUDIO_IO_ERROR_INVALID_OPERATION);
+			break;
+		default:
+			ret = __convert_error_code(ret, (char*)__FUNCTION__);
+			break;
+	}
+	return ret;
 }
 
 
