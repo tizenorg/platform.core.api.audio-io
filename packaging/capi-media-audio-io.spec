@@ -1,4 +1,3 @@
-#sbs-git:slp/api/audio-io capi-media-audio-io 0.1.0 da265a7364928d92084360809316e36f666f053f
 Name:       capi-media-audio-io
 Summary:    An Audio Input & Audio Output library in Tizen Native API
 Version: 0.1.0
