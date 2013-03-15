@@ -384,6 +384,21 @@ int audio_in_unset_interrupted_cb(audio_in_h input)
 	return AUDIO_IO_ERROR_NONE;
 }
 
+int audio_in_ignore_session(audio_in_h input)
+{
+	AUDIO_IO_NULL_ARG_CHECK(input);
+	audio_in_s  * handle = (audio_in_s  *) input;
+	int ret = 0;
+
+	ret = mm_sound_pcm_capture_ignore_session(handle->mm_handle);
+	if (ret != MM_ERROR_NONE) {
+		return __convert_error_code(ret, (char*)__FUNCTION__);
+	}
+
+	LOGI("[%s] mm_sound_pcm_capture_ignore_session() success",__FUNCTION__);
+	return AUDIO_IO_ERROR_NONE;
+}
+
 /* Audio Out */
 int audio_out_create(int sample_rate, audio_channel_e channel, audio_sample_type_e type, sound_type_e sound_type,  audio_out_h* output)
 {
@@ -586,5 +601,20 @@ int audio_out_unset_interrupted_cb(audio_out_h output)
 	handle->user_data = NULL;
 
 	LOGI("[%s] current interrupted cb (%p) / data (%p)",__FUNCTION__, handle->user_cb, handle->user_data);
+	return AUDIO_IO_ERROR_NONE;
+}
+
+int audio_out_ignore_session(audio_out_h output)
+{
+	AUDIO_IO_NULL_ARG_CHECK(output);
+	audio_out_s *handle = (audio_out_s *) output;
+	int ret = 0;
+
+	ret = mm_sound_pcm_play_ignore_session(handle->mm_handle);
+	if (ret != MM_ERROR_NONE) {
+		return __convert_error_code(ret, (char*)__FUNCTION__);
+	}
+	LOGI("[%s] mm_sound_pcm_play_ignore_session() success",__FUNCTION__);
+
 	return AUDIO_IO_ERROR_NONE;
 }

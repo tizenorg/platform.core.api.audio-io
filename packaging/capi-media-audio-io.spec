@@ -1,7 +1,7 @@
 Name:       capi-media-audio-io
 Summary:    An Audio Input & Audio Output library in Tizen Native API
-Version: 0.1.1
-Release:    3
+Version: 0.2.0
+Release:    0
 Group:      TO_BE/FILLED_IN
 License:    TO BE FILLED IN
 Source0:    %{name}-%{version}.tar.gz

@@ -21,6 +21,33 @@
 
 int audio_io_test()
 {
+	int ret, size;
+	audio_in_h input;
+	if ((ret = audio_in_create(44100, AUDIO_CHANNEL_STEREO ,AUDIO_SAMPLE_TYPE_S16_LE, &input)) == AUDIO_IO_ERROR_NONE) {
+		ret = audio_in_ignore_session(input);
+		if (ret != 0) {
+			printf ("ERROR, set session mix\n");
+			audio_in_destroy(input);
+			return 0;
+		}
+
+		audio_in_prepare(input);
+		if ((ret = audio_in_get_buffer_size(input, &size)) == AUDIO_IO_ERROR_NONE) {
+			size = 500000;
+			char *buffer = alloca(size);
+			if ((ret = audio_in_read(input, (void*)buffer, size)) > AUDIO_IO_ERROR_NONE) {
+				FILE* fp = fopen ("/root/test.raw", "wb+");
+				fwrite (buffer, size, sizeof(char), fp);
+				fclose (fp);
+				printf ("PASS, size=%d, ret=%d\n", size, ret);
+			}
+			else {
+				printf ("FAIL, size=%d, ret=%d\n", size, ret);
+			}
+		}
+		audio_in_destroy(input);
+	}
+
 	return 1;
 }
 

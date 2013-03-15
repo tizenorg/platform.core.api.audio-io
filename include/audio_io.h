@@ -291,7 +291,7 @@ int audio_in_set_interrupted_cb(audio_in_h input, audio_io_interrupted_cb callba
 
 /**
  * @brief Unregisters the callback function.
- * @param[in]  output   The handle to the audio output
+ * @param[in]  input   The handle to the audio input
  * @return 0 on success, otherwise a negative error value.
  * @retval #AUDIO_IO_ERROR_NONE Successful
  * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
@@ -300,7 +300,16 @@ int audio_in_set_interrupted_cb(audio_in_h input, audio_io_interrupted_cb callba
  */
 int audio_in_unset_interrupted_cb(audio_in_h input);
 
-
+/**
+ * @brief Ignore session for input
+ * @param[in]  input   The handle to the audio input
+ * @return 0 on success, otherwise a negative error value.
+ * @retval #AUDIO_IO_ERROR_NONE Successful
+ * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #AUDIO_IO_ERROR_INVALID_OPERATION Invalid operation
+ * @see
+ */
+int audio_in_ignore_session(audio_in_h input);
 
 //
 //  AUDIO OUTPUT
@@ -356,7 +365,7 @@ int audio_out_destroy(audio_out_h output);
 
 /**
  * @brief   Prepare playing audio out, this must be called before audio_out_write()
- * @param[in]	input	The handle to the audio output
+ * @param[in]	output	The handle to the audio output
  * @return 0 on success, otherwise a negative error value.
  * @retval #AUDIO_IO_ERROR_NONE Successful
  * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
@@ -368,7 +377,7 @@ int audio_out_prepare(audio_out_h output);
 
 /**
  * @brief    Unprepare playing audio out.
- * @param[in]	input	The handle to the audio output
+ * @param[in]	output	The handle to the audio output
  * @return 0 on success, otherwise a negative error value.
  * @retval #AUDIO_IO_ERROR_NONE Successful
  * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
@@ -491,6 +500,16 @@ int audio_out_set_interrupted_cb(audio_out_h output, audio_io_interrupted_cb cal
  */
 int audio_out_unset_interrupted_cb(audio_out_h output);
 
+/**
+ * @brief Ignore session for output
+ * @param[in]  output   The handle to the audio output
+ * @return 0 on success, otherwise a negative error value.
+ * @retval #AUDIO_IO_ERROR_NONE Successful
+ * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #AUDIO_IO_ERROR_INVALID_OPERATION Invalid operation
+ * @see
+ */
+int audio_out_ignore_session(audio_out_h output);
 
 
 /**
