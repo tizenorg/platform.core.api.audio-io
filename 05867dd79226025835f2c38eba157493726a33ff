@@ -1,0 +1,8 @@
+Change-Id: I05867dd79226025835f2c38eba157493726a33ff
+Code-Review+2: Ryan Ware <ware@linux.intel.com>
+Verified+1: Ryan Ware <ware@linux.intel.com>
+Submitted-by: Ryan Ware <ware@linux.intel.com>
+Submitted-at: Mon, 08 Jul 2013 10:07:12 -0700
+Reviewed-on: https://review.tizen.org/gerrit/4497
+Project: platform/core/api/audio-io
+Branch: refs/heads/tizen
