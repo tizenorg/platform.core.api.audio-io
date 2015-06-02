@@ -264,6 +264,23 @@ int audio_in_prepare(audio_in_h input);
 int audio_in_unprepare(audio_in_h input);
 
 /**
+ * @brief Flushes and discards buffered audio data from the input stream.
+ *
+ * @since_tizen 2.4
+ *
+ * @param[in] input The handle to the audio input
+ * @return @c 0 on success,
+ *         otherwise a negative error value
+ * @retval #AUDIO_IO_ERROR_NONE Successful
+ * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #AUDIO_IO_ERROR_NOT_SUPPORTED Not supported
+ * @retval #AUDIO_IO_ERROR_INVALID_STATE Invalid state
+ *
+ * @pre The state should be #AUDIO_IO_STATE_RUNNING or #AUDIO_IO_STATE_PAUSED.
+ */
+int audio_in_flush(audio_in_h input);
+
+/**
  * @brief Reads audio data from the audio input buffer.
  *
  * @since_tizen 2.3
@@ -271,7 +288,7 @@ int audio_in_unprepare(audio_in_h input);
  * @param[in] input The handle to the audio input
  * @param[out] buffer The PCM buffer address
  * @param[in] length The length of the PCM data buffer (in bytes)
- * @return The number of read bytes on success, 
+ * @return The number of read bytes on success,
  *         otherwise a negative error value
  * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #AUDIO_IO_ERROR_INVALID_BUFFER Invalid buffer pointer
@@ -590,6 +607,42 @@ int audio_out_prepare(audio_out_h output);
 int audio_out_unprepare(audio_out_h output);
 
 /**
+ * @brief Drains buffered audio data from the output stream.
+ *
+ * @details This function waits until drains stream buffer completely. (e.g end of playback)
+ *
+ * @since_tizen 2.4
+ *
+ * @param[in] output The handle to the audio output
+ * @return @c 0 on success,
+ *         otherwise a negative error value
+ * @retval #AUDIO_IO_ERROR_NONE Successful
+ * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #AUDIO_IO_ERROR_INVALID_STATE Invalid state
+ *
+ * @pre The state should be #AUDIO_IO_STATE_RUNNING or #AUDIO_IO_STATE_PAUSED.
+ * @see audio_out_flush()
+ */
+int audio_out_drain(audio_out_h output);
+
+/**
+ * @brief Flushes and discards buffered audio data from the output stream.
+ *
+ * @since_tizen 2.4
+ *
+ * @param[in] output The handle to the audio output
+ * @return @c 0 on success,
+ *         otherwise a negative error value
+ * @retval #AUDIO_IO_ERROR_NONE Successful
+ * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #AUDIO_IO_ERROR_INVALID_STATE Invalid state
+ *
+ * @pre The state should be #AUDIO_IO_STATE_RUNNING or #AUDIO_IO_STATE_PAUSED.
+ * @see audio_out_drain()
+ */
+int audio_out_flush(audio_out_h output);
+
+/**
  * @brief Starts writing the audio data to the device.
  *
  * @since_tizen 2.3
@@ -597,7 +650,7 @@ int audio_out_unprepare(audio_out_h output);
  * @param[in] output The handle to the audio output
  * @param[in,out] buffer The PCM buffer address
  * @param[in] length The length of the PCM buffer (in bytes)
- * @return The written data size on success, 
+ * @return The written data size on success,
  *         otherwise a negative error value
  * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #AUDIO_IO_ERROR_INVALID_BUFFER Invalid buffer pointer
