@@ -20,8 +20,8 @@
 #include <mm.h>
 #include "audio_io_private.h"
 #include <dlog.h>
-/* TODO : it will be added after updating libmm-sound */
-//#include <mm_sound_pcm_async.h>
+
+#include <mm_sound_pcm_async.h>
 
 
 #ifdef LOG_TAG
@@ -94,6 +94,7 @@ int __check_parameter(int sample_rate, audio_channel_e channel, audio_sample_typ
 	return AUDIO_IO_ERROR_NONE;
 }
 
+//LCOV_EXCL_START
 audio_io_interrupted_code_e __translate_interrupted_code (int code)
 {
 	audio_io_interrupted_code_e e = AUDIO_IO_INTERRUPTED_COMPLETED;
@@ -194,21 +195,58 @@ static int __mm_sound_pcm_playback_msg_cb (int message, void *param, void *user_
 
 	return 0;
 }
+//LCOV_EXCL_STOP
 
-/* TODO : it will be added after updating libmm-sound */
-//static int __audio_in_stream_cb (void* p, int nbytes, void* userdata)
-//{
-//	return 0;
-//}
+static int __audio_in_stream_cb (void* p, int nbytes, void* userdata)
+{
+	audio_in_s *handle = (audio_in_s *) userdata;
 
-//static int __audio_out_stream_cb (void* p, int nbytes, void* userdata)
-//{
+	LOGI("<< p=%p, nbytes=%d, userdata=%p", p, nbytes, userdata);
 
-//	return 0;
-//}
+	if (handle && handle->stream_cb) {
+		handle->stream_cb ((audio_in_h)handle, nbytes, handle->stream_userdata);
+		LOGI("<< handle->stream_cb(handle:%p, nbytes:%d, handle->stream_userdata:%p)", p, nbytes, userdata);
+	} else {
+		LOGI("No stream callback is set. Skip this");
+	}
+	return 0;
+}
 
+static int __audio_out_stream_cb (void* p, int nbytes, void* userdata)
+{
+	audio_out_s *handle = (audio_out_s *) userdata;
+	bool is_started = false;
+	char * dummy = NULL;
 
-int audio_in_create_private(int sample_rate, audio_channel_e channel, audio_sample_type_e type , audio_in_h* input)
+	LOGI(">> p=%p, nbytes=%d, userdata=%p", p, nbytes, userdata);
+
+	if (handle) {
+		mm_sound_pcm_is_started_async(handle->mm_handle, &is_started);
+		if (is_started) {
+			if (handle->stream_cb) {
+				handle->stream_cb ((audio_out_h)handle, nbytes, handle->stream_userdata);
+			} else {
+				LOGI("Started state but No stream callback is set. Skip this");
+			}
+		} else {
+			LOGI("Not started....write dummy data");
+			if ((dummy = (char*)malloc(nbytes)) != NULL) {
+				memset (dummy, 0, nbytes);
+				mm_sound_pcm_play_write_async(handle->mm_handle, (void*) dummy, nbytes);
+				free (dummy);
+				LOGI("write done!!!");
+			} else {
+				LOGE("ERROR :  AUDIO_IO_ERROR_OUT_OF_MEMORY(0x%08x)", AUDIO_IO_ERROR_OUT_OF_MEMORY);
+			}
+		}
+	} else {
+		LOGE("Handle is invalid...");
+	}
+
+	return 0;
+}
+
+int audio_in_create_private(int sample_rate, audio_channel_e channel, audio_sample_type_e type , int source_type, audio_in_h* input)
 {
 	int ret = 0;
 	audio_in_s *handle = NULL;
@@ -227,11 +265,17 @@ int audio_in_create_private(int sample_rate, audio_channel_e channel, audio_samp
 
 
 	/* Capture open */
-	if ((ret = mm_sound_pcm_capture_open( &handle->mm_handle,sample_rate, channel, type)) < 0) {
+	if ((ret = mm_sound_pcm_capture_open_ex(&handle->mm_handle, sample_rate, channel, type, source_type)) < 0) {
 		LOGE("mm_sound_pcm_capture_open_ex() failed [0x%x]", ret);
 		goto ERROR;
 	}
 	LOGI("mm_sound_pcm_capture_open_ex() success");
+
+
+	if (source_type == SUPPORT_SOURCE_TYPE_LOOPBACK)
+	{
+	    handle->is_loopback = 1;
+	}
 
 	handle->_buffer_size = ret; /* return by pcm_open */
 	handle->_sample_rate = sample_rate;
@@ -258,7 +302,56 @@ ERROR:
 
 int audio_in_set_callback_private(audio_in_h input, audio_in_stream_cb callback, void* userdata)
 {
-/* TODO : it will be added after updating libmm-sound */
+	AUDIO_IO_NULL_ARG_CHECK(input);
+
+	int         ret         = AUDIO_IO_ERROR_NONE;
+	int         source_type = SUPPORT_SOURCE_TYPE_DEFAULT;
+	audio_in_s* handle      = (audio_in_s*)input;
+
+	// at first, release existing audio handle
+	if (handle->is_async) {
+		ret = mm_sound_pcm_capture_close_async(handle->mm_handle);
+	} else {
+		ret = mm_sound_pcm_capture_close(handle->mm_handle);
+	}
+
+	if (ret != MM_ERROR_NONE) {
+		return __convert_audio_io_error_code(ret, (char*)__FUNCTION__);
+	}
+
+	// Initialize flags
+	handle->stream_cb       = NULL;
+	handle->stream_userdata = NULL;
+	handle->is_async        = 0;
+
+	// Checks loopback type
+	if (handle->is_loopback == 1) {
+		source_type = SUPPORT_SOURCE_TYPE_LOOPBACK;
+	}
+
+	/* Async (callback exists) or Sync (otherwise) */
+	if (callback != NULL) {
+		handle->stream_cb       = callback;
+		handle->stream_userdata = userdata;
+		handle->is_async        = 1;
+
+		/* Capture open */
+		if ((ret = mm_sound_pcm_capture_open_async(&handle->mm_handle, handle->_sample_rate, handle->_channel, handle->_type, source_type,
+				(mm_sound_pcm_stream_cb_t)__audio_in_stream_cb, handle)) < 0) {
+			LOGE("mm_sound_pcm_capture_open_async() failed [0x%x]", ret);
+			return __convert_audio_io_error_code(ret, (char*)__FUNCTION__);
+		}
+		LOGI("mm_sound_pcm_capture_open_async() success");
+	} else {
+		/* Capture open */
+		if ((ret = mm_sound_pcm_capture_open_ex(&handle->mm_handle, handle->_sample_rate, handle->_channel, handle->_type, source_type)) < 0) {
+			LOGE("mm_sound_pcm_capture_open_ex() failed [0x%x]", ret);
+			return __convert_audio_io_error_code(ret, (char*)__FUNCTION__);
+		}
+		LOGI("mm_sound_pcm_capture_open_ex() success");
+	}
+
+	handle->_buffer_size = ret; /* return by pcm_open */
 
 	return AUDIO_IO_ERROR_NONE;
 }
@@ -272,7 +365,7 @@ int audio_out_create_private(int sample_rate, audio_channel_e channel, audio_sam
 	AUDIO_IO_NULL_ARG_CHECK(output);
 	if(__check_parameter(sample_rate, channel, type)!=AUDIO_IO_ERROR_NONE)
 		return AUDIO_IO_ERROR_INVALID_PARAMETER;
-	if(sound_type < SOUND_TYPE_SYSTEM || sound_type > SOUND_TYPE_CALL) {
+	if(sound_type < SOUND_TYPE_SYSTEM || sound_type > SOUND_TYPE_VOICE) {
 		LOGE("ERROR :  AUDIO_IO_ERROR_INVALID_PARAMETER(0x%08x) : Invalid sample sound type : %d",
 				AUDIO_IO_ERROR_INVALID_PARAMETER,sound_type );
 		return AUDIO_IO_ERROR_INVALID_PARAMETER;
@@ -319,7 +412,48 @@ ERROR:
 
 int audio_out_set_callback_private(audio_out_h output, audio_out_stream_cb callback, void* userdata)
 {
-/* TODO : it will be added after updating libmm-sound */
+	AUDIO_IO_NULL_ARG_CHECK(output);
+
+	int          ret    = AUDIO_IO_ERROR_NONE;
+	audio_out_s* handle = (audio_out_s*)output;
+
+	// at first, release existing mm handle
+	if (handle->is_async) {
+		ret = mm_sound_pcm_play_close_async(handle->mm_handle);
+	} else {
+		ret = mm_sound_pcm_play_close(handle->mm_handle);
+	}
+
+	if (ret != MM_ERROR_NONE) {
+		return __convert_audio_io_error_code(ret, (char*)__FUNCTION__);
+	}
+
+	// Initialize flags
+	handle->stream_cb       = NULL;
+	handle->stream_userdata = NULL;
+	handle->is_async        = 0;
+
+	/* Async (callback exists) or Sync (otherwise) */
+	if (callback != NULL) {
+		handle->stream_cb       = callback;
+		handle->stream_userdata = userdata;
+		handle->is_async        = 1;
+
+		/* Playback open */
+		if ((ret = mm_sound_pcm_play_open_async(&handle->mm_handle, handle->_sample_rate, handle->_channel, handle->_type, handle->_sound_type,
+				(mm_sound_pcm_stream_cb_t)__audio_out_stream_cb, handle)) < 0) {
+			LOGE("mm_sound_pcm_play_open_async() failed [0x%x]", ret);
+			return __convert_audio_io_error_code(ret, (char*)__FUNCTION__);
+		}
+		LOGI("mm_sound_pcm_play_open_async() success");
+	} else {
+		if ((ret = mm_sound_pcm_play_open(&handle->mm_handle, handle->_sample_rate, handle->_channel, handle->_type, handle->_sound_type)) < 0) {
+			LOGE("mm_sound_pcm_play_open() failed [0x%x]", ret);
+			return __convert_audio_io_error_code(ret, (char*)__FUNCTION__);
+		}
+		LOGI("mm_sound_pcm_play_open() success");
+	}
+	handle->_buffer_size = ret; /* return by pcm_open */
 
 	return AUDIO_IO_ERROR_NONE;
 }

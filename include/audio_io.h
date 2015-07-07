@@ -11,7 +11,7 @@
 * distributed under the License is distributed on an "AS IS" BASIS,
 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 * See the License for the specific language governing permissions and
-* limitations under the License. 
+* limitations under the License.
 */
 
 #ifndef __TIZEN_MEDIA_AUDIO_IO_H__
@@ -38,7 +38,7 @@ extern "C"
 
 /**
  * @brief The audio input handle.
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
 typedef struct audio_in_s *audio_in_h;
 
@@ -50,10 +50,10 @@ typedef struct audio_in_s *audio_in_h;
  * @addtogroup CAPI_MEDIA_AUDIO_OUT_MODULE
  * @{
  */
- 
+
 /**
  * @brief The audio output handle.
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
 typedef struct audio_out_s *audio_out_h;
 
@@ -68,7 +68,7 @@ typedef struct audio_out_s *audio_out_h;
 
 /**
  * @brief Enumeration for audio sample type with bit depth.
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
 typedef enum
 {
@@ -78,7 +78,7 @@ typedef enum
 
 /**
  * @brief Enumeration for audio channel.
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
 typedef enum {
     AUDIO_CHANNEL_MONO = 0x80,                  /**< 1 channel, mono */
@@ -87,7 +87,7 @@ typedef enum {
 
 /**
  * @brief Enumeration for audio input and output error.
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
 typedef enum{
     AUDIO_IO_ERROR_NONE                = TIZEN_ERROR_NONE,              /**< Successful */
@@ -104,7 +104,7 @@ typedef enum{
 
 /**
  * @brief Enumeration for audio IO interrupted messages.
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
 typedef enum
 {
@@ -121,7 +121,7 @@ typedef enum
 /**
  * @brief Called when audio input or output is interrupted.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @param[in] error_code The interrupted error code
  * @param[in] user_data The user data passed from the callback registration function
  *
@@ -148,7 +148,7 @@ typedef void (*audio_io_interrupted_cb)(audio_io_interrupted_code_e code, void *
 /**
  * @brief Called when audio input data is available in asynchronous(event) mode.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @remarks @a use audio_in_peek() to get audio in data inside callback, use audio_in_drop() after use of peeked data.
  *
@@ -163,7 +163,7 @@ typedef void (*audio_in_stream_cb)(audio_in_h handle, size_t nbytes, void *userd
 /**
  * @brief Creates an audio device instance and returns an input handle to record PCM (pulse-code modulation) data.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
  * @privilege %http://tizen.org/privilege/recorder
  *
@@ -171,10 +171,10 @@ typedef void (*audio_in_stream_cb)(audio_in_h handle, size_t nbytes, void *userd
  *
  * @remarks @a input must be released using audio_in_destroy().
  *
- * @param[in] sample_rate	The audio sample rate in 8000[Hz] ~ 48000[Hz]
- * @param[in] channel	The audio channel type (mono or stereo)
- * @param[in] type	The type of audio sample (8- or 16-bit)
- * @param[out] input	An audio input handle is created on success
+ * @param[in] sample_rate The audio sample rate in 8000[Hz] ~ 48000[Hz]
+ * @param[in] channel The audio channel type (mono or stereo)
+ * @param[in] type The type of audio sample (8- or 16-bit)
+ * @param[out] input An audio input handle is created on success
  * @return @c 0 on success,
  *         otherwise a negative error value
  * @retval #AUDIO_IO_ERROR_NONE Successful
@@ -191,7 +191,7 @@ int audio_in_create(int sample_rate, audio_channel_e channel, audio_sample_type_
 /**
  * @brief Creates an audio loopback device instance and returns an input handle to record PCM (pulse-code modulation) data.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
  * @privilege %http://tizen.org/privilege/recorder
  *
@@ -199,10 +199,10 @@ int audio_in_create(int sample_rate, audio_channel_e channel, audio_sample_type_
  *
  * @remarks @a input must be released using audio_in_destroy().
  *
- * @param[in] sample_rate	The audio sample rate in 8000[Hz] ~ 48000[Hz]
- * @param[in] channel	The audio channel type, mono, or stereo
- * @param[in] type	The type of audio sample (8- or 16-bit)
- * @param[out] input	An audio input handle will be created, if successful
+ * @param[in] sample_rate The audio sample rate in 8000[Hz] ~ 48000[Hz]
+ * @param[in] channel The audio channel type, mono, or stereo
+ * @param[in] type The type of audio sample (8- or 16-bit)
+ * @param[out] input An audio input handle will be created, if successful
  * @return @c 0 on success,
  *         otherwise a negative error value
  * @retval #AUDIO_IO_ERROR_NONE Successful
@@ -219,7 +219,7 @@ int audio_in_create_loopback(int sample_rate, audio_channel_e channel, audio_sam
 /**
  * @brief Releases the audio input handle and all its resources associated with an audio stream.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] input The handle to the audio input to destroy
  * @return @c 0 on success,
@@ -235,7 +235,7 @@ int audio_in_destroy(audio_in_h input);
 /**
  * @brief Prepares reading audio input by starting buffering of audio data from the device.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] input The handle to the audio input
  * @return @c 0 on success,
@@ -251,7 +251,7 @@ int audio_in_prepare(audio_in_h input);
 /**
  * @brief Unprepares reading audio input by stopping buffering the audio data from the device.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] input The handle to the audio input
  * @return @c 0 on success,
@@ -264,6 +264,17 @@ int audio_in_prepare(audio_in_h input);
 int audio_in_unprepare(audio_in_h input);
 
 /**
+ * @brief    Set device which USB Mic input you want to capture
+ * @remarks @a Can be used after audio_in_prepare
+ * @param[in] input The handle to the audio input
+ * @param[in] device Device unique information (udev id) to Capture
+ * @return 0 on success, otherwise a negative error value.
+ * @retval #AUDIO_IO_ERROR_NONE Successful
+ * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
+ */
+int audio_in_set_device(audio_in_h input, char* device);
+
+/**
  * @brief Flushes and discards buffered audio data from the input stream.
  *
  * @since_tizen 2.4
@@ -274,16 +285,13 @@ int audio_in_unprepare(audio_in_h input);
  * @retval #AUDIO_IO_ERROR_NONE Successful
  * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #AUDIO_IO_ERROR_NOT_SUPPORTED Not supported
- * @retval #AUDIO_IO_ERROR_INVALID_STATE Invalid state
- *
- * @pre The state should be #AUDIO_IO_STATE_RUNNING or #AUDIO_IO_STATE_PAUSED.
  */
 int audio_in_flush(audio_in_h input);
 
 /**
  * @brief Reads audio data from the audio input buffer.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] input The handle to the audio input
  * @param[out] buffer The PCM buffer address
@@ -302,7 +310,7 @@ int audio_in_read(audio_in_h input, void *buffer, unsigned int length);
 /**
  * @brief Gets the size to be allocated for the audio input buffer.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] input The handle to the audio input
  * @param[out] size The buffer size (in bytes, the maximum size is 1 MB)
@@ -318,7 +326,7 @@ int audio_in_get_buffer_size(audio_in_h input, int *size);
 /**
  * @brief Gets the sample rate of the audio input data stream.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] input The handle to the audio input
  * @param[out] sample_rate The audio sample rate in Hertz (8000 ~ 48000)
@@ -333,7 +341,7 @@ int audio_in_get_sample_rate(audio_in_h input, int *sample_rate);
 /**
  * @brief Gets the channel type of the audio input data stream.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @details The audio channel type defines whether the audio is mono or stereo.
  *
@@ -350,7 +358,7 @@ int audio_in_get_channel(audio_in_h input, audio_channel_e *channel);
 /**
  * @brief Gets the sample audio format (8-bit or 16-bit) of the audio input data stream.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] input The handle to the audio input
  * @param[out] type The audio sample type
@@ -365,7 +373,7 @@ int audio_in_get_sample_type(audio_in_h input, audio_sample_type_e *type);
 /**
  * @brief Registers a callback function to be invoked when the audio input handle is interrupted or the interrupt is completed.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] input The handle to the audio input
  * @param[in] callback The callback function to register
@@ -386,7 +394,7 @@ int audio_in_set_interrupted_cb(audio_in_h input, audio_io_interrupted_cb callba
 /**
  * @brief Unregisters the callback function.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] input The handle to the audio input
  * @return @c 0 on success,
@@ -403,7 +411,7 @@ int audio_in_unset_interrupted_cb(audio_in_h input);
 /**
  * @brief Ignores session for input.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] input The handle to the audio input
  * @return @c 0 on success,
@@ -418,7 +426,7 @@ int audio_in_ignore_session(audio_in_h input);
 /**
  * @brief Sets an asynchronous(event) callback function to handle recording PCM (pulse-code modulation) data.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @details @a callback will be called when you can read a PCM data.
  * It might cause dead lock if change the state of audio handle in callback.
@@ -447,7 +455,7 @@ int audio_in_set_stream_cb(audio_in_h input, audio_in_stream_cb callback, void* 
 /**
  * @brief Unregisters the callback function.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] input The handle to the audio input
  * @return @c 0 on success,
@@ -464,7 +472,7 @@ int audio_in_unset_stream_cb(audio_in_h input);
 /**
  * @brief peek from audio in buffer
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @details This function works correctly only with read, write callback. Otherwise it won't operate as intended.
  *
@@ -489,7 +497,7 @@ int audio_in_peek(audio_in_h input, const void **buffer, unsigned int *length);
  *
  * @details This function works correctly only with read, write callback. Otherwise it won't operate as intended.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @remarks @a Works only in asynchronous(event) mode. This will remove audio in data from actual stream buffer. Use this if peeked data is not needed anymore.
  *
@@ -522,7 +530,7 @@ int audio_in_drop(audio_in_h input);
 /**
  * @brief Called when audio out data can be written in asynchronous(event) mode.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @remarks @a use audio_out_write() to write pcm data inside this callback.
  * @param[in] handle The handle to the audio output
@@ -536,7 +544,7 @@ typedef void (*audio_out_stream_cb)(audio_out_h handle, size_t nbytes, void *use
 /**
  * @brief Creates an audio device instance and returns an output handle to play PCM (pulse-code modulation) data.
 
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @details This function is used for audio output initialization.
  *
@@ -562,7 +570,7 @@ int audio_out_create(int sample_rate, audio_channel_e channel, audio_sample_type
 /**
  * @brief Releases the audio output handle, along with all its resources.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] output The handle to the audio output to destroy
  * @return @c 0 on success,
@@ -579,7 +587,7 @@ int audio_out_destroy(audio_out_h output);
 /**
  * @brief Prepares playing audio output, this must be called before audio_out_write().
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] output The handle to the audio output
  * @return @c 0 on success,
@@ -594,7 +602,7 @@ int audio_out_prepare(audio_out_h output);
 /**
  * @brief Unprepares playing audio output.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] output The handle to the audio output
  * @return @c 0 on success,
@@ -618,9 +626,7 @@ int audio_out_unprepare(audio_out_h output);
  *         otherwise a negative error value
  * @retval #AUDIO_IO_ERROR_NONE Successful
  * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
- * @retval #AUDIO_IO_ERROR_INVALID_STATE Invalid state
  *
- * @pre The state should be #AUDIO_IO_STATE_RUNNING or #AUDIO_IO_STATE_PAUSED.
  * @see audio_out_flush()
  */
 int audio_out_drain(audio_out_h output);
@@ -635,9 +641,7 @@ int audio_out_drain(audio_out_h output);
  *         otherwise a negative error value
  * @retval #AUDIO_IO_ERROR_NONE Successful
  * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
- * @retval #AUDIO_IO_ERROR_INVALID_STATE Invalid state
  *
- * @pre The state should be #AUDIO_IO_STATE_RUNNING or #AUDIO_IO_STATE_PAUSED.
  * @see audio_out_drain()
  */
 int audio_out_flush(audio_out_h output);
@@ -645,7 +649,7 @@ int audio_out_flush(audio_out_h output);
 /**
  * @brief Starts writing the audio data to the device.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] output The handle to the audio output
  * @param[in,out] buffer The PCM buffer address
@@ -661,7 +665,7 @@ int audio_out_write(audio_out_h output, void *buffer, unsigned int length);
 /**
  * @brief Gets the size to be allocated for the audio output buffer.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] output The handle to the audio output
  * @param[out] size The suggested buffer size (in bytes, the maximum size is 1 MB)
@@ -677,7 +681,7 @@ int audio_out_get_buffer_size(audio_out_h output, int *size);
 /**
  * @brief Gets the sample rate of the audio output data stream.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] output The handle to the audio output
  * @param[out] sample_rate The audio sample rate in Hertz (8000 ~ 48000)
@@ -692,7 +696,7 @@ int audio_out_get_sample_rate(audio_out_h output, int *sample_rate);
  * @brief Gets the channel type of the audio output data stream.
  * @details The audio channel type defines whether the audio is mono or stereo.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] output The handle to the audio output
  * @param[out] channel The audio channel type
@@ -706,7 +710,7 @@ int audio_out_get_channel(audio_out_h output, audio_channel_e *channel);
 /**
  * @brief Gets the sample audio format (8-bit or 16-bit) of the audio output data stream.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] output The handle to the audio output
  * @param[out] type The audio sample type
@@ -721,7 +725,7 @@ int audio_out_get_sample_type(audio_out_h output, audio_sample_type_e *type);
 /**
  * @brief Gets the sound type supported by the audio output device.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] output The handle to the audio output
  * @param[out] type The sound type
@@ -735,11 +739,11 @@ int audio_out_get_sound_type(audio_out_h output, sound_type_e *type);
 /**
  * @brief Registers a callback function to be invoked when the audio output handle is interrupted or the interrupt is completed.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] output The handle to the audio output
- * @param[in] callback	The callback function to register
- * @param[in] user_data	The user data to be passed to the callback function
+ * @param[in] callback The callback function to register
+ * @param[in] user_data The user data to be passed to the callback function
  * @return @c 0 on success,
  *         otherwise a negative error value
  * @retval #AUDIO_IO_ERROR_NONE Successful
@@ -755,7 +759,7 @@ int audio_out_set_interrupted_cb(audio_out_h output, audio_io_interrupted_cb cal
 /**
  * @brief Unregisters the callback function.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] output The handle to the audio output
  * @return @c 0 on success,
@@ -771,7 +775,7 @@ int audio_out_unset_interrupted_cb(audio_out_h output);
 /**
  * @brief Ignores session for output.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] output The handle to the audio output
  * @return @c 0 on success,
@@ -785,7 +789,7 @@ int audio_out_ignore_session(audio_out_h output);
 /**
  * @brief Sets an asynchronous(event) callback function to handle playing PCM (pulse-code modulation) data.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @details @a callback will be called when you can write a PCM data.
  * It might cause dead lock if change the state of audio handle in callback.
@@ -812,7 +816,7 @@ int audio_out_set_stream_cb(audio_out_h output, audio_out_stream_cb callback, vo
 /**
  * @brief Unregisters the callback function.
  *
- * @since_tizen 2.3
+ * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in] output The handle to the audio output
  * @return 0 on success, otherwise a negative error value
