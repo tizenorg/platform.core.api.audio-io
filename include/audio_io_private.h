@@ -11,14 +11,14 @@
 * distributed under the License is distributed on an "AS IS" BASIS,
 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 * See the License for the specific language governing permissions and
-* limitations under the License. 
+* limitations under the License.
 */
 
 #ifndef __TIZEN_MEDIA_AUDIO_IO_PRIVATE_H__
-#define	__TIZEN_MEDIA_AUDIO_IO_PRIVATE_H__
-#include <audio_io.h>
+#define __TIZEN_MEDIA_AUDIO_IO_PRIVATE_H__
 #include <sound_manager.h>
 #include <mm_sound.h>
+#include "audio_io.h"
 
 /*
 * Internal Macros
@@ -38,10 +38,10 @@
 extern "C" {
 #endif
 
-
 typedef struct _audio_in_s{
 	MMSoundPcmHandle_t mm_handle;
-
+	int is_async;
+	int is_loopback;
 	int _buffer_size;
 	int _sample_rate;
 	audio_channel_e _channel;
@@ -54,11 +54,12 @@ typedef struct _audio_in_s{
 
 typedef struct _audio_out_s{
 	MMSoundPcmHandle_t mm_handle;
-
+	int is_async;
+	int is_loopback;
 	int _buffer_size;
 	int _sample_rate;
 	audio_channel_e _channel;
-	audio_sample_type_e _type; 	
+	audio_sample_type_e _type;
 	sound_type_e	_sound_type;
 	audio_io_interrupted_cb user_cb;
 	void* user_data;
@@ -71,7 +72,7 @@ int __check_parameter(int sample_rate, audio_channel_e channel, audio_sample_typ
 int __mm_sound_pcm_capture_msg_cb (int message, void *param, void *user_param);
 audio_io_interrupted_code_e __translate_interrupted_code (int code);
 
-int audio_in_create_private(int sample_rate, audio_channel_e channel, audio_sample_type_e type , audio_in_h* input);
+int audio_in_create_private(int sample_rate, audio_channel_e channel, audio_sample_type_e type , int source_type, audio_in_h* input);
 
 int audio_in_set_callback_private(audio_in_h input, audio_in_stream_cb callback, void* userdata);
 
