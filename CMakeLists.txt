@@ -1,4 +1,3 @@
-
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 SET(fw_name "capi-media-audio-io")
 
@@ -10,17 +9,21 @@ SET(PREFIX ${CMAKE_INSTALL_PREFIX})
 SET(INC_DIR include)
 INCLUDE_DIRECTORIES(${INC_DIR})
 
-SET(dependents "dlog mm-sound capi-base-common capi-media-sound-manager")
+SET(dependents "dlog mm-sound capi-base-common capi-media-sound-manager mm-common mm-session libpulse vconf")
 SET(pc_dependents "capi-base-common capi-media-sound-manager")
 
 INCLUDE(FindPkgConfig)
 pkg_check_modules(${fw_name} REQUIRED ${dependents})
 FOREACH(flag ${${fw_name}_CFLAGS})
     SET(EXTRA_CFLAGS "${EXTRA_CFLAGS} ${flag}")
+    SET(EXTRA_CXXFLAGS "${EXTRA_CXXFLAGS} ${flag}")
 ENDFOREACH(flag)
 
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -fPIC -Wall")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -fPIC -Wall -Werror")
 SET(CMAKE_C_FLAGS_DEBUG "-O0 -g")
+
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EXTRA_CXXFLAGS} -fPIC -Wall -Werror -std=c++0x")
+SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
 
 IF("${ARCH}" STREQUAL "arm")
     ADD_DEFINITIONS("-DTARGET")
@@ -31,8 +34,12 @@ ADD_DEFINITIONS("-DTIZEN_DEBUG")
 
 SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--as-needed -Wl,--rpath=${LIB_INSTALL_DIR}")
 
+aux_source_directory(src/cpp CPPSOURCES)
 aux_source_directory(src SOURCES)
-ADD_LIBRARY(${fw_name} SHARED ${SOURCES})
+
+SET(ALL_SRC ${SOURCES} ${CPPSOURCES})
+
+ADD_LIBRARY(${fw_name} SHARED ${ALL_SRC})
 
 SET_TARGET_PROPERTIES(${fw_name}
      PROPERTIES
@@ -55,6 +62,9 @@ INSTALL(
         DIRECTORY ${INC_DIR}/ DESTINATION include/media
         FILES_MATCHING
         PATTERN "*_private.h" EXCLUDE
+        PATTERN "*cpp*.h" EXCLUDE
+        PATTERN "C*.h" EXCLUDE
+        PATTERN "I*.h" EXCLUDE
         PATTERN "${INC_DIR}/*.h"
         )
 
@@ -71,15 +81,16 @@ CONFIGURE_FILE(
 INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/${fw_name}.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
 
 ADD_SUBDIRECTORY(test)
+#INSTALL(TARGETS audio_io_test DESTINATION bin)
 
 IF(UNIX)
 
 ADD_CUSTOM_TARGET (distclean @echo cleaning for source distribution)
 ADD_CUSTOM_COMMAND(
-        DEPENDS clean 
+        DEPENDS clean
         COMMENT "distribution clean"
         COMMAND find
-        ARGS    . 
+        ARGS    .
         -not -name config.cmake -and \(
         -name tester.c -or
         -name Testing -or
@@ -102,4 +113,3 @@ ADD_CUSTOM_COMMAND(
 )
 
 ENDIF(UNIX)
-
