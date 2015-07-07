@@ -1,6 +1,6 @@
 Name:       capi-media-audio-io
 Summary:    An Audio Input & Audio Output library in Tizen Native API
-Version: 0.2.3
+Version:    0.3.5
 Release:    0
 Group:      Multimedia/API
 License:    Apache-2.0
@@ -8,9 +8,16 @@ Source0:    %{name}-%{version}.tar.gz
 Source1001: 	capi-media-audio-io.manifest
 BuildRequires:  cmake
 BuildRequires:  pkgconfig(dlog)
+BuildRequires:  pkgconfig(mm-common)
+BuildRequires:  pkgconfig(mm-session)
 BuildRequires:  pkgconfig(mm-sound)
+BuildRequires:  pkgconfig(vconf)
 BuildRequires:  pkgconfig(capi-media-sound-manager)
 BuildRequires:  pkgconfig(capi-base-common)
+BuildRequires:  pkgconfig(libpulse)
+Requires(post): /sbin/ldconfig
+Requires(postun): /sbin/ldconfig
+Requires(post): libprivilege-control
 
 %description
 An Audio Input & Audio Output library in Tizen Native API
@@ -35,16 +42,20 @@ MAJORVER=`echo %{version} | awk 'BEGIN {FS="."}{print $1}'`
 make %{?jobs:-j%jobs}
 
 %install
+rm -rf %{buildroot}
 %make_install
+mkdir -p %{buildroot}/usr/share/privilege-control
 
-%post -p /sbin/ldconfig
+%post
+/sbin/ldconfig
+/usr/bin/api_feature_loader --verbose --dir=/usr/share/privilege-control
 
 %postun -p /sbin/ldconfig
 
 
 %files
 %manifest %{name}.manifest
-%license LICENSE.APLv2
+%license LICENSE
 %{_libdir}/libcapi-media-audio-io.so.*
 %manifest capi-media-audio-io.manifest
 
@@ -53,5 +64,5 @@ make %{?jobs:-j%jobs}
 %{_includedir}/media/audio_io.h
 %{_libdir}/pkgconfig/*.pc
 %{_libdir}/libcapi-media-audio-io.so
-
+#%{_prefix}/bin/audio_io_test
 
