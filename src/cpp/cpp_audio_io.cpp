@@ -283,6 +283,30 @@ static audio_io_state_e _convert_state_type(const CAudioInfo::EAudioIOState src_
     return dst_state;
 }
 
+static void _check_audio_param(int sample_rate, audio_channel_e channel, audio_sample_type_e type)  throw (CAudioError) {
+
+    if (sample_rate < 0) {
+        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Invalid sample rate :%d", sample_rate);
+    }
+
+    if (channel != AUDIO_CHANNEL_MONO && channel != AUDIO_CHANNEL_STEREO) {
+        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Invalid channel :%d", channel);
+    }
+
+    if (type != AUDIO_SAMPLE_TYPE_U8 && type != AUDIO_SAMPLE_TYPE_S16_LE) {
+        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Invalid sample type :%d", type);
+    }
+}
+
+static void _check_audio_param(int sample_rate, audio_channel_e channel, audio_sample_type_e type, sound_type_e sound_type) throw (CAudioError) {
+
+    _check_audio_param(sample_rate, channel, type);
+
+    if (sound_type < SOUND_TYPE_SYSTEM || sound_type > SOUND_TYPE_VOICE) {
+        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Invalid sound type : %d", sound_type);
+    }
+}
+
 static CAudioInfo _generate_audio_input_info(int sampleRate, audio_channel_e channel, audio_sample_type_e sample_type) throw (CAudioError) {
     CAudioInfo::EChannel     dstChannel;
     CAudioInfo::ESampleType dstSampleType;
@@ -349,6 +373,8 @@ int cpp_audio_in_create(int sample_rate, audio_channel_e channel, audio_sample_t
         if (input == NULL) {
             THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
         }
+
+        _check_audio_param(sample_rate, channel, type);
 
         handle = new audio_io_s;
         if (handle == NULL) {
@@ -773,6 +799,10 @@ int cpp_audio_in_ignore_session(audio_in_h input) {
             THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
         }
 
+        if (handle->stream_callback.onStream) {
+            THROW_ERROR_MSG(CAudioError::ERROR_INVALID_OPERATION, "Not support ignore session in async mode");
+        }
+
         assert(handle->audioIoHandle);
 
         handle->audioIoHandle->ignoreSession();
@@ -957,6 +987,8 @@ int cpp_audio_out_create(int sample_rate, audio_channel_e channel, audio_sample_
         if (handle == NULL) {
             THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed allocation handle");
         }
+
+        _check_audio_param(sample_rate, channel, type, sound_type);
 
         CAudioInfo audioInfo = _generate_audio_output_info(sample_rate, channel, type, sound_type);
 
@@ -1381,6 +1413,10 @@ int cpp_audio_out_ignore_session(audio_out_h output) {
     try {
         if (handle == NULL) {
             THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p", output);
+        }
+
+        if (handle->stream_callback.onStream) {
+            THROW_ERROR_MSG(CAudioError::ERROR_INVALID_OPERATION, "Not support ignore session in async mode");
         }
 
         assert(handle->audioIoHandle);
