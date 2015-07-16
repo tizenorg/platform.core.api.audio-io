@@ -349,7 +349,7 @@ void CAudioInput::setStreamCallback(SStreamCallback callback) throw (CAudioError
     CAudioIO::setStreamCallback(callback);
 }
 
-int CAudioInput::read(void* buffer, unsigned int length) throw (CAudioError) {
+size_t CAudioInput::read(void* buffer, size_t length) throw (CAudioError) {
     if (IsInit() == false || IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioInput");
     }
@@ -365,7 +365,7 @@ int CAudioInput::read(void* buffer, unsigned int length) throw (CAudioError) {
 
     internalLock();
 
-    unsigned int lengthIter = length;
+    size_t lengthIter = length;
     int ret = 0;
 
     try {
@@ -441,7 +441,7 @@ int CAudioInput::read(void* buffer, unsigned int length) throw (CAudioError) {
     return length;
 }
 
-int CAudioInput::peek(const void** buffer, unsigned int* length) throw (CAudioError) {
+int CAudioInput::peek(const void** buffer, size_t* length) throw (CAudioError) {
     if (IsInit() == false || IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioInput");
     }

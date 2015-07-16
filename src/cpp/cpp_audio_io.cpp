@@ -94,7 +94,7 @@ static audio_io_error_e _convert_CAudioError(CAudioError& error) {
     audio_io_error_e    ret = AUDIO_IO_ERROR_NONE;
     CAudioError::EError err = error.getError();
 
-    switch(err)
+    switch (err)
     {
     case CAudioError::ERROR_NONE:
         ret = AUDIO_IO_ERROR_NONE;
@@ -632,9 +632,10 @@ int cpp_audio_in_read(audio_in_h input, void *buffer, unsigned int length) {
         assert(handle->audioIoHandle);
 
         CAudioInput* inputHandle = dynamic_cast<CAudioInput*>(handle->audioIoHandle);
-        ret = inputHandle->read(buffer, length);
+        size_t readn = inputHandle->read(buffer, static_cast<size_t>(length));
+        ret = static_cast<int>(readn);
 #ifdef _AUDIO_IO_DEBUG_TIMING_
-        AUDIO_IO_LOGD("ret:%d", ret);
+        AUDIO_IO_LOGD("readn:%d", readn);
 #endif
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
@@ -895,7 +896,7 @@ int cpp_audio_in_peek(audio_in_h input, const void **buffer, unsigned int *lengt
         CAudioInput* inputHandle = dynamic_cast<CAudioInput*>(handle->audioIoHandle);
         assert(inputHandle);
 
-        inputHandle->peek(buffer, length);
+        inputHandle->peek(buffer, static_cast<size_t*>(length));
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
         return _convert_CAudioError(e);
@@ -1236,9 +1237,10 @@ int cpp_audio_out_write(audio_out_h output, void *buffer, unsigned int length) {
         assert(handle->audioIoHandle);
 
         CAudioOutput* outputHandle = dynamic_cast<CAudioOutput*>(handle->audioIoHandle);
-        ret = outputHandle->write(buffer, length);
+        size_t writen = outputHandle->write(buffer, static_cast<size_t>(length));
+        ret = static_cast<int>(writen);
 #ifdef _AUDIO_IO_DEBUG_TIMING_
-        AUDIO_IO_LOGD("ret:%d", ret);
+        AUDIO_IO_LOGD("writen:%d", writen);
 #endif
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());

@@ -319,7 +319,7 @@ int CAudioOutput::getBufferSize() throw (CAudioError) {
     return size;
 }
 
-int CAudioOutput::write(const void* buffer, unsigned int length) throw (CAudioError) {
+size_t CAudioOutput::write(const void* buffer, size_t length) throw (CAudioError) {
     if (IsInit() == false || IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioOutput");
     }
@@ -356,10 +356,10 @@ int CAudioOutput::write(const void* buffer, unsigned int length) throw (CAudioEr
     // Sets synchronous flag
     mIsUsedSyncWrite = true;
 
-    unsigned int lengthIter = length;
+    size_t lengthIter = length;
     try {
         while (lengthIter > 0) {
-            int l, r;
+            size_t l;
 
             while ((l = mpPulseAudioClient->getWritableSize()) == 0) {
 #ifdef _AUDIO_IO_DEBUG_TIMING_
@@ -368,11 +368,7 @@ int CAudioOutput::write(const void* buffer, unsigned int length) throw (CAudioEr
                 internalWait();
             }
 
-            if (l == -1) {
-                THROW_ERROR_MSG(CAudioError::ERROR_INTERNAL_OPERATION, "The Writable size is invalid");
-            }
-
-            if (static_cast<unsigned int>(l) > lengthIter) {
+            if (l > lengthIter) {
                 l = lengthIter;
             }
 
@@ -380,7 +376,7 @@ int CAudioOutput::write(const void* buffer, unsigned int length) throw (CAudioEr
             AUDIO_IO_LOGD("PulseAudioClient->write(buffer:%p, length:%d)", buffer, l);
 #endif
 
-            r = mpPulseAudioClient->write(buffer, l);
+            int r = mpPulseAudioClient->write(buffer, l);
             if (r < 0) {
                 THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INTERNAL_OPERATION, "The written result is invalid ret:%d", r);
             }

@@ -70,7 +70,7 @@ namespace tizen_media_audio {
         virtual int  getBufferSize() throw (CAudioError);
 
         /* Methods */
-        int write(const void* buffer, unsigned int length) throw (CAudioError);
+        size_t write(const void* buffer, size_t length) throw (CAudioError);
     };
 
 } /* namespace tizen_media_audio */

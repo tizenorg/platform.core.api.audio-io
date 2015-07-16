@@ -76,7 +76,7 @@ namespace tizen_media_audio {
         virtual void setStreamCallback(SStreamCallback callback) throw (CAudioError);
 
         /* Methods */
-        int read(void* buffer, size_t length) throw (CAudioError);
+        size_t read(void* buffer, size_t length) throw (CAudioError);
         int peek(const void** buffer, size_t* length) throw (CAudioError);
         int drop() throw (CAudioError);
     };
