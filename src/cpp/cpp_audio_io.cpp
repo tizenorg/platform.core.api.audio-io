@@ -896,7 +896,7 @@ int cpp_audio_in_peek(audio_in_h input, const void **buffer, unsigned int *lengt
         CAudioInput* inputHandle = dynamic_cast<CAudioInput*>(handle->audioIoHandle);
         assert(inputHandle);
 
-        inputHandle->peek(buffer, static_cast<size_t*>(length));
+        inputHandle->peek(buffer, (size_t*)length);
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
         return _convert_CAudioError(e);

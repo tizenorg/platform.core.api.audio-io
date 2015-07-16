@@ -325,7 +325,7 @@ size_t CAudioOutput::write(const void* buffer, size_t length) throw (CAudioError
     }
 
     if (buffer == NULL) {
-        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are invalid - buffer:%p, length:%d", buffer, length);
+        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are invalid - buffer:%p, length:%zu", buffer, length);
     }
 
     /*
