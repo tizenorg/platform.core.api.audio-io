@@ -45,6 +45,7 @@ namespace tizen_media_audio {
 
             ERROR_NOT_INITIALIZED,
             ERROR_NOT_SUPPORTED,
+            ERROR_NOT_SUPPORTED_TYPE,
 
             ERROR_PERMISSION_DENIED,
 
