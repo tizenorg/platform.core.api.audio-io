@@ -76,7 +76,6 @@ CAudioError::~CAudioError() {
 
 const char* CAudioError::_convertErrorToString(EError err) {
     switch (err) {
-
     default:
     case ERROR_NONE:                return COLOR_GREEN "ERROR_NONE"               COLOR_END;
     case ERROR_INVALID_ARGUMENT:    return COLOR_RED   "ERROR_INVALID_ARGUMENT"   COLOR_END;
@@ -88,6 +87,7 @@ const char* CAudioError::_convertErrorToString(EError err) {
     case ERROR_INVALID_OPERATION:   return COLOR_RED   "ERROR_INVALID_OPERATION"  COLOR_END;
     case ERROR_NOT_INITIALIZED:     return COLOR_RED   "ERROR_NOT_INITIALIZED"    COLOR_END;
     case ERROR_NOT_SUPPORTED:       return COLOR_RED   "ERROR_NOT_SUPPORTED"      COLOR_END;
+    case ERROR_NOT_SUPPORTED_TYPE:  return COLOR_RED   "ERROR_NOT_SUPPORTED_TYPE" COLOR_END;
     case ERROR_PERMISSION_DENIED:   return COLOR_RED   "ERROR_PERMISSION_DENIED"  COLOR_END;
     case ERROR_DEVICE_NOT_OPENED:   return COLOR_RED   "ERROR_DEVICE_NOT_OPENED"  COLOR_END;
     case ERROR_DEVICE_NOT_CLOSED:   return COLOR_RED   "ERROR_DEVICE_NOT_CLOSED"  COLOR_END;

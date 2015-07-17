@@ -360,7 +360,7 @@ size_t CAudioInput::read(void* buffer, size_t length) throw (CAudioError) {
 
     /* Checks synchronous flag */
     if (mIsUsedSyncRead == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_SUPPORTED, "Does not support read() if receive stream callback");
+        THROW_ERROR_MSG(CAudioError::ERROR_INVALID_OPERATION, "Invalid operation of read() if receive stream callback");
     }
 
     internalLock();
@@ -451,11 +451,9 @@ int CAudioInput::peek(const void** buffer, size_t* length) throw (CAudioError) {
     }
 
     /* Checks synchronous flag */
-    internalLock();
     if (mIsUsedSyncRead == true) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_SUPPORTED, "Does not support peek() if does not receive a stream callback");
+        THROW_ERROR_MSG(CAudioError::ERROR_INVALID_OPERATION, "Invalid operation of peek() if does not receive a stream callback");
     }
-    internalUnlock();
 
     int ret = 0;
 
@@ -477,11 +475,9 @@ int CAudioInput::drop() throw (CAudioError) {
     }
 
     /* Checks synchronous flag */
-    internalLock();
     if (mIsUsedSyncRead == true) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_SUPPORTED, "Does not support drop() if does not receive a stream callback");
+        THROW_ERROR_MSG(CAudioError::ERROR_INVALID_OPERATION, "Invalid operation of drop() if does not receive a stream callback");
     }
-    internalUnlock();
 
     int ret = 0;
 
