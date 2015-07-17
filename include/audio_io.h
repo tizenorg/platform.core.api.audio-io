@@ -112,6 +112,7 @@ typedef enum{
     AUDIO_IO_ERROR_INVALID_BUFFER      = TIZEN_ERROR_AUDIO_IO | 0x03,   /**< Invalid buffer pointer */
     AUDIO_IO_ERROR_SOUND_POLICY        = TIZEN_ERROR_AUDIO_IO | 0x04,   /**< Sound policy error */
     AUDIO_IO_ERROR_INVALID_STATE       = TIZEN_ERROR_AUDIO_IO | 0x05,   /**< Invalid state (Since 3.0) */
+    AUDIO_IO_ERROR_NOT_SUPPORTED_TYPE  = TIZEN_ERROR_AUDIO_IO | 0x06,   /**< Not supported stream type (Since 3.0) */
 } audio_io_error_e;
 
 /**
@@ -275,6 +276,7 @@ int audio_in_destroy(audio_in_h input);
  *
  * @remarks @a the sound stream information includes audio routing and volume type.
  *          For more details, you can refer to @ref CAPI_MEDIA_SOUND_MANAGER_MODULE
+ *          System, Alarm, Notification, Emergency, Voice Information, Ringtone VOIP and Ringtone Call stream types are not supported in this API.
  *
  * @param[in] input The handle to the audio input
  * @param[in] stream_info The handle of stream information
@@ -284,6 +286,7 @@ int audio_in_destroy(audio_in_h input);
  * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #AUDIO_IO_ERROR_NOT_SUPPORTED Not supported
  * @retval #AUDIO_IO_ERROR_INVALID_STATE Invalid state
+ * @retval #AUDIO_IO_ERROR_NOT_SUPPORTED_TYPE Not supported stream type
  *
  * @pre The state should be #AUDIO_IO_STATE_IDLE.\n
  *      Call audio_in_create() before calling this function.
@@ -773,7 +776,8 @@ int audio_out_destroy(audio_out_h output);
  * @since_tizen 3.0
  *
  * @remarks @a the sound stream information includes audio routing and volume type.
- *          For more details, you can refer to sound_manager.h
+ *          For more details, you can refer to @ref CAPI_MEDIA_SOUND_MANAGER_MODULE
+ *          Voice Recognition and Loopback stream types are not supported in this API.
  *
  * @param[in] output The handle to the audio output
  * @param[in] stream_info The handle of stream information
@@ -783,6 +787,7 @@ int audio_out_destroy(audio_out_h output);
  * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #AUDIO_IO_ERROR_NOT_SUPPORTED Not supported
  * @retval #AUDIO_IO_ERROR_INVALID_STATE Invalid state
+ * @retval #AUDIO_IO_ERROR_NOT_SUPPORTED_TYPE Not supported stream type
  *
  * @pre The state should be #AUDIO_IO_STATE_IDLE.\n
  *      Call audio_out_create_new() before calling this function.

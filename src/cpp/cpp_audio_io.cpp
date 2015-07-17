@@ -99,7 +99,6 @@ static audio_io_error_e _convert_CAudioError(CAudioError& error) {
     case CAudioError::ERROR_NONE:
         ret = AUDIO_IO_ERROR_NONE;
         break;
-
     case CAudioError::ERROR_INVALID_ARGUMENT:
     case CAudioError::ERROR_INVALID_HANDLE:
     case CAudioError::ERROR_INVALID_SAMPLERATE:
@@ -107,23 +106,21 @@ static audio_io_error_e _convert_CAudioError(CAudioError& error) {
     case CAudioError::ERROR_INVALID_FORMAT:
         ret = AUDIO_IO_ERROR_INVALID_PARAMETER;
         break;
-
     case CAudioError::ERROR_DEVICE_NOT_OPENED:
         ret = AUDIO_IO_ERROR_DEVICE_NOT_OPENED;
         break;
-
     case CAudioError::ERROR_DEVICE_NOT_CLOSED:
         ret = AUDIO_IO_ERROR_DEVICE_NOT_CLOSED;
         break;
-
     case CAudioError::ERROR_PERMISSION_DENIED:
         ret = AUDIO_IO_ERROR_PERMISSION_DENIED;
         break;
-
     case CAudioError::ERROR_NOT_SUPPORTED:
         ret = AUDIO_IO_ERROR_NOT_SUPPORTED;
         break;
-
+    case CAudioError::ERROR_NOT_SUPPORTED_TYPE:
+        ret = AUDIO_IO_ERROR_NOT_SUPPORTED_TYPE;
+        break;
     case CAudioError::ERROR_MAX:
     case CAudioError::ERROR_INTERNAL_OPERATION:
     case CAudioError::ERROR_NOT_INITIALIZED:
@@ -131,20 +128,18 @@ static audio_io_error_e _convert_CAudioError(CAudioError& error) {
     case CAudioError::ERROR_INVALID_OPERATION:
         ret = AUDIO_IO_ERROR_INVALID_OPERATION;
         break;
-
     case CAudioError::ERROR_OUT_OF_MEMORY:
     case CAudioError::ERROR_INVALID_POINTER:
         ret = AUDIO_IO_ERROR_INVALID_BUFFER;
         break;
-
     case CAudioError::ERROR_POLICY_BLOCKED:
     case CAudioError::ERROR_POLICY_INTERRUPTED:
     case CAudioError::ERROR_POLICY_DUPLICATED:
         ret = AUDIO_IO_ERROR_SOUND_POLICY;
         break;
     }
-    return ret;
 
+    return ret;
 }
 
 static void _convert_channel_2_audio_info_channel(const audio_channel_e& src_channel, CAudioInfo::EChannel& dst_channel) {
@@ -201,65 +196,64 @@ static void _convert_audio_info_sample_type_2_sample_type(const CAudioInfo::ESam
 
 static void _convert_sound_type_2_audio_info_audio_type(const sound_type_e& src_type, CAudioInfo::EAudioType& dst_type) {
     switch (src_type) {
-        case SOUND_TYPE_SYSTEM:
-            dst_type = CAudioInfo::AUDIO_OUT_TYPE_SYSTEM;
-            break;
-        case SOUND_TYPE_NOTIFICATION:
-            dst_type = CAudioInfo::AUDIO_OUT_TYPE_NOTIFICATION;
-            break;
-        case SOUND_TYPE_ALARM:
-            dst_type = CAudioInfo::AUDIO_OUT_TYPE_ALARM;
-            break;
-        case SOUND_TYPE_RINGTONE:
-            dst_type = CAudioInfo::AUDIO_OUT_TYPE_RINGTONE_VOIP;
-            break;
-        case SOUND_TYPE_MEDIA:
-            dst_type = CAudioInfo::AUDIO_OUT_TYPE_MEDIA;
-            break;
-        case SOUND_TYPE_CALL:
-            dst_type = CAudioInfo::AUDIO_OUT_TYPE_SYSTEM;
-            break;
-        case SOUND_TYPE_VOIP:
-            dst_type = CAudioInfo::AUDIO_OUT_TYPE_VOIP;
-            break;
-        case SOUND_TYPE_VOICE:
-            dst_type = CAudioInfo::AUDIO_OUT_TYPE_VOICE_INFORMATION;
-            break;
-        default:
-            dst_type = CAudioInfo::AUDIO_OUT_TYPE_MEDIA;
-            break;
-        }
+    case SOUND_TYPE_SYSTEM:
+        dst_type = CAudioInfo::AUDIO_OUT_TYPE_SYSTEM;
+        break;
+    case SOUND_TYPE_NOTIFICATION:
+        dst_type = CAudioInfo::AUDIO_OUT_TYPE_NOTIFICATION;
+        break;
+    case SOUND_TYPE_ALARM:
+        dst_type = CAudioInfo::AUDIO_OUT_TYPE_ALARM;
+        break;
+    case SOUND_TYPE_RINGTONE:
+        dst_type = CAudioInfo::AUDIO_OUT_TYPE_RINGTONE_VOIP;
+        break;
+    case SOUND_TYPE_MEDIA:
+        dst_type = CAudioInfo::AUDIO_OUT_TYPE_MEDIA;
+        break;
+    case SOUND_TYPE_CALL:
+        dst_type = CAudioInfo::AUDIO_OUT_TYPE_SYSTEM;
+        break;
+    case SOUND_TYPE_VOIP:
+        dst_type = CAudioInfo::AUDIO_OUT_TYPE_VOIP;
+        break;
+    case SOUND_TYPE_VOICE:
+        dst_type = CAudioInfo::AUDIO_OUT_TYPE_VOICE_INFORMATION;
+        break;
+    default:
+        dst_type = CAudioInfo::AUDIO_OUT_TYPE_MEDIA;
+        break;
+    }
 }
 
 static void _convert_audio_info_audio_type_2_sound_type(const CAudioInfo::EAudioType& src_type, sound_type_e& dst_type) {
     switch (src_type) {
-        case CAudioInfo::AUDIO_OUT_TYPE_MEDIA:
-            dst_type = SOUND_TYPE_MEDIA;
-            break;
-        case CAudioInfo::AUDIO_OUT_TYPE_SYSTEM:
-            dst_type = SOUND_TYPE_SYSTEM;
-            break;
-        case CAudioInfo::AUDIO_OUT_TYPE_ALARM:
-            dst_type = SOUND_TYPE_ALARM;
-            break;
-        case CAudioInfo::AUDIO_OUT_TYPE_NOTIFICATION:
-        case CAudioInfo::AUDIO_OUT_TYPE_EMERGENCY:
-            dst_type = SOUND_TYPE_NOTIFICATION;
-            break;
-        case CAudioInfo::AUDIO_OUT_TYPE_VOICE_INFORMATION:
-        case CAudioInfo::AUDIO_OUT_TYPE_VOICE_RECOGNITION:
-            dst_type = SOUND_TYPE_VOICE;
-            break;
-        case CAudioInfo::AUDIO_OUT_TYPE_RINGTONE_VOIP:
-            dst_type = SOUND_TYPE_RINGTONE;
-            break;
-        case CAudioInfo::AUDIO_OUT_TYPE_VOIP:
-            dst_type = SOUND_TYPE_VOIP;
-            break;
-        default:
-            dst_type = SOUND_TYPE_MEDIA;
-            break;
-        }
+    case CAudioInfo::AUDIO_OUT_TYPE_MEDIA:
+        dst_type = SOUND_TYPE_MEDIA;
+        break;
+    case CAudioInfo::AUDIO_OUT_TYPE_SYSTEM:
+        dst_type = SOUND_TYPE_SYSTEM;
+        break;
+    case CAudioInfo::AUDIO_OUT_TYPE_ALARM:
+        dst_type = SOUND_TYPE_ALARM;
+        break;
+    case CAudioInfo::AUDIO_OUT_TYPE_NOTIFICATION:
+    case CAudioInfo::AUDIO_OUT_TYPE_EMERGENCY:
+        dst_type = SOUND_TYPE_NOTIFICATION;
+        break;
+    case CAudioInfo::AUDIO_OUT_TYPE_VOICE_INFORMATION:
+        dst_type = SOUND_TYPE_VOICE;
+        break;
+    case CAudioInfo::AUDIO_OUT_TYPE_RINGTONE_VOIP:
+        dst_type = SOUND_TYPE_RINGTONE;
+        break;
+    case CAudioInfo::AUDIO_OUT_TYPE_VOIP:
+        dst_type = SOUND_TYPE_VOIP;
+        break;
+    default:
+        dst_type = SOUND_TYPE_MEDIA;
+        break;
+    }
 }
 
 static audio_io_state_e _convert_state_type(const CAudioInfo::EAudioIOState src_state) {
@@ -491,7 +485,7 @@ int cpp_audio_in_set_stream_info(audio_in_h input, sound_stream_info_h stream_in
         if ((errorCode = sound_manager_get_type_from_stream_information (stream_info, &type)) != SOUND_MANAGER_ERROR_NONE) {
             THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameter stream_info->stream_type is invalid [ret:%d]", errorCode);
         }
-        handle->audioIoHandle->getAudioInfo().convertStreamType2AudioType(type, &AudioType);
+        handle->audioIoHandle->getAudioInfo().convertInputStreamType2AudioType(type, &AudioType);
         handle->audioIoHandle->getAudioInfo().setAudioType(AudioType);
 
         if ((errorCode = sound_manager_get_index_from_stream_information (stream_info, &index)) != SOUND_MANAGER_ERROR_NONE) {
@@ -1028,7 +1022,7 @@ int cpp_audio_out_create_new(int sample_rate, audio_channel_e channel, audio_sam
             THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed allocation handle");
         }
 
-        CAudioInfo audioInfo = _generate_audio_output_info(sample_rate, channel, type, SOUND_TYPE_MEDIA /* default sound_tyoe */);
+        CAudioInfo audioInfo = _generate_audio_output_info(sample_rate, channel, type, SOUND_TYPE_MEDIA /* default sound_type */);
 
         handle->audioIoHandle = new CAudioOutput(audioInfo);
         if (handle == NULL) {
@@ -1096,7 +1090,7 @@ int cpp_audio_out_set_stream_info(audio_out_h output, sound_stream_info_h stream
         if ((errorCode = sound_manager_get_type_from_stream_information (stream_info, &type)) != SOUND_MANAGER_ERROR_NONE) {
             THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameter stream_info->stream_type is invalid [ret:%d]", errorCode);
         }
-        handle->audioIoHandle->getAudioInfo().convertStreamType2AudioType(type, &AudioType);
+        handle->audioIoHandle->getAudioInfo().convertOutputStreamType2AudioType(type, &AudioType);
         handle->audioIoHandle->getAudioInfo().setAudioType(AudioType);
 
         if ((errorCode = sound_manager_get_index_from_stream_information (stream_info, &index)) != SOUND_MANAGER_ERROR_NONE) {
