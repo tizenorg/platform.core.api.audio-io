@@ -308,11 +308,8 @@ int CAudioOutput::getBufferSize() throw (CAudioError) {
     int size = 0;
 
     try {
-        internalLock();
         size = mpPulseAudioClient->getBufferSize();
-        internalUnlock();
     } catch (CAudioError err) {
-        internalUnlock();
         throw err;
     }
 
