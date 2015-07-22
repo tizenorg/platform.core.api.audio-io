@@ -458,9 +458,7 @@ int CAudioInput::peek(const void** buffer, size_t* length) throw (CAudioError) {
     int ret = 0;
 
     try {
-        internalLock();
         ret = mpPulseAudioClient->peek(buffer, length);
-        internalUnlock();
     } catch (CAudioError e) {
         internalUnlock();
         throw e;
@@ -482,9 +480,7 @@ int CAudioInput::drop() throw (CAudioError) {
     int ret = 0;
 
     try {
-        internalLock();
         ret = mpPulseAudioClient->drop();
-        internalUnlock();
     } catch (CAudioError e) {
         internalUnlock();
         throw e;

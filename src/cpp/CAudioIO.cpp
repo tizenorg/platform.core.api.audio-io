@@ -67,7 +67,7 @@ void CAudioIO::internalLock() throw (CAudioError) {
         THROW_ERROR_MSG(CAudioError::ERROR_INTERNAL_OPERATION, "Failed pthread_mutex_lock()");
     }
 #ifdef _AUDIO_IO_DEBUG_TIMING_
-    AUDIO_IO_LOGD(COLOR_RED"LOCK"COLOR_END);
+    AUDIO_IO_LOGD(COLOR_RED "LOCK" COLOR_END);
 #endif
 }
 
@@ -80,7 +80,7 @@ void CAudioIO::internalUnlock() throw (CAudioError) {
         THROW_ERROR_MSG(CAudioError::ERROR_INTERNAL_OPERATION, "Failed pthread_mutex_lock()");
     }
 #ifdef _AUDIO_IO_DEBUG_TIMING_
-    AUDIO_IO_LOGD(COLOR_GREEN"UNLOCK"COLOR_END);
+    AUDIO_IO_LOGD(COLOR_GREEN "UNLOCK" COLOR_END);
 #endif
 }
 
@@ -90,7 +90,7 @@ void CAudioIO::internalWait() throw (CAudioError) {
     }
 
 #ifdef _AUDIO_IO_DEBUG_TIMING_
-    AUDIO_IO_LOGD(COLOR_RED"WAIT"COLOR_END);
+    AUDIO_IO_LOGD(COLOR_RED "WAIT" COLOR_END);
 #endif
 
     pthread_cond_wait(&mCond, &mMutex);
@@ -102,7 +102,7 @@ void CAudioIO::internalSignal() throw (CAudioError) {
     }
 
 #ifdef _AUDIO_IO_DEBUG_TIMING_
-    AUDIO_IO_LOGD(COLOR_GREEN"SIGNAL"COLOR_END);
+    AUDIO_IO_LOGD(COLOR_GREEN "SIGNAL" COLOR_END);
 #endif
 
     pthread_cond_signal(&mCond);
@@ -156,6 +156,10 @@ void CAudioIO::onStream(CPulseAudioClient* pClient, size_t length) {
     assert(mIsInit == true);
     assert(pClient != NULL);
     assert(length > 0);
+
+#ifdef _AUDIO_IO_DEBUG_TIMING_
+    AUDIO_IO_LOGD("mStreamCallback.onStream(%p), pClient(%p), length(%zu)", mStreamCallback.onStream, pClient, length);
+#endif
 
     if (mStreamCallback.onStream != NULL) {
         mStreamCallback.onStream(length, mStreamCallback.mUserData);
