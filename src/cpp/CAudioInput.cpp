@@ -282,16 +282,7 @@ void CAudioInput::resume() throw (CAudioError) {
 }
 
 void CAudioInput::drain() throw (CAudioError) {
-    if (IsInit() == false || IsReady() == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioInput");
-    }
-
-    try{
-        CAudioIO::drain();
-    } catch (CAudioError e) {
-        internalUnlock();
-        throw e;
-    }
+    THROW_ERROR_MSG(CAudioError::ERROR_NOT_SUPPORTED, "Did not support drain of CAudioInput");
 }
 
 void CAudioInput::flush() throw (CAudioError) {
@@ -302,7 +293,6 @@ void CAudioInput::flush() throw (CAudioError) {
     try {
         CAudioIO::flush();
     } catch (CAudioError e) {
-        internalUnlock();
         throw e;
     }
 }
@@ -320,11 +310,8 @@ int CAudioInput::getBufferSize() throw (CAudioError) {
     int size = 0;
 
     try {
-        internalLock();
         size = mpPulseAudioClient->getBufferSize();
-        internalUnlock();
     } catch (CAudioError err) {
-        internalUnlock();
         throw err;
     }
 
@@ -336,7 +323,6 @@ void CAudioInput::setStreamCallback(SStreamCallback callback) throw (CAudioError
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioInput");
     }
 
-    internalLock();
     if (callback.onStream == NULL) {
         AUDIO_IO_LOGD("mIsUsedSyncRead = true");
         mIsUsedSyncRead = true;
@@ -344,7 +330,6 @@ void CAudioInput::setStreamCallback(SStreamCallback callback) throw (CAudioError
         AUDIO_IO_LOGD("mIsUsedSyncRead = false");
         mIsUsedSyncRead = false;
     }
-    internalUnlock();
 
     CAudioIO::setStreamCallback(callback);
 }
@@ -363,12 +348,12 @@ size_t CAudioInput::read(void* buffer, size_t length) throw (CAudioError) {
         THROW_ERROR_MSG(CAudioError::ERROR_INVALID_OPERATION, "Invalid operation of read() if receive stream callback");
     }
 
-    internalLock();
-
     size_t lengthIter = length;
     int ret = 0;
 
     try {
+        internalLock();
+
         while (lengthIter > 0) {
             size_t l;
 
@@ -430,13 +415,13 @@ size_t CAudioInput::read(void* buffer, size_t length) throw (CAudioError) {
                 mSyncReadLength   = 0;
                 mSyncReadIndex    = 0;
             }
-        }//end of while (length > 0)
+        }  // End of while (length > 0)
+
+        internalUnlock();
     } catch (CAudioError e) {
         internalUnlock();
         throw e;
     }
-
-    internalUnlock();
 
     return length;
 }
@@ -458,11 +443,8 @@ int CAudioInput::peek(const void** buffer, size_t* length) throw (CAudioError) {
     int ret = 0;
 
     try {
-        internalLock();
         ret = mpPulseAudioClient->peek(buffer, length);
-        internalUnlock();
     } catch (CAudioError e) {
-        internalUnlock();
         throw e;
     }
 
@@ -482,11 +464,8 @@ int CAudioInput::drop() throw (CAudioError) {
     int ret = 0;
 
     try {
-        internalLock();
         ret = mpPulseAudioClient->drop();
-        internalUnlock();
     } catch (CAudioError e) {
-        internalUnlock();
         throw e;
     }
 
