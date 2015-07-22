@@ -67,7 +67,7 @@ void CAudioIO::internalLock() throw (CAudioError) {
         THROW_ERROR_MSG(CAudioError::ERROR_INTERNAL_OPERATION, "Failed pthread_mutex_lock()");
     }
 #ifdef _AUDIO_IO_DEBUG_TIMING_
-    AUDIO_IO_LOGD(COLOR_RED"LOCK"COLOR_END);
+    AUDIO_IO_LOGD(COLOR_RED "LOCK" COLOR_END);
 #endif
 }
 
@@ -80,7 +80,7 @@ void CAudioIO::internalUnlock() throw (CAudioError) {
         THROW_ERROR_MSG(CAudioError::ERROR_INTERNAL_OPERATION, "Failed pthread_mutex_lock()");
     }
 #ifdef _AUDIO_IO_DEBUG_TIMING_
-    AUDIO_IO_LOGD(COLOR_GREEN"UNLOCK"COLOR_END);
+    AUDIO_IO_LOGD(COLOR_GREEN "UNLOCK" COLOR_END);
 #endif
 }
 
@@ -90,7 +90,7 @@ void CAudioIO::internalWait() throw (CAudioError) {
     }
 
 #ifdef _AUDIO_IO_DEBUG_TIMING_
-    AUDIO_IO_LOGD(COLOR_RED"WAIT"COLOR_END);
+    AUDIO_IO_LOGD(COLOR_RED "WAIT" COLOR_END);
 #endif
 
     pthread_cond_wait(&mCond, &mMutex);
@@ -102,7 +102,7 @@ void CAudioIO::internalSignal() throw (CAudioError) {
     }
 
 #ifdef _AUDIO_IO_DEBUG_TIMING_
-    AUDIO_IO_LOGD(COLOR_GREEN"SIGNAL"COLOR_END);
+    AUDIO_IO_LOGD(COLOR_GREEN "SIGNAL" COLOR_END);
 #endif
 
     pthread_cond_signal(&mCond);
@@ -157,6 +157,10 @@ void CAudioIO::onStream(CPulseAudioClient* pClient, size_t length) {
     assert(pClient != NULL);
     assert(length > 0);
 
+#ifdef _AUDIO_IO_DEBUG_TIMING_
+    AUDIO_IO_LOGD("mStreamCallback.onStream(%p), pClient(%p), length(%zu)", mStreamCallback.onStream, pClient, length);
+#endif
+
     if (mStreamCallback.onStream != NULL) {
         mStreamCallback.onStream(length, mStreamCallback.mUserData);
     }
@@ -210,6 +214,7 @@ void CAudioIO::onInterrupt(CAudioSessionHandler* pHandler, int id, mm_sound_focu
         } else if (state == FOCUS_IS_ACQUIRED) {
             // Focus handle(id) of the other application was acquired, do pause if possible
             internalLock();
+
             if (mpPulseAudioClient->getStreamDirection() == CPulseAudioClient::STREAM_DIRECTION_PLAYBACK) {
                 if (mpPulseAudioClient->drain() == false) {
                     AUDIO_IO_LOGE("Failed CPulseAudioClient::drain()");
@@ -241,6 +246,7 @@ void CAudioIO::onInterrupt(CAudioSessionHandler* pHandler, int id, mm_sound_focu
         if (state == FOCUS_IS_RELEASED) {
             // Focus handle(id) was released, do pause here
             internalLock();
+
             if (mpPulseAudioClient->getStreamDirection() == CPulseAudioClient::STREAM_DIRECTION_PLAYBACK) {
                 if (mpPulseAudioClient->drain() == false) {
                     AUDIO_IO_LOGE("Failed CPulseAudioClient::drain()");
@@ -291,12 +297,9 @@ void CAudioIO::prepare() throw (CAudioError) {
     }
 
     try {
-        internalLock();
         AUDIO_IO_LOGD("prepare");
         /* Do nothing */
-        internalUnlock();
     } catch (CAudioError e) {
-        internalUnlock();
         throw e;
     }
 }
@@ -307,12 +310,9 @@ void CAudioIO::unprepare() throw (CAudioError) {
     }
 
     try {
-        internalLock();
         AUDIO_IO_LOGD("unprepare");
         /* Do nothing */
-        internalUnlock();
     } catch (CAudioError e) {
-        internalUnlock();
         throw e;
     }
 }
@@ -394,9 +394,7 @@ void CAudioIO::setStreamCallback(SStreamCallback callback) throw (CAudioError) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
 
-    internalLock();
     mStreamCallback = callback;
-    internalUnlock();
 }
 
 CAudioIO::SStreamCallback CAudioIO::getStreamCallback() throw (CAudioError) {
@@ -412,9 +410,7 @@ void CAudioIO::setStateChangedCallback(SStateChangedCallback callback) throw (CA
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
 
-    internalLock();
     mStateChangedCallback = callback;
-    internalUnlock();
 }
 
 CAudioIO::SStateChangedCallback CAudioIO::getStateChangedCallback() throw (CAudioError) {
@@ -447,9 +443,9 @@ void CAudioIO::ignoreSession() throw (CAudioError) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
 
-    internalLock();
-
     try {
+        internalLock();
+
         if (mpPulseAudioClient != NULL && mpPulseAudioClient->isCorked() == false) {
             THROW_ERROR_MSG(CAudioError::ERROR_INVALID_OPERATION, "An Operation is not permitted while started");
         }
@@ -459,11 +455,10 @@ void CAudioIO::ignoreSession() throw (CAudioError) {
             mpAudioSessionHandler->unregisterSound();
             mForceIgnore = true;
         }
+
+        internalUnlock();
     } catch (CAudioError e) {
         internalUnlock();
-
         throw e;
     }
-
-    internalUnlock();
 }

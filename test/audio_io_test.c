@@ -358,14 +358,15 @@ static void interrupted_callback_write(audio_io_interrupted_code_e code, void *u
 
 static void _audio_io_stream_read_cb (audio_in_h handle, size_t nbytes, void *user_data)
 {
-    const void * buffer = NULL;
+    const void *buffer = NULL;
+    unsigned int len = (unsigned int) nbytes;
 
-//    printf("_audio_io_stream_read_cb : handle=%p, nbytes=%d, user_data=%p\n", handle, nbytes, user_data);
+    //printf("_audio_io_stream_read_cb : handle=%p, nbytes=%d, user_data=%p\n", handle, nbytes, user_data);
 
-    if (nbytes > 0) {
-        audio_in_peek (handle, &buffer, &nbytes);
+    if (len > 0) {
+        audio_in_peek (handle, &buffer, &len);
         if (fp_w) {
-            fwrite(buffer, sizeof(char), nbytes, fp_w);
+            fwrite(buffer, sizeof(char), len, fp_w);
         }
         audio_in_drop (handle);
     }
@@ -377,7 +378,7 @@ static void _audio_io_stream_write_cb (audio_out_h handle, size_t nbytes, void *
     int ret = 0;
     int i = 0;
 
-//    printf("_audio_io_stream_write_cb : handle=%p, nbytes=%d, user_data=%p\n", handle, nbytes, user_data);
+    //printf("_audio_io_stream_write_cb : handle=%p, nbytes=%d, user_data=%p\n", handle, nbytes, user_data);
 
     if (nbytes > 0) {
         buffer = (short *) malloc(nbytes);
@@ -399,7 +400,7 @@ static void _audio_io_stream_write_cb (audio_out_h handle, size_t nbytes, void *
 
         ret = audio_out_write(handle, buffer, nbytes);
         if(ret > AUDIO_IO_ERROR_NONE) {
-//            printf("audio write success. buffer(%p), nbytes(%d)\n", buffer, nbytes);
+            //printf("audio write success. buffer(%p), nbytes(%d)\n", buffer, nbytes);
         }
 
         free (buffer);

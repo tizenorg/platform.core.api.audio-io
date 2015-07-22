@@ -262,6 +262,7 @@ void CAudioOutput::resume() throw (CAudioError) {
         internalUnlock();
 
         CAudioIO::resume();
+
         CAudioIO::onStateChanged(CAudioInfo::AUDIO_IO_STATE_RUNNING);
     } catch (CAudioError e) {
         internalUnlock();
@@ -277,7 +278,6 @@ void CAudioOutput::drain() throw (CAudioError) {
     try {
         CAudioIO::drain();
     } catch (CAudioError e) {
-        internalUnlock();
         throw e;
     }
 }
@@ -290,7 +290,6 @@ void CAudioOutput::flush() throw (CAudioError) {
     try {
         CAudioIO::flush();
     } catch (CAudioError e) {
-        internalUnlock();
         throw e;
     }
 }
@@ -308,11 +307,8 @@ int CAudioOutput::getBufferSize() throw (CAudioError) {
     int size = 0;
 
     try {
-        internalLock();
         size = mpPulseAudioClient->getBufferSize();
-        internalUnlock();
     } catch (CAudioError err) {
-        internalUnlock();
         throw err;
     }
 
@@ -342,7 +338,7 @@ size_t CAudioOutput::write(const void* buffer, size_t length) throw (CAudioError
         }
     }
 
-    /* When write() is called in PulseAudio callback, bypass a pcm data to PulseAudioClient (For  Asynchronous) */
+    /* When write() is called in PulseAudio callback, bypass a pcm data to PulseAudioClient (For Asynchronous) */
     if (mpPulseAudioClient->isInThread() == true) {
         int ret = mpPulseAudioClient->write(buffer, length);
         if (ret == 0) {
@@ -350,14 +346,15 @@ size_t CAudioOutput::write(const void* buffer, size_t length) throw (CAudioError
         }
     }
 
-    /* For synchronization */
-    internalLock();
-
-    // Sets synchronous flag
-    mIsUsedSyncWrite = true;
-
-    size_t lengthIter = length;
     try {
+        /* For synchronization */
+        internalLock();
+
+        // Sets synchronous flag
+        mIsUsedSyncWrite = true;
+
+        size_t lengthIter = length;
+
         while (lengthIter > 0) {
             size_t l;
 
@@ -383,17 +380,17 @@ size_t CAudioOutput::write(const void* buffer, size_t length) throw (CAudioError
 
             buffer = static_cast<const uint8_t*>(buffer) + l;
             lengthIter -= l;
-        }//end of while (length > 0)
+        }  // End of while (length > 0)
+
+        // Unsets synchronous flag
+        mIsUsedSyncWrite = false;
+        internalUnlock();
     } catch (CAudioError e) {
         // Unsets synchronous flag
         mIsUsedSyncWrite = false;
         internalUnlock();
         throw e;
     }
-
-    // Unsets synchronous flag
-    mIsUsedSyncWrite = false;
-    internalUnlock();
 
     return length;
 }
