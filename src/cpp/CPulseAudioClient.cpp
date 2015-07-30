@@ -180,10 +180,8 @@ void CPulseAudioClient::initialize() throw (CAudioError) {
         }
 
         // Adds latency on proplist for delivery to PULSEAUDIO
-        CPulseStreamSpec::EStreamLatency latency = mSpec.getStreamLatency();
-        AUDIO_IO_LOGD("LATENCY : %d", latency);
-
-        pa_proplist_setf(mpPropList, PA_PROP_MEDIA_TIZEN_AUDIO_LATENCY, "%d", latency);
+        AUDIO_IO_LOGD("LATENCY : %s(%d)", mSpec.getStreamLatencyToString(), mSpec.getStreamLatency());
+        pa_proplist_setf(mpPropList, PA_PROP_MEDIA_TIZEN_AUDIO_LATENCY, "%s", mSpec.getStreamLatencyToString());
 
         // Allocates PA mainloop
         mpMainloop = pa_threaded_mainloop_new();

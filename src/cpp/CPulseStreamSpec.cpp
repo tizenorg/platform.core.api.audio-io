@@ -32,6 +32,11 @@ static const char* STREAM_NAME_OUTPUT_LOW_LATENCY  = "LOW LATENCY PLAYBACK";
 static const char* STREAM_NAME_OUTPUT_HIGH_LATENCY = "HIGH LATENCY PLAYBACK";
 static const char* STREAM_NAME_OUTPUT_VOIP         = "VOIP PLAYBACK";
 
+static const char* STREAM_LATENCY_LOW  = "low";
+static const char* STREAM_LATENCY_MID  = "mid";
+static const char* STREAM_LATENCY_HIGH = "high";
+static const char* STREAM_LATENCY_VOIP = "voip";
+
 
 CPulseStreamSpec::CPulseStreamSpec() throw (CAudioError) :
     mLatency(STREAM_LATENCY_INPUT_MID),
@@ -102,8 +107,8 @@ void CPulseStreamSpec::_adjustSpec() throw (CAudioError) {
         break;
 
     case STREAM_LATENCY_OUTPUT_VOIP:
-         mStreamName = STREAM_NAME_OUTPUT_VOIP;
-         break;
+        mStreamName = STREAM_NAME_OUTPUT_VOIP;
+        break;
 
     case STREAM_LATENCY_INPUT_HIGH:
         mStreamName = STREAM_NAME_INPUT_HIGH_LATENCY;
@@ -126,6 +131,34 @@ void CPulseStreamSpec::_adjustSpec() throw (CAudioError) {
 
 CPulseStreamSpec::EStreamLatency CPulseStreamSpec::getStreamLatency() {
     return mLatency;
+}
+
+const char* CPulseStreamSpec::getStreamLatencyToString() {
+    const char* Latency;  // Default latency
+
+    switch (mLatency) {
+    case STREAM_LATENCY_INPUT_LOW:
+    case STREAM_LATENCY_OUTPUT_LOW:
+        Latency = STREAM_LATENCY_LOW;
+        break;
+    case STREAM_LATENCY_INPUT_MID:
+    case STREAM_LATENCY_OUTPUT_MID:
+        Latency = STREAM_LATENCY_MID;
+        break;
+    case STREAM_LATENCY_INPUT_HIGH:
+    case STREAM_LATENCY_OUTPUT_HIGH:
+        Latency = STREAM_LATENCY_HIGH;
+        break;
+    case STREAM_LATENCY_INPUT_VOIP:
+    case STREAM_LATENCY_OUTPUT_VOIP:
+        Latency = STREAM_LATENCY_VOIP;
+        break;
+    default:
+        Latency = STREAM_LATENCY_MID;
+        break;
+    }
+
+    return Latency;
 }
 
 CAudioInfo CPulseStreamSpec::getAudioInfo() {
