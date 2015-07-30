@@ -25,14 +25,17 @@ using namespace tizen_media_audio;
 /**
  * class CAudioOutput
  */
-CAudioOutput::CAudioOutput(CAudioInfo& info) : CAudioIO(info), mIsUsedSyncWrite(false) {
+CAudioOutput::CAudioOutput(CAudioInfo& info) :
+    CAudioIO(info),
+    mIsUsedSyncWrite(false) {
 }
 
 CAudioOutput::CAudioOutput(
         unsigned int            sampleRate,
         CAudioInfo::EChannel    channel,
         CAudioInfo::ESampleType sampleType,
-        CAudioInfo::EAudioType  audioType) : mIsUsedSyncWrite(false) {
+        CAudioInfo::EAudioType  audioType) :
+    mIsUsedSyncWrite(false) {
     mAudioInfo = CAudioInfo(sampleRate, channel, sampleType, audioType, -1);
 }
 

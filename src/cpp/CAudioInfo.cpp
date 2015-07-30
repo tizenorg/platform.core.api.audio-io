@@ -26,14 +26,20 @@ using namespace tizen_media_audio;
 /**
  * class CAudioInfo
  */
-CAudioInfo::CAudioInfo()
-    :  mSampleRate(MAX_SYSTEM_SAMPLERATE), mChannel(CHANNEL_MONO),
-       mSampleType(SAMPLE_TYPE_U8), mAudioType(AUDIO_IN_TYPE_MEDIA),
-       mAudioIndex(-1) {
+CAudioInfo::CAudioInfo() :
+    mSampleRate(MAX_SYSTEM_SAMPLERATE),
+    mChannel(CHANNEL_MONO),
+    mSampleType(SAMPLE_TYPE_U8),
+    mAudioType(AUDIO_IN_TYPE_MEDIA),
+    mAudioIndex(-1) {
 }
 
-CAudioInfo::CAudioInfo(unsigned int sampleRate, EChannel channel, ESampleType sampleType, EAudioType audioType, int audioIndex) throw (CAudioError)
-    :  mSampleRate(sampleRate), mChannel(channel), mSampleType(sampleType), mAudioType(audioType), mAudioIndex(audioIndex) {
+CAudioInfo::CAudioInfo(unsigned int sampleRate, EChannel channel, ESampleType sampleType, EAudioType audioType, int audioIndex) throw (CAudioError) :
+    mSampleRate(sampleRate),
+    mChannel(channel),
+    mSampleType(sampleType),
+    mAudioType(audioType),
+    mAudioIndex(audioIndex) {
     // Check to invalid AudioInfo
     if (sampleRate < CAudioInfo::MIN_SYSTEM_SAMPLERATE || sampleRate > CAudioInfo::MAX_SYSTEM_SAMPLERATE) {
         THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "The sampleRate is invalid [sampleRate:%d]", sampleRate);

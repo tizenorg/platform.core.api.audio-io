@@ -17,9 +17,9 @@
 #ifndef __TIZEN_MEDIA_AUDIO_IO_H__
 #define __TIZEN_MEDIA_AUDIO_IO_H__
 
+#include <sys/types.h>
 #include <tizen.h>
 #include <sound_manager.h>
-#include <sys/types.h>
 
 #ifdef __cplusplus
 extern "C"

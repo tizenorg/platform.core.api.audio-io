@@ -30,10 +30,16 @@ const char* CPulseAudioClient::CLIENT_NAME = "AUDIO_IO_PA_CLIENT";
 
 CPulseAudioClient::CPulseAudioClient(EStreamDirection      direction,
                                      CPulseStreamSpec&     spec,
-                                     IPulseStreamListener* listener)
-    : mDirection(direction), mSpec(spec),     mpListener(listener),
-      mpMainloop(NULL),      mpContext(NULL), mpStream(NULL),
-      mpPropList(NULL),      mIsInit(false),  mIsOperationSuccess(false) {
+                                     IPulseStreamListener* listener) :
+    mDirection(direction),
+    mSpec(spec),
+    mpListener(listener),
+    mpMainloop(NULL),
+    mpContext(NULL),
+    mpStream(NULL),
+    mpPropList(NULL),
+    mIsInit(false),
+    mIsOperationSuccess(false) {
 }
 
 CPulseAudioClient::~CPulseAudioClient() {

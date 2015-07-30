@@ -80,15 +80,15 @@ int CAudioSessionHandler::FOCUS_ID_COUNT_GET() {
     return sFocusRef;
 }
 
-CAudioSessionHandler::CAudioSessionHandler(EAudioSessionType sessionType, CAudioInfo& audioInfo, IAudioSessionEventListener* listener)
-: mId(-1),
-  mOptions(0),
-  mAudioSession(sessionType),
-  mMultimediaSession(MM_SESSION_TYPE_MEDIA),
-  mpEventListener(listener),
-  mIsInit(false),
-  mUseFocus(false),
-  mSubscribeId(-1) {
+CAudioSessionHandler::CAudioSessionHandler(EAudioSessionType sessionType, CAudioInfo& audioInfo, IAudioSessionEventListener* listener) :
+    mId(-1),
+    mOptions(0),
+    mAudioSession(sessionType),
+    mMultimediaSession(MM_SESSION_TYPE_MEDIA),
+    mpEventListener(listener),
+    mIsInit(false),
+    mUseFocus(false),
+    mSubscribeId(-1) {
     mAudioInfo = audioInfo;
 }
 
@@ -134,7 +134,7 @@ CAudioError CAudioSessionHandler::_getAsmInformation(MMSessionType *type, int *o
     /* Read session information */
     int ret = 0;
     if ((ret = _mm_session_util_read_information(-1, (int*)&currentSession, &sessionOptions)) < 0) {
-        if(ret == (int) MM_ERROR_INVALID_HANDLE) {
+        if (ret == (int) MM_ERROR_INVALID_HANDLE) {
             RET_ERROR_MSG(CAudioError::ERROR_INVALID_HANDLE, "Failed _mm_session_util_read_information(). Invalid handle");
         } else {
             RET_ERROR_MSG(CAudioError::ERROR_FAILED_OPERATION, "Failed _mm_session_util_read_information(). Not exist");
@@ -148,7 +148,7 @@ CAudioError CAudioSessionHandler::_getAsmInformation(MMSessionType *type, int *o
 }
 
 bool CAudioSessionHandler::_isFocusRequired(MMSessionType type, int options) {
-    if((options & ASM_SESSION_OPTION_PAUSE_OTHERS)
+    if ((options & ASM_SESSION_OPTION_PAUSE_OTHERS)
         || ((type != MM_SESSION_TYPE_MEDIA) && (type != MM_SESSION_TYPE_MEDIA_RECORD)))
         return true;
     else

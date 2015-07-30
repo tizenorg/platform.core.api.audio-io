@@ -71,7 +71,7 @@ namespace tizen_media_audio {
         EError        mError;
         char          mErrorMsg[MSG_LENGTH];
 
-        const char* _convertErrorToString(EError err);
+        const char* __convertErrorToString(EError err);
 
     public:
         /* Constructor & Destructor */

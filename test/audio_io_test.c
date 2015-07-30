@@ -19,8 +19,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <math.h>
-#include <audio_io.h>
 #include <sound_manager.h>
+#include <audio_io.h>
 
 //#define _NEW_SOUND_MANAGER_API_
 #define _SESSION_SOUND_MANAGER_API_
@@ -85,7 +85,7 @@ void play_file_sample(char *file, int frequency, int ch, int type)
     int buffer_size = 0;
     char * buf = NULL;
 
-    if(ch < 0 || ch > 2) {
+    if (ch < 0 || ch > 2) {
         ch = 0;
     }
 
@@ -193,7 +193,7 @@ int audio_io_loopback_in_test()
     audio_in_h input;
     FILE* fp = fopen ("/tmp/dump_test.raw", "wb+");
 
-    if(fp == NULL) {
+    if (fp == NULL) {
         printf("open failed \n");
         return 0;
     }
@@ -212,12 +212,12 @@ int audio_io_loopback_in_test()
         }
 
         ret = audio_in_get_buffer_size(input, &size);
-        if(ret != AUDIO_IO_ERROR_NONE) {
+        if (ret != AUDIO_IO_ERROR_NONE) {
             printf ("audio_in_get_buffer_size failed.\n");
             goto exit;
         }
 
-        while(1) {
+        while (1) {
             char *buffer = alloca(size);
             if ((ret = audio_in_read(input, (void*)buffer, size)) > AUDIO_IO_ERROR_NONE) {
                 fwrite (buffer, size, sizeof(char), fp);
@@ -245,14 +245,14 @@ int audio_io_loopback_test()
     char *buffer = NULL;
 
     ret = audio_in_create(16000, AUDIO_CHANNEL_MONO , AUDIO_SAMPLE_TYPE_S16_LE, &input);
-    if(ret != AUDIO_IO_ERROR_NONE) {
+    if (ret != AUDIO_IO_ERROR_NONE) {
         printf ("audio_in_create_ex failed. \n");
         return 0;
     }
 
     //ret = audio_out_create(16000, AUDIO_CHANNEL_MONO , AUDIO_SAMPLE_TYPE_S16_LE, SOUND_TYPE_CALL, &output);
     ret = audio_out_create_new(16000, AUDIO_CHANNEL_MONO , AUDIO_SAMPLE_TYPE_S16_LE, &output);
-    if(ret != AUDIO_IO_ERROR_NONE) {
+    if (ret != AUDIO_IO_ERROR_NONE) {
         printf ("audio_out_create failed. \n");
         return 0;
     }
@@ -264,7 +264,7 @@ int audio_io_loopback_test()
         return 0;
     } else {
         ret = audio_in_get_buffer_size(input, &size);
-        if(ret != AUDIO_IO_ERROR_NONE) {
+        if (ret != AUDIO_IO_ERROR_NONE) {
             printf ("audio_in_get_buffer_size failed.\n");
             return 0;
         } else {
@@ -280,16 +280,16 @@ int audio_io_loopback_test()
         return 0;
     }
 
-    if(buffer == NULL) {
+    if (buffer == NULL) {
         printf("buffer is null\n");
         return 0;
     }
 
-    while(1) {
+    while (1) {
         ret = audio_in_read(input, (void*)buffer, size);
-        if(ret > AUDIO_IO_ERROR_NONE) {
+        if (ret > AUDIO_IO_ERROR_NONE) {
             ret = audio_out_write(output, buffer, size);
-            if(ret > AUDIO_IO_ERROR_NONE) {
+            if (ret > AUDIO_IO_ERROR_NONE) {
                 printf("audio read/write success. buffer(%p), size(%d)\n", buffer, size);
             } else {
                 printf("audio read success, write failed. buffer(%p), size(%d)\n", buffer, size);
@@ -388,18 +388,18 @@ static void _audio_io_stream_write_cb (audio_out_h handle, size_t nbytes, void *
         }
         memset (buffer, 0, nbytes);
 
-        for(i=0; i<nbytes/2; i+=2)
+        for (i=0; i<nbytes/2; i+=2)
         {
             buffer[i]   = (short) 32768 * test_wav.sine[test_wav.left_channel];   /* left */
             buffer[i+1] = (short) 32768 * test_wav.sine[test_wav.right_channel];  /* right */
             test_wav.left_channel += 1;
-            if( test_wav.left_channel >= TABLE_SIZE ) test_wav.left_channel -= TABLE_SIZE;
+            if (test_wav.left_channel >= TABLE_SIZE) test_wav.left_channel -= TABLE_SIZE;
             test_wav.right_channel += 3;
-            if( test_wav.right_channel >= TABLE_SIZE ) test_wav.right_channel -= TABLE_SIZE;
+            if (test_wav.right_channel >= TABLE_SIZE) test_wav.right_channel -= TABLE_SIZE;
         }
 
         ret = audio_out_write(handle, buffer, nbytes);
-        if(ret > AUDIO_IO_ERROR_NONE) {
+        if (ret > AUDIO_IO_ERROR_NONE) {
             //printf("audio write success. buffer(%p), nbytes(%d)\n", buffer, nbytes);
         }
 
@@ -421,28 +421,28 @@ int _convert_cmd_and_run(char cmd, int mode) {
     int ret = 0;
     switch (cmd) {
         case 'P':
-            if(mode & 0x01)  ret = audio_out_prepare(output);
-            if(mode & 0x02)  ret = audio_in_prepare(input);
+            if (mode & 0x01)  ret = audio_out_prepare(output);
+            if (mode & 0x02)  ret = audio_in_prepare(input);
             break;
         case 'u':
-            if(mode & 0x01)  ret = audio_out_unprepare(output);
-            if(mode & 0x02)  ret = audio_in_unprepare(input);
+            if (mode & 0x01)  ret = audio_out_unprepare(output);
+            if (mode & 0x02)  ret = audio_in_unprepare(input);
             break;
         case 'p':
-            if(mode & 0x01)  ret = audio_out_pause(output);
-            if(mode & 0x02)  ret = audio_in_pause(input);
+            if (mode & 0x01)  ret = audio_out_pause(output);
+            if (mode & 0x02)  ret = audio_in_pause(input);
             break;
         case 'r':
-            if(mode & 0x01)  ret = audio_out_resume(output);
-            if(mode & 0x02)  ret = audio_in_resume(input);
+            if (mode & 0x01)  ret = audio_out_resume(output);
+            if (mode & 0x02)  ret = audio_in_resume(input);
             break;
         case 'd':
-            if(mode & 0x01)  ret = audio_out_drain(output);
-            //if(mode & 0x02)  ret = audio_in_drain(input);
+            if (mode & 0x01)  ret = audio_out_drain(output);
+            //if (mode & 0x02)  ret = audio_in_drain(input);
             break;
         case 'f':
-            if(mode & 0x01)  ret = audio_out_flush(output);
-            if(mode & 0x02)  ret = audio_in_flush(input);
+            if (mode & 0x01)  ret = audio_out_flush(output);
+            if (mode & 0x02)  ret = audio_in_flush(input);
             break;
         case 'i':
 #ifdef _NEW_SOUND_MANAGER_API_
@@ -484,7 +484,7 @@ int audio_io_async_test(int mode)
     int write_mode = (mode & 0x01);
     int read_mode = (mode & 0x02);
 
-    if((write_mode == 0) && (read_mode == 0)) {
+    if ((write_mode == 0) && (read_mode == 0)) {
         printf ("not vaild mode.\n");
         return 0;
     }
@@ -507,21 +507,21 @@ int audio_io_async_test(int mode)
 
         printf ("audio_in_create\n");
         ret = audio_in_create(44100, AUDIO_CHANNEL_STEREO , AUDIO_SAMPLE_TYPE_S16_LE, &input);
-        if(ret != AUDIO_IO_ERROR_NONE) {
+        if (ret != AUDIO_IO_ERROR_NONE) {
             printf ("audio_in_create_ex failed. \n");
             return 0;
         }
         printf ("audio_in_create success!!! [%p]\n", input);
 
         ret = audio_in_set_stream_cb(input, _audio_io_stream_read_cb, NULL);
-        if(ret != AUDIO_IO_ERROR_NONE) {
+        if (ret != AUDIO_IO_ERROR_NONE) {
             printf ("audio_in_set_stream_cb failed. \n");
             return 0;
         }
         printf ("audio_in_set_stream_cb success!!! [%p]\n", input);
 
         ret = audio_in_set_state_changed_cb(input, _audio_in_state_cb, NULL);
-        if(ret != AUDIO_IO_ERROR_NONE) {
+        if (ret != AUDIO_IO_ERROR_NONE) {
             printf ("audio_out_set_state_changed_cb failed. \n");
             return 0;
         }
@@ -562,21 +562,21 @@ int audio_io_async_test(int mode)
         printf ("audio_out_create\n");
         //ret = audio_out_create(44100, AUDIO_CHANNEL_STEREO , AUDIO_SAMPLE_TYPE_S16_LE, SOUND_TYPE_MEDIA, &output);
         ret = audio_out_create_new(44100, AUDIO_CHANNEL_STEREO , AUDIO_SAMPLE_TYPE_S16_LE, &output);
-        if(ret != AUDIO_IO_ERROR_NONE) {
+        if (ret != AUDIO_IO_ERROR_NONE) {
             printf ("audio_out_create failed. \n");
             return 0;
         }
         printf ("audio_out_create success!!! [%p]\n", output);
 
         ret = audio_out_set_stream_cb(output, _audio_io_stream_write_cb, NULL);
-        if(ret != AUDIO_IO_ERROR_NONE) {
+        if (ret != AUDIO_IO_ERROR_NONE) {
             printf ("audio_out_set_stream_cb failed. \n");
             return 0;
         }
         printf ("audio_out_set_stream_cb success!!! [%p]\n", output);
 
         ret = audio_out_set_state_changed_cb(output, _audio_out_state_cb, NULL);
-        if(ret != AUDIO_IO_ERROR_NONE) {
+        if (ret != AUDIO_IO_ERROR_NONE) {
             printf ("audio_out_set_state_changed_cb failed. \n");
             return 0;
         }
@@ -594,7 +594,7 @@ int audio_io_async_test(int mode)
         ret = audio_out_set_interrupted_cb(output, interrupted_callback_write, NULL);
 
         //generate wave data
-        for(i=0; i<TABLE_SIZE; i++) {
+        for (i=0; i<TABLE_SIZE; i++) {
             test_wav.sine[i] = 0.9 * (float) sin( ((double)i/(double)TABLE_SIZE) * M_PI * 2. );
         }
         test_wav.left_channel = test_wav.right_channel = 0;
@@ -611,7 +611,7 @@ int audio_io_async_test(int mode)
             return 0;
         } else {
             ret = audio_in_get_buffer_size(input, &size);
-            if(ret != AUDIO_IO_ERROR_NONE) {
+            if (ret != AUDIO_IO_ERROR_NONE) {
                 printf ("audio_in_get_buffer_size failed.\n");
                 return 0;
             } else {
@@ -620,7 +620,7 @@ int audio_io_async_test(int mode)
             }
         }
 
-        if(buffer == NULL) {
+        if (buffer == NULL) {
             printf("buffer is null\n");
             return 0;
         }
@@ -641,7 +641,7 @@ int audio_io_async_test(int mode)
     do {
         printf ("command(q:quit) : ");
         cmd = (char) getchar();
-        if(cmd != '\n')  getchar();
+        if (cmd != '\n')  getchar();
         cmd_ret = _convert_cmd_and_run(cmd, mode);
         printf ("  - result code : %d\n", cmd_ret);
     } while (cmd != 'q');

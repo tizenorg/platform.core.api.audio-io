@@ -30,16 +30,18 @@ using namespace tizen_media_audio;
 CAudioError::EError CAudioError::mLastError = CAudioError::ERROR_NONE;
 char CAudioError::mLastErrorMsg[CAudioError::MSG_LENGTH];
 
-CAudioError::CAudioError(EError err) : mError(err) {
+CAudioError::CAudioError(EError err) :
+    mError(err) {
     mLastError = mError;
 }
 
-CAudioError::CAudioError(EError err, const char* fileName, const char* parentFunc, int lineNum) : mError(err) {
+CAudioError::CAudioError(EError err, const char* fileName, const char* parentFunc, int lineNum) :
+    mError(err) {
     mLastError = mError;
 
     const char* findFileName = strrchr(fileName, '/');
     findFileName++;
-    const char* errStr = _convertErrorToString(mError);
+    const char* errStr = __convertErrorToString(mError);
 
     snprintf(mErrorMsg, CAudioError::MSG_LENGTH, "["
             COLOR_RED    "THROW" COLOR_END ":%s|"
@@ -49,12 +51,13 @@ CAudioError::CAudioError(EError err, const char* fileName, const char* parentFun
     snprintf(mLastErrorMsg, CAudioError::MSG_LENGTH, "LastError:%s", mErrorMsg);
 }
 
-CAudioError::CAudioError(EError err, const char* msg, const char* fileName, const char* parentFunc, int lineNum) : mError(err) {
+CAudioError::CAudioError(EError err, const char* msg, const char* fileName, const char* parentFunc, int lineNum) :
+    mError(err) {
     mLastError = mError;
 
     const char* findFileName = strrchr(fileName, '/');
     findFileName++;
-    const char* errStr = _convertErrorToString(mError);
+    const char* errStr = __convertErrorToString(mError);
 
     snprintf(mErrorMsg, CAudioError::MSG_LENGTH, "["
             COLOR_RED    "THROW" COLOR_END ":%s|"
@@ -74,7 +77,7 @@ CAudioError::CAudioError(EError err, const char* msg, const char* fileName, cons
 CAudioError::~CAudioError() {
 }
 
-const char* CAudioError::_convertErrorToString(EError err) {
+const char* CAudioError::__convertErrorToString(EError err) {
     switch (err) {
     default:
     case ERROR_NONE:                return COLOR_GREEN "ERROR_NONE"               COLOR_END;

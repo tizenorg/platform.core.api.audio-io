@@ -33,18 +33,23 @@ static const char* STREAM_NAME_OUTPUT_HIGH_LATENCY = "HIGH LATENCY PLAYBACK";
 static const char* STREAM_NAME_OUTPUT_VOIP         = "VOIP PLAYBACK";
 
 
-CPulseStreamSpec::CPulseStreamSpec() throw (CAudioError)
-        : mLatency(STREAM_LATENCY_INPUT_MID), mStreamName(NULL) {
+CPulseStreamSpec::CPulseStreamSpec() throw (CAudioError) :
+    mLatency(STREAM_LATENCY_INPUT_MID),
+    mStreamName(NULL) {
     _adjustSpec();
 }
 
-CPulseStreamSpec::CPulseStreamSpec(EStreamLatency latency, CAudioInfo& audioInfo) throw (CAudioError)
-        : mLatency(latency), mAudioInfo(audioInfo), mStreamName(NULL) {
+CPulseStreamSpec::CPulseStreamSpec(EStreamLatency latency, CAudioInfo& audioInfo) throw (CAudioError) :
+    mLatency(latency),
+    mAudioInfo(audioInfo),
+    mStreamName(NULL) {
     _adjustSpec();
 }
 
-CPulseStreamSpec::CPulseStreamSpec(EStreamLatency latency, CAudioInfo& audioInfo, int customLatency) throw (CAudioError)
-        : mLatency(latency), mAudioInfo(audioInfo), mStreamName(NULL) {
+CPulseStreamSpec::CPulseStreamSpec(EStreamLatency latency, CAudioInfo& audioInfo, int customLatency) throw (CAudioError) :
+    mLatency(latency),
+    mAudioInfo(audioInfo),
+    mStreamName(NULL) {
     _adjustSpec();
 }
 

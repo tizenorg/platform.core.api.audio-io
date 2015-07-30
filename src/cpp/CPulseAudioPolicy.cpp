@@ -26,10 +26,12 @@ using namespace tizen_media_audio;
 /**
  * class CPulseAudioPolicy
  */
-CPulseAudioPolicy::CPulseAudioPolicy() : mPolicy(POLICY_DEFAULT) {
+CPulseAudioPolicy::CPulseAudioPolicy() :
+    mPolicy(POLICY_DEFAULT) {
 }
 
-CPulseAudioPolicy::CPulseAudioPolicy(EPolicy policy) : mPolicy(policy) {
+CPulseAudioPolicy::CPulseAudioPolicy(EPolicy policy) :
+    mPolicy(policy) {
 }
 
 CPulseAudioPolicy::~CPulseAudioPolicy() {

@@ -25,23 +25,23 @@ using namespace tizen_media_audio;
 /**
  * class CAudioInput inherited by CAudioIO
  */
-CAudioInput::CAudioInput(CAudioInfo& info)
-    : CAudioIO(info),
-      mpSyncReadDataPtr(NULL),
-      mSyncReadIndex(0),
-      mSyncReadLength(0),
-      mIsUsedSyncRead(true) {
+CAudioInput::CAudioInput(CAudioInfo& info) :
+    CAudioIO(info),
+    mpSyncReadDataPtr(NULL),
+    mSyncReadIndex(0),
+    mSyncReadLength(0),
+    mIsUsedSyncRead(true) {
 }
 
 CAudioInput::CAudioInput(
         unsigned int            sampleRate,
         CAudioInfo::EChannel    channel,
         CAudioInfo::ESampleType type,
-        CAudioInfo::EAudioType  audioType)
-      : mpSyncReadDataPtr(NULL),
-        mSyncReadIndex(0),
-        mSyncReadLength(0),
-        mIsUsedSyncRead(true) {
+        CAudioInfo::EAudioType  audioType) :
+    mpSyncReadDataPtr(NULL),
+    mSyncReadIndex(0),
+    mSyncReadLength(0),
+    mIsUsedSyncRead(true) {
     mAudioInfo = CAudioInfo(sampleRate, channel, type, audioType, -1);
 }
 

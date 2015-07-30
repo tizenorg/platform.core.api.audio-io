@@ -30,7 +30,11 @@ using namespace tizen_media_audio;
 /**
  * class CAudioIO
  */
-CAudioIO::CAudioIO() : mIsInit(false), mForceIgnore(false), mpAudioSessionHandler(NULL), mpPulseAudioClient(NULL) {
+CAudioIO::CAudioIO() :
+    mIsInit(false),
+    mForceIgnore(false),
+    mpAudioSessionHandler(NULL),
+    mpPulseAudioClient(NULL) {
     mState = CAudioInfo::AUDIO_IO_STATE_NONE;
     mStatePrev = CAudioInfo::AUDIO_IO_STATE_NONE;
     mByPolicy = false;

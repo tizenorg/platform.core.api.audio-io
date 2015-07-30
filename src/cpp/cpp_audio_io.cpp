@@ -15,10 +15,10 @@
  */
 
 
-#include "audio_io.h"
 #include "cpp_audio_io.h"
-#include "CAudioIODef.h"
 #include <sound_manager_internal.h>
+#include "audio_io.h"
+#include "CAudioIODef.h"
 
 
 using namespace std;
@@ -90,7 +90,7 @@ typedef struct audio_io_s {
 /**
  * Internal functions
  */
-static audio_io_error_e _convert_CAudioError(CAudioError& error) {
+static audio_io_error_e __convert_CAudioError(CAudioError& error) {
     audio_io_error_e    ret = AUDIO_IO_ERROR_NONE;
     CAudioError::EError err = error.getError();
 
@@ -142,7 +142,7 @@ static audio_io_error_e _convert_CAudioError(CAudioError& error) {
     return ret;
 }
 
-static void _convert_channel_2_audio_info_channel(const audio_channel_e& src_channel, CAudioInfo::EChannel& dst_channel) {
+static void __convert_channel_2_audio_info_channel(const audio_channel_e& src_channel, CAudioInfo::EChannel& dst_channel) {
     switch (src_channel) {
     case AUDIO_CHANNEL_MONO:
         dst_channel = CAudioInfo::CHANNEL_MONO;
@@ -155,7 +155,7 @@ static void _convert_channel_2_audio_info_channel(const audio_channel_e& src_cha
     }
 }
 
-static void _convert_audio_info_channel_2_channel(const CAudioInfo::EChannel& src_channel, audio_channel_e& dst_channel) {
+static void __convert_audio_info_channel_2_channel(const CAudioInfo::EChannel& src_channel, audio_channel_e& dst_channel) {
     switch (src_channel) {
     case CAudioInfo::CHANNEL_MONO:
         dst_channel = AUDIO_CHANNEL_MONO;
@@ -168,7 +168,7 @@ static void _convert_audio_info_channel_2_channel(const CAudioInfo::EChannel& sr
     }
 }
 
-static void _convert_sample_type_2_audio_info_sample_type(const audio_sample_type_e& src_type, CAudioInfo::ESampleType& dst_type) {
+static void __convert_sample_type_2_audio_info_sample_type(const audio_sample_type_e& src_type, CAudioInfo::ESampleType& dst_type) {
     switch (src_type) {
     case AUDIO_SAMPLE_TYPE_U8:
         dst_type = CAudioInfo::SAMPLE_TYPE_U8;
@@ -181,7 +181,7 @@ static void _convert_sample_type_2_audio_info_sample_type(const audio_sample_typ
     }
 }
 
-static void _convert_audio_info_sample_type_2_sample_type(const CAudioInfo::ESampleType& src_type, audio_sample_type_e& dst_type) {
+static void __convert_audio_info_sample_type_2_sample_type(const CAudioInfo::ESampleType& src_type, audio_sample_type_e& dst_type) {
     switch (src_type) {
     case CAudioInfo::SAMPLE_TYPE_U8:
         dst_type = AUDIO_SAMPLE_TYPE_U8;
@@ -194,7 +194,7 @@ static void _convert_audio_info_sample_type_2_sample_type(const CAudioInfo::ESam
     }
 }
 
-static void _convert_sound_type_2_audio_info_audio_type(const sound_type_e& src_type, CAudioInfo::EAudioType& dst_type) {
+static void __convert_sound_type_2_audio_info_audio_type(const sound_type_e& src_type, CAudioInfo::EAudioType& dst_type) {
     switch (src_type) {
     case SOUND_TYPE_SYSTEM:
         dst_type = CAudioInfo::AUDIO_OUT_TYPE_SYSTEM;
@@ -226,7 +226,7 @@ static void _convert_sound_type_2_audio_info_audio_type(const sound_type_e& src_
     }
 }
 
-static void _convert_audio_info_audio_type_2_sound_type(const CAudioInfo::EAudioType& src_type, sound_type_e& dst_type) {
+static void __convert_audio_info_audio_type_2_sound_type(const CAudioInfo::EAudioType& src_type, sound_type_e& dst_type) {
     switch (src_type) {
     case CAudioInfo::AUDIO_OUT_TYPE_MEDIA:
         dst_type = SOUND_TYPE_MEDIA;
@@ -256,7 +256,7 @@ static void _convert_audio_info_audio_type_2_sound_type(const CAudioInfo::EAudio
     }
 }
 
-static audio_io_state_e _convert_state_type(const CAudioInfo::EAudioIOState src_state) {
+static audio_io_state_e __convert_state_type(const CAudioInfo::EAudioIOState src_state) {
     audio_io_state_e dst_state;
     switch (src_state) {
     case CAudioInfo::AUDIO_IO_STATE_NONE:
@@ -277,8 +277,7 @@ static audio_io_state_e _convert_state_type(const CAudioInfo::EAudioIOState src_
     return dst_state;
 }
 
-static void _check_audio_param(int sample_rate, audio_channel_e channel, audio_sample_type_e type)  throw (CAudioError) {
-
+static void __check_audio_param(int sample_rate, audio_channel_e channel, audio_sample_type_e type)  throw (CAudioError) {
     if (sample_rate < 0) {
         THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Invalid sample rate :%d", sample_rate);
     }
@@ -292,50 +291,49 @@ static void _check_audio_param(int sample_rate, audio_channel_e channel, audio_s
     }
 }
 
-static void _check_audio_param(int sample_rate, audio_channel_e channel, audio_sample_type_e type, sound_type_e sound_type) throw (CAudioError) {
-
-    _check_audio_param(sample_rate, channel, type);
+static void __check_audio_param(int sample_rate, audio_channel_e channel, audio_sample_type_e type, sound_type_e sound_type) throw (CAudioError) {
+    __check_audio_param(sample_rate, channel, type);
 
     if (sound_type < SOUND_TYPE_SYSTEM || sound_type > SOUND_TYPE_VOICE) {
         THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Invalid sound type : %d", sound_type);
     }
 }
 
-static CAudioInfo _generate_audio_input_info(int sampleRate, audio_channel_e channel, audio_sample_type_e sample_type) throw (CAudioError) {
+static CAudioInfo __generate_audio_input_info(int sampleRate, audio_channel_e channel, audio_sample_type_e sample_type) throw (CAudioError) {
     CAudioInfo::EChannel     dstChannel;
     CAudioInfo::ESampleType dstSampleType;
     CAudioInfo::EAudioType  dstAudioType = CAudioInfo::AUDIO_IN_TYPE_MEDIA;
 
-    _convert_channel_2_audio_info_channel(channel, dstChannel);
-    _convert_sample_type_2_audio_info_sample_type(sample_type, dstSampleType);
+    __convert_channel_2_audio_info_channel(channel, dstChannel);
+    __convert_sample_type_2_audio_info_sample_type(sample_type, dstSampleType);
 
     return CAudioInfo(sampleRate, dstChannel, dstSampleType, dstAudioType, -1);
 }
 
-static CAudioInfo _generate_audio_input_loopback_info(int sampleRate, audio_channel_e channel, audio_sample_type_e sample_type) throw (CAudioError) {
+static CAudioInfo __generate_audio_input_loopback_info(int sampleRate, audio_channel_e channel, audio_sample_type_e sample_type) throw (CAudioError) {
     CAudioInfo::EChannel     dstChannel;
     CAudioInfo::ESampleType dstSampleType;
     CAudioInfo::EAudioType  dstAudioType = CAudioInfo::AUDIO_IN_TYPE_LOOPBACK;
 
-    _convert_channel_2_audio_info_channel(channel, dstChannel);
-    _convert_sample_type_2_audio_info_sample_type(sample_type, dstSampleType);
+    __convert_channel_2_audio_info_channel(channel, dstChannel);
+    __convert_sample_type_2_audio_info_sample_type(sample_type, dstSampleType);
 
     return CAudioInfo(sampleRate, dstChannel, dstSampleType, dstAudioType, -1);
 }
 
-static CAudioInfo _generate_audio_output_info(int sampleRate, audio_channel_e channel, audio_sample_type_e sample_type, sound_type_e sound_type) throw (CAudioError) {
+static CAudioInfo __generate_audio_output_info(int sampleRate, audio_channel_e channel, audio_sample_type_e sample_type, sound_type_e sound_type) throw (CAudioError) {
     CAudioInfo::EChannel     dstChannel;
     CAudioInfo::ESampleType dstSampleType;
     CAudioInfo::EAudioType  dstAudioType;
 
-    _convert_channel_2_audio_info_channel(channel, dstChannel);
-    _convert_sample_type_2_audio_info_sample_type(sample_type, dstSampleType);
-    _convert_sound_type_2_audio_info_audio_type(sound_type, dstAudioType);
+    __convert_channel_2_audio_info_channel(channel, dstChannel);
+    __convert_sample_type_2_audio_info_sample_type(sample_type, dstSampleType);
+    __convert_sound_type_2_audio_info_audio_type(sound_type, dstAudioType);
 
     return CAudioInfo(sampleRate, dstChannel, dstSampleType, dstAudioType, -1);
 }
 
-static audio_io_interrupted_code_e _convert_interrupted_code(IAudioSessionEventListener::EInterruptCode code) {
+static audio_io_interrupted_code_e __convert_interrupted_code(IAudioSessionEventListener::EInterruptCode code) {
     switch (code) {
     case IAudioSessionEventListener::INTERRUPT_COMPLETED:
         return AUDIO_IO_INTERRUPTED_COMPLETED;
@@ -368,14 +366,14 @@ int cpp_audio_in_create(int sample_rate, audio_channel_e channel, audio_sample_t
             THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
         }
 
-        _check_audio_param(sample_rate, channel, type);
+        __check_audio_param(sample_rate, channel, type);
 
         handle = new audio_io_s;
         if (handle == NULL) {
             THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed allocation handle");
         }
 
-        CAudioInfo audioInfo = _generate_audio_input_info(sample_rate, channel, type);
+        CAudioInfo audioInfo = __generate_audio_input_info(sample_rate, channel, type);
 
         handle->audioIoHandle = new CAudioInput(audioInfo);
         if (handle == NULL) {
@@ -398,7 +396,7 @@ int cpp_audio_in_create(int sample_rate, audio_channel_e channel, audio_sample_t
             *input = NULL;
         VALID_POINTER_END
 
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -412,14 +410,14 @@ int cpp_audio_in_create_loopback(int sample_rate, audio_channel_e channel, audio
             THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
         }
 
-        _check_audio_param(sample_rate, channel, type);
+        __check_audio_param(sample_rate, channel, type);
 
         handle = new audio_io_s;
         if (handle == NULL) {
             THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed allocation handle");
         }
 
-        CAudioInfo audioInfo = _generate_audio_input_loopback_info(sample_rate, channel, type);
+        CAudioInfo audioInfo = __generate_audio_input_loopback_info(sample_rate, channel, type);
 
         handle->audioIoHandle = new CAudioInput(audioInfo);
         if (handle == NULL) {
@@ -442,7 +440,7 @@ int cpp_audio_in_create_loopback(int sample_rate, audio_channel_e channel, audio
             *input = NULL;
         VALID_POINTER_END
 
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -463,7 +461,7 @@ int cpp_audio_in_destroy(audio_in_h input) {
         SAFE_DELETE(handle);
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -496,7 +494,7 @@ int cpp_audio_in_set_stream_info(audio_in_h input, sound_stream_info_h stream_in
         handle->audioIoHandle->getAudioInfo().setAudioIndex(index);
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -515,7 +513,7 @@ int cpp_audio_in_prepare(audio_in_h input) {
         handle->audioIoHandle->prepare();
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -534,7 +532,7 @@ int cpp_audio_in_unprepare(audio_in_h input) {
         handle->audioIoHandle->unprepare();
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -553,7 +551,7 @@ int cpp_audio_in_pause(audio_in_h input) {
         handle->audioIoHandle->pause();
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -572,7 +570,7 @@ int cpp_audio_in_resume(audio_in_h input) {
         handle->audioIoHandle->resume();
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -591,7 +589,7 @@ int cpp_audio_in_drain(audio_in_h input) {
         handle->audioIoHandle->drain();
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -610,7 +608,7 @@ int cpp_audio_in_flush(audio_in_h input) {
         handle->audioIoHandle->flush();
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -635,7 +633,7 @@ int cpp_audio_in_read(audio_in_h input, void *buffer, unsigned int length) {
 #endif
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return ret;
@@ -655,7 +653,7 @@ int cpp_audio_in_get_buffer_size(audio_in_h input, int *size) {
         *size = inputHandle->getBufferSize();
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -673,7 +671,7 @@ int cpp_audio_in_get_sample_rate(audio_in_h input, int *sample_rate) {
         *sample_rate = handle->audioIoHandle->getAudioInfo().getSampleRate();
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -691,12 +689,12 @@ int cpp_audio_in_get_channel(audio_in_h input, audio_channel_e *channel) {
 
         const CAudioInfo::EChannel srcChannel = handle->audioIoHandle->getAudioInfo().getChannel();
         audio_channel_e dstChannel = AUDIO_CHANNEL_MONO;
-        _convert_audio_info_channel_2_channel(srcChannel, dstChannel);
+        __convert_audio_info_channel_2_channel(srcChannel, dstChannel);
 
         *channel = dstChannel;
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -714,20 +712,20 @@ int cpp_audio_in_get_sample_type(audio_in_h input, audio_sample_type_e *type) {
 
         const CAudioInfo::ESampleType srcSampleType = handle->audioIoHandle->getAudioInfo().getSampleType();
         audio_sample_type_e     dstSampleType = AUDIO_SAMPLE_TYPE_U8;
-        _convert_audio_info_sample_type_2_sample_type(srcSampleType, dstSampleType);
+        __convert_audio_info_sample_type_2_sample_type(srcSampleType, dstSampleType);
 
         *type = dstSampleType;
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
 }
 
-static void _interrupt_cb_internal(IAudioSessionEventListener::EInterruptCode _code, void* user_data) {
+static void __interrupt_cb_internal(IAudioSessionEventListener::EInterruptCode _code, void* user_data) {
     audio_io_s* handle = static_cast<audio_io_s*>(user_data);
-    audio_io_interrupted_code_e code = _convert_interrupted_code(_code);
+    audio_io_interrupted_code_e code = __convert_interrupted_code(_code);
 
     assert(handle);
 
@@ -751,12 +749,12 @@ int cpp_audio_in_set_interrupted_cb(audio_in_h input, audio_io_interrupted_cb ca
 
         CAudioIO::SInterruptCallback cb = handle->audioIoHandle->getInterruptCallback();
         cb.mUserData   = static_cast<void*>(handle);
-        cb.onInterrupt = _interrupt_cb_internal;
+        cb.onInterrupt = __interrupt_cb_internal;
 
         handle->audioIoHandle->setInterruptCallback(cb);
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -782,7 +780,7 @@ int cpp_audio_in_unset_interrupted_cb(audio_in_h input) {
         handle->audioIoHandle->setInterruptCallback(cb);
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -805,13 +803,13 @@ int cpp_audio_in_ignore_session(audio_in_h input) {
         handle->audioIoHandle->ignoreSession();
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
 }
 
-static void _stream_cb_internal(size_t nbytes, void *user_data) {
+static void __stream_cb_internal(size_t nbytes, void *user_data) {
     audio_io_s* audioIo = static_cast<audio_io_s*>(user_data);
     assert(audioIo);
 
@@ -820,12 +818,12 @@ static void _stream_cb_internal(size_t nbytes, void *user_data) {
     }
 }
 
-static void _state_changed_cb_internal(CAudioInfo::EAudioIOState state, CAudioInfo::EAudioIOState state_prev, bool by_policy, void *user_data) {
+static void __state_changed_cb_internal(CAudioInfo::EAudioIOState state, CAudioInfo::EAudioIOState state_prev, bool by_policy, void *user_data) {
     audio_io_s* audioIo = static_cast<audio_io_s*>(user_data);
     assert(audioIo);
 
     if (audioIo->state_changed_callback.onStateChanged != NULL) {
-        audioIo->state_changed_callback.onStateChanged(audioIo, _convert_state_type(state_prev), _convert_state_type(state), by_policy, audioIo->state_changed_callback.user_data);
+        audioIo->state_changed_callback.onStateChanged(audioIo, __convert_state_type(state_prev), __convert_state_type(state), by_policy, audioIo->state_changed_callback.user_data);
     }
 }
 
@@ -844,12 +842,12 @@ int cpp_audio_in_set_stream_cb(audio_in_h input, audio_in_stream_cb callback, vo
 
         CAudioIO::SStreamCallback cb = handle->audioIoHandle->getStreamCallback();
         cb.mUserData = static_cast<void*>(handle);
-        cb.onStream  = _stream_cb_internal;
+        cb.onStream  = __stream_cb_internal;
 
         handle->audioIoHandle->setStreamCallback(cb);
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -875,7 +873,7 @@ int cpp_audio_in_unset_stream_cb(audio_in_h input) {
         handle->audioIoHandle->setStreamCallback(cb);
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -883,6 +881,7 @@ int cpp_audio_in_unset_stream_cb(audio_in_h input) {
 
 int cpp_audio_in_peek(audio_in_h input, const void **buffer, unsigned int *length) {
     audio_io_s* handle = static_cast<audio_io_s*>(input);
+    size_t _length = 0;
 
     try {
         if (handle == NULL || buffer == NULL) {
@@ -892,11 +891,13 @@ int cpp_audio_in_peek(audio_in_h input, const void **buffer, unsigned int *lengt
         CAudioInput* inputHandle = dynamic_cast<CAudioInput*>(handle->audioIoHandle);
         assert(inputHandle);
 
-        inputHandle->peek(buffer, (size_t*)length);
+        inputHandle->peek(buffer, &_length);
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
+
+    *length = (unsigned int)_length;
 
     return AUDIO_IO_ERROR_NONE;
 }
@@ -915,7 +916,7 @@ int cpp_audio_in_drop(audio_in_h input) {
         inputHandle->drop();
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -936,12 +937,12 @@ int cpp_audio_in_set_state_changed_cb(audio_in_h input, audio_in_state_changed_c
 
         CAudioIO::SStateChangedCallback cb = handle->audioIoHandle->getStateChangedCallback();
         cb.mUserData = static_cast<void*>(handle);
-        cb.onStateChanged = _state_changed_cb_internal;
+        cb.onStateChanged = __state_changed_cb_internal;
 
         handle->audioIoHandle->setStateChangedCallback(cb);
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -967,7 +968,7 @@ int cpp_audio_in_unset_state_changed_cb(audio_in_h input) {
         handle->audioIoHandle->setStateChangedCallback(cb);
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -984,14 +985,14 @@ int cpp_audio_out_create(int sample_rate, audio_channel_e channel, audio_sample_
             THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p", output);
         }
 
-        _check_audio_param(sample_rate, channel, type, sound_type);
+        __check_audio_param(sample_rate, channel, type, sound_type);
 
         handle = new audio_io_s;
         if (handle == NULL) {
             THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed allocation handle");
         }
 
-        CAudioInfo audioInfo = _generate_audio_output_info(sample_rate, channel, type, sound_type);
+        CAudioInfo audioInfo = __generate_audio_output_info(sample_rate, channel, type, sound_type);
 
         handle->audioIoHandle = new CAudioOutput(audioInfo);
         if (handle == NULL) {
@@ -1014,7 +1015,7 @@ int cpp_audio_out_create(int sample_rate, audio_channel_e channel, audio_sample_
             *output = NULL;
         VALID_POINTER_END
 
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -1027,14 +1028,14 @@ int cpp_audio_out_create_new(int sample_rate, audio_channel_e channel, audio_sam
             THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p", output);
         }
 
-        _check_audio_param(sample_rate, channel, type, SOUND_TYPE_SYSTEM /*default check */);
+        __check_audio_param(sample_rate, channel, type, SOUND_TYPE_SYSTEM /*default check */);
 
         handle = new audio_io_s;
         if (handle == NULL) {
             THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed allocation handle");
         }
 
-        CAudioInfo audioInfo = _generate_audio_output_info(sample_rate, channel, type, SOUND_TYPE_MEDIA /* default sound_type */);
+        CAudioInfo audioInfo = __generate_audio_output_info(sample_rate, channel, type, SOUND_TYPE_MEDIA /* default sound_type */);
 
         handle->audioIoHandle = new CAudioOutput(audioInfo);
         if (handle == NULL) {
@@ -1057,7 +1058,7 @@ int cpp_audio_out_create_new(int sample_rate, audio_channel_e channel, audio_sam
             *output = NULL;
         VALID_POINTER_END
 
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -1078,7 +1079,7 @@ int cpp_audio_out_destroy(audio_out_h output) {
         SAFE_DELETE(handle);
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -1111,7 +1112,7 @@ int cpp_audio_out_set_stream_info(audio_out_h output, sound_stream_info_h stream
         handle->audioIoHandle->getAudioInfo().setAudioIndex(index);
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -1130,7 +1131,7 @@ int cpp_audio_out_prepare(audio_out_h output) {
         handle->audioIoHandle->prepare();
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -1149,7 +1150,7 @@ int cpp_audio_out_unprepare(audio_out_h output) {
         handle->audioIoHandle->unprepare();
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -1168,7 +1169,7 @@ int cpp_audio_out_pause(audio_out_h output) {
         handle->audioIoHandle->pause();
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -1187,7 +1188,7 @@ int cpp_audio_out_resume(audio_out_h output) {
         handle->audioIoHandle->resume();
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -1206,7 +1207,7 @@ int cpp_audio_out_drain(audio_out_h output) {
         handle->audioIoHandle->drain();
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -1225,7 +1226,7 @@ int cpp_audio_out_flush(audio_out_h output) {
         handle->audioIoHandle->flush();
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -1250,7 +1251,7 @@ int cpp_audio_out_write(audio_out_h output, void *buffer, unsigned int length) {
 #endif
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return ret;
@@ -1270,7 +1271,7 @@ int cpp_audio_out_get_buffer_size(audio_out_h output, int *size) {
         *size = outputHandle->getBufferSize();
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -1288,7 +1289,7 @@ int cpp_audio_out_get_sample_rate(audio_out_h output, int *sample_rate) {
         *sample_rate = handle->audioIoHandle->getAudioInfo().getSampleRate();
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -1306,12 +1307,12 @@ int cpp_audio_out_get_channel(audio_out_h output, audio_channel_e *channel) {
 
         const CAudioInfo::EChannel srcChannel = handle->audioIoHandle->getAudioInfo().getChannel();
         audio_channel_e dstChannel = AUDIO_CHANNEL_MONO;
-        _convert_audio_info_channel_2_channel(srcChannel, dstChannel);
+        __convert_audio_info_channel_2_channel(srcChannel, dstChannel);
 
         *channel = dstChannel;
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -1329,12 +1330,12 @@ int cpp_audio_out_get_sample_type(audio_out_h output, audio_sample_type_e *type)
 
         const CAudioInfo::ESampleType srcSampleType = handle->audioIoHandle->getAudioInfo().getSampleType();
         audio_sample_type_e     dstSampleType = AUDIO_SAMPLE_TYPE_U8;
-        _convert_audio_info_sample_type_2_sample_type(srcSampleType, dstSampleType);
+        __convert_audio_info_sample_type_2_sample_type(srcSampleType, dstSampleType);
 
         *type = dstSampleType;
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -1352,12 +1353,12 @@ int cpp_audio_out_get_sound_type(audio_out_h output, sound_type_e *type) {
 
         const CAudioInfo::EAudioType srcAudioType = handle->audioIoHandle->getAudioInfo().getAudioType();
         sound_type_e                 dstSoundType = SOUND_TYPE_MEDIA;
-        _convert_audio_info_audio_type_2_sound_type(srcAudioType, dstSoundType);
+        __convert_audio_info_audio_type_2_sound_type(srcAudioType, dstSoundType);
 
         *type = dstSoundType;
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -1378,12 +1379,12 @@ int cpp_audio_out_set_interrupted_cb(audio_out_h output, audio_io_interrupted_cb
 
         CAudioIO::SInterruptCallback cb = handle->audioIoHandle->getInterruptCallback();
         cb.mUserData   = static_cast<void*>(handle);
-        cb.onInterrupt = _interrupt_cb_internal;
+        cb.onInterrupt = __interrupt_cb_internal;
 
         handle->audioIoHandle->setInterruptCallback(cb);
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -1409,7 +1410,7 @@ int cpp_audio_out_unset_interrupted_cb(audio_out_h output) {
         handle->audioIoHandle->setInterruptCallback(cb);
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -1432,7 +1433,7 @@ int cpp_audio_out_ignore_session(audio_out_h output) {
         handle->audioIoHandle->ignoreSession();
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -1453,12 +1454,12 @@ int cpp_audio_out_set_stream_cb(audio_out_h output, audio_out_stream_cb callback
 
         CAudioIO::SStreamCallback cb = handle->audioIoHandle->getStreamCallback();
         cb.mUserData = static_cast<void*>(handle);
-        cb.onStream  = _stream_cb_internal;
+        cb.onStream  = __stream_cb_internal;
 
         handle->audioIoHandle->setStreamCallback(cb);
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -1484,7 +1485,7 @@ int cpp_audio_out_unset_stream_cb(audio_out_h output) {
         handle->audioIoHandle->setStreamCallback(cb);
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -1505,12 +1506,12 @@ int cpp_audio_out_set_state_changed_cb(audio_out_h output, audio_in_state_change
 
         CAudioIO::SStateChangedCallback cb = handle->audioIoHandle->getStateChangedCallback();
         cb.mUserData = static_cast<void*>(handle);
-        cb.onStateChanged = _state_changed_cb_internal;
+        cb.onStateChanged = __state_changed_cb_internal;
 
         handle->audioIoHandle->setStateChangedCallback(cb);
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
@@ -1536,7 +1537,7 @@ int cpp_audio_out_unset_state_changed_cb(audio_out_h output) {
         handle->audioIoHandle->setStateChangedCallback(cb);
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
-        return _convert_CAudioError(e);
+        return __convert_CAudioError(e);
     }
 
     return AUDIO_IO_ERROR_NONE;
