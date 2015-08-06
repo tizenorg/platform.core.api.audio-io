@@ -327,20 +327,6 @@ size_t CAudioOutput::write(const void* buffer, size_t length) throw (CAudioError
         THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are invalid - buffer:%p, length:%zu", buffer, length);
     }
 
-    /*
-     * Check skip condition.
-     * If accessibility screen reader (VOICE type with NoSession), no need to check, always do write.
-     */
-    if (mpAudioSessionHandler->isSkipSessionEvent() == false) {
-        /* Check whether voicerecorder is running */
-        int vrState = 0;
-
-        vconf_get_int(VCONFKEY_RECORDER_STATE, &vrState);
-        if (vrState == VCONFKEY_RECORDER_STATE_RECORDING) {
-            THROW_ERROR_MSG(CAudioError::ERROR_POLICY_BLOCKED, "During Voicerecording --> MUTE");
-        }
-    }
-
     /* When write() is called in PulseAudio callback, bypass a pcm data to PulseAudioClient (For Asynchronous) */
     if (mpPulseAudioClient->isInThread() == true) {
         int ret = mpPulseAudioClient->write(buffer, length);

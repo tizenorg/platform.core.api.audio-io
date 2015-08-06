@@ -1,11 +1,11 @@
-Name:       capi-media-audio-io
-Summary:    An Audio Input & Audio Output library in Tizen Native API
-Version:    0.3.11
-Release:    0
-Group:      Multimedia/API
-License:    Apache-2.0
-Source0:    %{name}-%{version}.tar.gz
-Source1001: 	capi-media-audio-io.manifest
+Name:           capi-media-audio-io
+Summary:        An Audio Input & Audio Output library in Tizen Native API
+Version:        0.3.12
+Release:        0
+Group:          Multimedia/API
+License:        Apache-2.0
+Source0:        %{name}-%{version}.tar.gz
+Source1001:     capi-media-audio-io.manifest
 BuildRequires:  cmake
 BuildRequires:  pkgconfig(dlog)
 BuildRequires:  pkgconfig(mm-common)
