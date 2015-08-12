@@ -29,9 +29,7 @@ namespace tizen_media_audio {
      */
     class CAudioError {
     public:
-        /* Constants Definition */
-        static const unsigned int MSG_LENGTH = 512;
-
+        /* Enums Definition */
         enum EError {
             ERROR_NONE,
 
@@ -63,17 +61,9 @@ namespace tizen_media_audio {
             ERROR_MAX
         };
 
-    private:
-        /* Members */
-        static EError mLastError;
-        static char   mLastErrorMsg[MSG_LENGTH];
+        /* Constants Definition */
+        static const unsigned int MSG_LENGTH = 512;
 
-        EError        mError;
-        char          mErrorMsg[MSG_LENGTH];
-
-        const char* __convertErrorToString(EError err);
-
-    public:
         /* Constructor & Destructor */
         CAudioError(EError err);
         CAudioError(EError err, const char* fileName, const char* parentFunc, int lineNum);
@@ -94,8 +84,18 @@ namespace tizen_media_audio {
         CAudioError& operator =  (const CAudioError& err);
         bool         operator != (const EError err);
         bool         operator == (const EError err);
-//        friend bool operator == (const CAudioError& src, const EError& err);
+        //friend bool operator == (const CAudioError& src, const EError& err);
+
+    private:
+        const char* __convertErrorToString(EError err);
+
+        /* Members */
+        static EError __mLastError;
+        static char   __mLastErrorMsg[MSG_LENGTH];
+        EError        __mError;
+        char          __mErrorMsg[MSG_LENGTH];
     };
+
 
 } /* namespace tizen_media_audio */
 

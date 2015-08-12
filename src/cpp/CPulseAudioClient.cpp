@@ -31,22 +31,22 @@ const char* CPulseAudioClient::CLIENT_NAME = "AUDIO_IO_PA_CLIENT";
 CPulseAudioClient::CPulseAudioClient(EStreamDirection      direction,
                                      CPulseStreamSpec&     spec,
                                      IPulseStreamListener* listener) :
-    mDirection(direction),
-    mSpec(spec),
-    mpListener(listener),
-    mpMainloop(NULL),
-    mpContext(NULL),
-    mpStream(NULL),
-    mpPropList(NULL),
-    mIsInit(false),
-    mIsOperationSuccess(false) {
+    __mDirection(direction),
+    __mSpec(spec),
+    __mpListener(listener),
+    __mpMainloop(NULL),
+    __mpContext(NULL),
+    __mpStream(NULL),
+    __mpPropList(NULL),
+    __mIsInit(false),
+    __mIsOperationSuccess(false) {
 }
 
 CPulseAudioClient::~CPulseAudioClient() {
     finalize();
 }
 
-void CPulseAudioClient::_contextStateChangeCb(pa_context* c, void* user_data) {
+void CPulseAudioClient::__contextStateChangeCb(pa_context* c, void* user_data) {
     CPulseAudioClient* pClient = static_cast<CPulseAudioClient*>(user_data);
     assert(pClient);
     assert(c);
@@ -56,7 +56,7 @@ void CPulseAudioClient::_contextStateChangeCb(pa_context* c, void* user_data) {
         AUDIO_IO_LOGD("The context is ready!");
     case PA_CONTEXT_FAILED:
     case PA_CONTEXT_TERMINATED:
-        pa_threaded_mainloop_signal(pClient->mpMainloop, 0);
+        pa_threaded_mainloop_signal(pClient->__mpMainloop, 0);
         break;
 
     case PA_CONTEXT_UNCONNECTED:
@@ -67,18 +67,18 @@ void CPulseAudioClient::_contextStateChangeCb(pa_context* c, void* user_data) {
     }
 }
 
-void CPulseAudioClient::_successContextCb(pa_context* c, int success, void* user_data) {
+void CPulseAudioClient::__successContextCb(pa_context* c, int success, void* user_data) {
     AUDIO_IO_LOGD("pa_context[%p], success[%d], user_data[%p]", c, success, user_data);
     assert(c);
     assert(user_data);
 
     CPulseAudioClient* pClient = static_cast<CPulseAudioClient*>(user_data);
-    pClient->mIsOperationSuccess = static_cast<bool>(success);
+    pClient->__mIsOperationSuccess = static_cast<bool>(success);
 
-    pa_threaded_mainloop_signal(pClient->mpMainloop, 0);
+    pa_threaded_mainloop_signal(pClient->__mpMainloop, 0);
 }
 
-void CPulseAudioClient::_streamStateChangeCb(pa_stream* s, void* user_data) {
+void CPulseAudioClient::__streamStateChangeCb(pa_stream* s, void* user_data) {
     assert(s);
     assert(user_data);
 
@@ -87,10 +87,10 @@ void CPulseAudioClient::_streamStateChangeCb(pa_stream* s, void* user_data) {
     switch (pa_stream_get_state(s)) {
     case PA_STREAM_READY:
         AUDIO_IO_LOGD("The stream is ready!");
-        pClient->mpListener->onStateChanged(CAudioInfo::AUDIO_IO_STATE_RUNNING);
+        pClient->__mpListener->onStateChanged(CAudioInfo::AUDIO_IO_STATE_RUNNING);
     case PA_STREAM_FAILED:
     case PA_STREAM_TERMINATED:
-        pa_threaded_mainloop_signal(pClient->mpMainloop, 0);
+        pa_threaded_mainloop_signal(pClient->__mpMainloop, 0);
         break;
 
     case PA_STREAM_UNCONNECTED:
@@ -100,25 +100,25 @@ void CPulseAudioClient::_streamStateChangeCb(pa_stream* s, void* user_data) {
     }
 }
 
-void CPulseAudioClient::_streamCaptureCb(pa_stream* s, size_t length, void* user_data) {
+void CPulseAudioClient::__streamCaptureCb(pa_stream* s, size_t length, void* user_data) {
     assert(s);
     assert(user_data);
 
     CPulseAudioClient* pClient = static_cast<CPulseAudioClient*>(user_data);
-    assert(pClient->mpListener);
+    assert(pClient->__mpListener);
 
-    pClient->mpListener->onStream(pClient, length);
+    pClient->__mpListener->onStream(pClient, length);
 }
 
-void CPulseAudioClient::_streamPlaybackCb(pa_stream* s, size_t length, void* user_data) {
-    //AUDIO_IO_LOGD("_streamPlaybackCb()");
+void CPulseAudioClient::__streamPlaybackCb(pa_stream* s, size_t length, void* user_data) {
+    //AUDIO_IO_LOGD("__streamPlaybackCb()");
     assert(s);
     assert(user_data);
 
     CPulseAudioClient* pClient = static_cast<CPulseAudioClient*>(user_data);
-    assert(pClient->mpListener);
+    assert(pClient->__mpListener);
 
-    if (pClient->mIsInit == false) {
+    if (pClient->__mIsInit == false) {
         AUDIO_IO_LOGD("Occurred this listener when an out stream is on the way to create - Dummy write[length:%d]", length);
 
         char* dummy = new char[length];
@@ -129,32 +129,32 @@ void CPulseAudioClient::_streamPlaybackCb(pa_stream* s, size_t length, void* use
         return;
     }
 
-    pClient->mpListener->onStream(pClient, length);
+    pClient->__mpListener->onStream(pClient, length);
 }
 
-void CPulseAudioClient::_streamLatencyUpdateCb(pa_stream* s, void* user_data) {
+void CPulseAudioClient::__streamLatencyUpdateCb(pa_stream* s, void* user_data) {
     assert(s);
     assert(user_data);
 
     CPulseAudioClient* pClient = static_cast<CPulseAudioClient*>(user_data);
 
-    pa_threaded_mainloop_signal(pClient->mpMainloop, 0);
+    pa_threaded_mainloop_signal(pClient->__mpMainloop, 0);
 }
 
-void CPulseAudioClient::_successStreamCb(pa_stream* s, int success, void* user_data) {
+void CPulseAudioClient::__successStreamCb(pa_stream* s, int success, void* user_data) {
     AUDIO_IO_LOGD("pa_stream[%p], success[%d], user_data[%p]", s, success, user_data);
     assert(s);
     assert(user_data);
 
     CPulseAudioClient* pClient = static_cast<CPulseAudioClient*>(user_data);
-    pClient->mIsOperationSuccess = static_cast<bool>(success);
+    pClient->__mIsOperationSuccess = static_cast<bool>(success);
 
-    pa_threaded_mainloop_signal(pClient->mpMainloop, 0);
+    pa_threaded_mainloop_signal(pClient->__mpMainloop, 0);
 }
 
 void CPulseAudioClient::initialize() throw (CAudioError) {
     AUDIO_IO_LOGD("");
-    if (mIsInit == true) {
+    if (__mIsInit == true) {
         return;
     }
 
@@ -163,52 +163,52 @@ void CPulseAudioClient::initialize() throw (CAudioError) {
 
     try {
         // Allocates PA proplist
-        mpPropList = pa_proplist_new();
-        if (mpPropList == NULL) {
+        __mpPropList = pa_proplist_new();
+        if (__mpPropList == NULL) {
             THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed pa_proplist_new()");
         }
 
         // Adds values on proplist for delivery to PULSEAUDIO
         char *streamType = NULL;
-        CAudioInfo::EAudioType audioType = mSpec.getAudioInfo().getAudioType();
-        mSpec.getAudioInfo().convertAudioType2StreamType(audioType, &streamType);
-        pa_proplist_sets(mpPropList, PA_PROP_MEDIA_ROLE, streamType);
+        CAudioInfo::EAudioType audioType = __mSpec.getAudioInfo().getAudioType();
+        __mSpec.getAudioInfo().convertAudioType2StreamType(audioType, &streamType);
+        pa_proplist_sets(__mpPropList, PA_PROP_MEDIA_ROLE, streamType);
 
-        int index = mSpec.getAudioInfo().getAudioIndex();
+        int index = __mSpec.getAudioInfo().getAudioIndex();
         if (index >= 0) {
-            pa_proplist_setf(mpPropList, PA_PROP_MEDIA_PARENT_ID, "%u", (unsigned int) index);
+            pa_proplist_setf(__mpPropList, PA_PROP_MEDIA_PARENT_ID, "%u", (unsigned int) index);
         }
 
         // Adds latency on proplist for delivery to PULSEAUDIO
-        AUDIO_IO_LOGD("LATENCY : %s(%d)", mSpec.getStreamLatencyToString(), mSpec.getStreamLatency());
-        pa_proplist_setf(mpPropList, PA_PROP_MEDIA_TIZEN_AUDIO_LATENCY, "%s", mSpec.getStreamLatencyToString());
+        AUDIO_IO_LOGD("LATENCY : %s(%d)", __mSpec.getStreamLatencyToString(), __mSpec.getStreamLatency());
+        pa_proplist_setf(__mpPropList, PA_PROP_MEDIA_TIZEN_AUDIO_LATENCY, "%s", __mSpec.getStreamLatencyToString());
 
         // Allocates PA mainloop
-        mpMainloop = pa_threaded_mainloop_new();
-        if (mpMainloop == NULL) {
+        __mpMainloop = pa_threaded_mainloop_new();
+        if (__mpMainloop == NULL) {
             THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed pa_threaded_mainloop_new()");
         }
 
         // Allocates PA context
-        mpContext = pa_context_new(pa_threaded_mainloop_get_api(mpMainloop), CLIENT_NAME);
-        if (mpContext == NULL) {
+        __mpContext = pa_context_new(pa_threaded_mainloop_get_api(__mpMainloop), CLIENT_NAME);
+        if (__mpContext == NULL) {
             THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed pa_context_new()");
         }
 
         // Sets context state changed callback
-        pa_context_set_state_callback(mpContext, _contextStateChangeCb, this);
+        pa_context_set_state_callback(__mpContext, __contextStateChangeCb, this);
 
         // Connects this client with PA server
-        if (pa_context_connect(mpContext, NULL, PA_CONTEXT_NOFLAGS, NULL) < 0) {
+        if (pa_context_connect(__mpContext, NULL, PA_CONTEXT_NOFLAGS, NULL) < 0) {
             THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed pa_context_connect()");
         }
 
         // LOCK for synchronous connection
-        pa_threaded_mainloop_lock(mpMainloop);
+        pa_threaded_mainloop_lock(__mpMainloop);
 
         // Start mainloop
-        if (pa_threaded_mainloop_start(mpMainloop) < 0) {
-            pa_threaded_mainloop_unlock(mpMainloop);
+        if (pa_threaded_mainloop_start(__mpMainloop) < 0) {
+            pa_threaded_mainloop_unlock(__mpMainloop);
             THROW_ERROR_MSG(CAudioError::ERROR_FAILED_OPERATION, "Failed pa_threaded_mainloop_start()");
         }
 
@@ -217,65 +217,65 @@ void CPulseAudioClient::initialize() throw (CAudioError) {
         // If I got a signal, do next processing
         while (true) {
             pa_context_state_t state;
-            state = pa_context_get_state(mpContext);
+            state = pa_context_get_state(__mpContext);
 
             if (state == PA_CONTEXT_READY) {
                 break;
             }
 
             if (!PA_CONTEXT_IS_GOOD(state)) {
-                err = pa_context_errno(mpContext);
-                pa_threaded_mainloop_unlock(mpMainloop);
+                err = pa_context_errno(__mpContext);
+                pa_threaded_mainloop_unlock(__mpMainloop);
                 THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INTERNAL_OPERATION, "pa_context's state is not good err:[%d]", err);
             }
 
             /* Wait until the context is ready */
-            pa_threaded_mainloop_wait(mpMainloop);
+            pa_threaded_mainloop_wait(__mpMainloop);
         }
 
         // Allocates PA stream
-        pa_sample_spec ss   = mSpec.getSampleSpec();
-        pa_channel_map map  = mSpec.getChannelMap();
+        pa_sample_spec ss   = __mSpec.getSampleSpec();
+        pa_channel_map map  = __mSpec.getChannelMap();
 
-        mpStream = pa_stream_new_with_proplist(mpContext, mSpec.getStreamName(), &ss, &map, mpPropList);
-        if (mpStream == NULL) {
-            pa_threaded_mainloop_unlock(mpMainloop);
+        __mpStream = pa_stream_new_with_proplist(__mpContext, __mSpec.getStreamName(), &ss, &map, __mpPropList);
+        if (__mpStream == NULL) {
+            pa_threaded_mainloop_unlock(__mpMainloop);
             THROW_ERROR_MSG(CAudioError::ERROR_FAILED_OPERATION, "Failed pa_stream_new_with_proplist()()");
         }
 
         // Sets stream callbacks
-        pa_stream_set_state_callback(mpStream, _streamStateChangeCb, this);
-        pa_stream_set_read_callback(mpStream, _streamCaptureCb, this);
-        pa_stream_set_write_callback(mpStream, _streamPlaybackCb, this);
-        pa_stream_set_latency_update_callback(mpStream, _streamLatencyUpdateCb, this);
+        pa_stream_set_state_callback(__mpStream, __streamStateChangeCb, this);
+        pa_stream_set_read_callback(__mpStream, __streamCaptureCb, this);
+        pa_stream_set_write_callback(__mpStream, __streamPlaybackCb, this);
+        pa_stream_set_latency_update_callback(__mpStream, __streamLatencyUpdateCb, this);
 
         // Connect stream with PA Server
 
-        if (mDirection == STREAM_DIRECTION_PLAYBACK) {
+        if (__mDirection == STREAM_DIRECTION_PLAYBACK) {
             pa_stream_flags_t flags = static_cast<pa_stream_flags_t>(
                     PA_STREAM_INTERPOLATE_TIMING |
                     PA_STREAM_ADJUST_LATENCY     |
                     PA_STREAM_AUTO_TIMING_UPDATE);
 
-            ret = pa_stream_connect_playback(mpStream, NULL, NULL, flags, NULL, NULL);
+            ret = pa_stream_connect_playback(__mpStream, NULL, NULL, flags, NULL, NULL);
         } else {
             pa_stream_flags_t flags = static_cast<pa_stream_flags_t>(
                     PA_STREAM_INTERPOLATE_TIMING |
                     PA_STREAM_ADJUST_LATENCY     |
                     PA_STREAM_AUTO_TIMING_UPDATE);
 
-            ret = pa_stream_connect_record(mpStream, NULL, NULL, flags);
+            ret = pa_stream_connect_record(__mpStream, NULL, NULL, flags);
         }
 
         if (ret != 0) {
-            err = pa_context_errno(mpContext);
-            pa_threaded_mainloop_unlock(mpMainloop);
+            err = pa_context_errno(__mpContext);
+            pa_threaded_mainloop_unlock(__mpMainloop);
             THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_FAILED_OPERATION, "Failed pa_stream_connect() err:[%d]", err);
         }
 
         while (true) {
             pa_stream_state_t state;
-            state = pa_stream_get_state(mpStream);
+            state = pa_stream_get_state(__mpStream);
 
             if (state == PA_STREAM_READY) {
                 AUDIO_IO_LOGD("STREAM READY");
@@ -283,19 +283,19 @@ void CPulseAudioClient::initialize() throw (CAudioError) {
             }
 
             if (!PA_STREAM_IS_GOOD(state)) {
-                err = pa_context_errno(mpContext);
-                pa_threaded_mainloop_unlock(mpMainloop);
+                err = pa_context_errno(__mpContext);
+                pa_threaded_mainloop_unlock(__mpMainloop);
                 THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INTERNAL_OPERATION, "pa_stream's state is not good err:[%d]", err);
             }
 
             /* Wait until the stream is ready */
-            pa_threaded_mainloop_wait(mpMainloop);
+            pa_threaded_mainloop_wait(__mpMainloop);
         }
 
         // End of synchronous
-        pa_threaded_mainloop_unlock(mpMainloop);
+        pa_threaded_mainloop_unlock(__mpMainloop);
 
-        mIsInit = true;
+        __mIsInit = true;
     } catch (CAudioError e) {
         finalize();
         throw e;
@@ -304,39 +304,39 @@ void CPulseAudioClient::initialize() throw (CAudioError) {
 
 void CPulseAudioClient::finalize() {
     AUDIO_IO_LOGD("");
-    if (mIsInit == false) {
+    if (__mIsInit == false) {
         return;
     }
 
-    if (mpMainloop != NULL) {
-        pa_threaded_mainloop_stop(mpMainloop);
+    if (__mpMainloop != NULL) {
+        pa_threaded_mainloop_stop(__mpMainloop);
     }
-    if (mpStream != NULL) {
-        pa_stream_disconnect(mpStream);
-        mpStream = NULL;
-    }
-
-    if (mpContext != NULL) {
-        pa_context_disconnect(mpContext);
-        pa_context_unref(mpContext);
-        mpContext = NULL;
+    if (__mpStream != NULL) {
+        pa_stream_disconnect(__mpStream);
+        __mpStream = NULL;
     }
 
-    if (mpMainloop != NULL) {
-        pa_threaded_mainloop_free(mpMainloop);
-        mpMainloop = NULL;
+    if (__mpContext != NULL) {
+        pa_context_disconnect(__mpContext);
+        pa_context_unref(__mpContext);
+        __mpContext = NULL;
     }
 
-    if (mpPropList != NULL) {
-        pa_proplist_free(mpPropList);
-        mpPropList = NULL;
+    if (__mpMainloop != NULL) {
+        pa_threaded_mainloop_free(__mpMainloop);
+        __mpMainloop = NULL;
     }
 
-    mIsInit = false;
+    if (__mpPropList != NULL) {
+        pa_proplist_free(__mpPropList);
+        __mpPropList = NULL;
+    }
+
+    __mIsInit = false;
 }
 
 int CPulseAudioClient::peek(const void** data, size_t* length) throw (CAudioError) {
-    if (mIsInit == false) {
+    if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
 
@@ -350,18 +350,18 @@ int CPulseAudioClient::peek(const void** data, size_t* length) throw (CAudioErro
         THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "The parameter is invalid - data:%p, length:%p", data, length);
     }
 
-    if (mDirection == STREAM_DIRECTION_PLAYBACK) {
+    if (__mDirection == STREAM_DIRECTION_PLAYBACK) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_SUPPORTED, "The Playback client couldn't use this function");
     }
 
     int ret = 0;
 
     if (isInThread() == false) {
-        pa_threaded_mainloop_lock(mpMainloop);
-        ret = pa_stream_peek(mpStream, data, length);
-        pa_threaded_mainloop_unlock(mpMainloop);
+        pa_threaded_mainloop_lock(__mpMainloop);
+        ret = pa_stream_peek(__mpStream, data, length);
+        pa_threaded_mainloop_unlock(__mpMainloop);
     } else {
-        ret = pa_stream_peek(mpStream, data, length);
+        ret = pa_stream_peek(__mpStream, data, length);
     }
 
     if (ret < 0) {
@@ -372,7 +372,7 @@ int CPulseAudioClient::peek(const void** data, size_t* length) throw (CAudioErro
 }
 
 int CPulseAudioClient::drop() throw (CAudioError) {
-    if (mIsInit == false) {
+    if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
 
@@ -382,18 +382,18 @@ int CPulseAudioClient::drop() throw (CAudioError) {
 
     checkRunningState();
 
-    if (mDirection == STREAM_DIRECTION_PLAYBACK) {
+    if (__mDirection == STREAM_DIRECTION_PLAYBACK) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_SUPPORTED, "The Playback client couldn't use this function");
     }
 
     int ret = 0;
 
     if (isInThread() == false) {
-        pa_threaded_mainloop_lock(mpMainloop);
-        ret = pa_stream_drop(mpStream);
-        pa_threaded_mainloop_unlock(mpMainloop);
+        pa_threaded_mainloop_lock(__mpMainloop);
+        ret = pa_stream_drop(__mpStream);
+        pa_threaded_mainloop_unlock(__mpMainloop);
     } else {
-        ret = pa_stream_drop(mpStream);
+        ret = pa_stream_drop(__mpStream);
     }
 
     if (ret < 0) {
@@ -404,7 +404,7 @@ int CPulseAudioClient::drop() throw (CAudioError) {
 }
 
 int CPulseAudioClient::write(const void* data, size_t length) throw (CAudioError) {
-    if (mIsInit == false) {
+    if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
 
@@ -418,18 +418,18 @@ int CPulseAudioClient::write(const void* data, size_t length) throw (CAudioError
         THROW_ERROR_MSG(CAudioError::ERROR_INVALID_ARGUMENT, "The parameter is invalid");
     }
 
-    if (mDirection == STREAM_DIRECTION_RECORD) {
+    if (__mDirection == STREAM_DIRECTION_RECORD) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_SUPPORTED, "The Playback client couldn't use this function");
     }
 
     int ret = 0;
 
     if (isInThread() == false) {
-        pa_threaded_mainloop_lock(mpMainloop);
-        ret = pa_stream_write(mpStream, data, length, NULL, 0LL, PA_SEEK_RELATIVE);
-        pa_threaded_mainloop_unlock(mpMainloop);
+        pa_threaded_mainloop_lock(__mpMainloop);
+        ret = pa_stream_write(__mpStream, data, length, NULL, 0LL, PA_SEEK_RELATIVE);
+        pa_threaded_mainloop_unlock(__mpMainloop);
     } else {
-        ret = pa_stream_write(mpStream, data, length, NULL, 0LL, PA_SEEK_RELATIVE);
+        ret = pa_stream_write(__mpStream, data, length, NULL, 0LL, PA_SEEK_RELATIVE);
     }
 
     if (ret < 0) {
@@ -442,7 +442,7 @@ int CPulseAudioClient::write(const void* data, size_t length) throw (CAudioError
 void CPulseAudioClient::cork(bool cork) throw (CAudioError) {
     AUDIO_IO_LOGD("bool cork:%d", cork);
 
-    if (mIsInit == false) {
+    if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
 
@@ -453,18 +453,18 @@ void CPulseAudioClient::cork(bool cork) throw (CAudioError) {
     checkRunningState();
 
     if (isInThread() == false) {
-        pa_threaded_mainloop_lock(mpMainloop);
-        pa_operation_unref(pa_stream_cork(mpStream, static_cast<int>(cork), _successStreamCb, this));
-        pa_threaded_mainloop_unlock(mpMainloop);
+        pa_threaded_mainloop_lock(__mpMainloop);
+        pa_operation_unref(pa_stream_cork(__mpStream, static_cast<int>(cork), __successStreamCb, this));
+        pa_threaded_mainloop_unlock(__mpMainloop);
     } else {
-        pa_operation_unref(pa_stream_cork(mpStream, static_cast<int>(cork), _successStreamCb, this));
+        pa_operation_unref(pa_stream_cork(__mpStream, static_cast<int>(cork), __successStreamCb, this));
     }
 
     return;
 }
 
 bool CPulseAudioClient::isCorked() throw (CAudioError) {
-    if (mIsInit == false) {
+    if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
 
@@ -473,11 +473,11 @@ bool CPulseAudioClient::isCorked() throw (CAudioError) {
     int isCork = 0;
 
     if (isInThread() == false) {
-        pa_threaded_mainloop_lock(mpMainloop);
-        isCork = pa_stream_is_corked(mpStream);
-        pa_threaded_mainloop_unlock(mpMainloop);
+        pa_threaded_mainloop_lock(__mpMainloop);
+        isCork = pa_stream_is_corked(__mpStream);
+        pa_threaded_mainloop_unlock(__mpMainloop);
     } else {
-        isCork = pa_stream_is_corked(mpStream);
+        isCork = pa_stream_is_corked(__mpStream);
     }
 
     AUDIO_IO_LOGD("isCork:%d", isCork);
@@ -487,18 +487,18 @@ bool CPulseAudioClient::isCorked() throw (CAudioError) {
 bool CPulseAudioClient::drain() throw (CAudioError) {
     AUDIO_IO_LOGD("drain");
 
-    if (mIsInit == false) {
+    if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
 
     checkRunningState();
 
     if (isInThread() == false) {
-        pa_threaded_mainloop_lock(mpMainloop);
-        pa_operation_unref(pa_stream_drain(mpStream, _successStreamCb, this));
-        pa_threaded_mainloop_unlock(mpMainloop);
+        pa_threaded_mainloop_lock(__mpMainloop);
+        pa_operation_unref(pa_stream_drain(__mpStream, __successStreamCb, this));
+        pa_threaded_mainloop_unlock(__mpMainloop);
     } else {
-        pa_operation_unref(pa_stream_drain(mpStream, _successStreamCb, this));
+        pa_operation_unref(pa_stream_drain(__mpStream, __successStreamCb, this));
     }
 
     return true;
@@ -507,60 +507,60 @@ bool CPulseAudioClient::drain() throw (CAudioError) {
 bool CPulseAudioClient::flush() throw (CAudioError) {
     AUDIO_IO_LOGD("flush");
 
-    if (mIsInit == false) {
+    if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
 
     checkRunningState();
 
     if (isInThread() == false) {
-        pa_threaded_mainloop_lock(mpMainloop);
-        pa_operation_unref(pa_stream_flush(mpStream, _successStreamCb, this));
-        pa_threaded_mainloop_unlock(mpMainloop);
+        pa_threaded_mainloop_lock(__mpMainloop);
+        pa_operation_unref(pa_stream_flush(__mpStream, __successStreamCb, this));
+        pa_threaded_mainloop_unlock(__mpMainloop);
     } else {
-        pa_operation_unref(pa_stream_flush(mpStream, _successStreamCb, this));
+        pa_operation_unref(pa_stream_flush(__mpStream, __successStreamCb, this));
     }
 
     return true;
 }
 
 size_t CPulseAudioClient::getWritableSize() throw (CAudioError) {
-    if (mIsInit == false) {
+    if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
 
     checkRunningState();
 
-    if (mDirection != STREAM_DIRECTION_PLAYBACK) {
+    if (__mDirection != STREAM_DIRECTION_PLAYBACK) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_SUPPORTED, "This client is used for Playback");
     }
 
     size_t ret = 0;
 
     if (isInThread() == false) {
-        pa_threaded_mainloop_lock(mpMainloop);
-        ret = pa_stream_writable_size(mpStream);
-        pa_threaded_mainloop_unlock(mpMainloop);
+        pa_threaded_mainloop_lock(__mpMainloop);
+        ret = pa_stream_writable_size(__mpStream);
+        pa_threaded_mainloop_unlock(__mpMainloop);
     } else {
-        ret = pa_stream_writable_size(mpStream);
+        ret = pa_stream_writable_size(__mpStream);
     }
 
     return ret;
 }
 
 void CPulseAudioClient::checkRunningState() throw (CAudioError) {
-    if (mIsInit == false) {
+    if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
 
-    if (mpContext == NULL || PA_CONTEXT_IS_GOOD(pa_context_get_state(mpContext)) == 0) {
-        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_NOT_INITIALIZED, "The context[%p] is not created or not good state", mpContext);
+    if (__mpContext == NULL || PA_CONTEXT_IS_GOOD(pa_context_get_state(__mpContext)) == 0) {
+        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_NOT_INITIALIZED, "The context[%p] is not created or not good state", __mpContext);
     }
-    if (mpStream == NULL || PA_STREAM_IS_GOOD(pa_stream_get_state(mpStream)) == 0) {
-        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_NOT_INITIALIZED, "The stream[%p] is not created or not good state", mpStream);
+    if (__mpStream == NULL || PA_STREAM_IS_GOOD(pa_stream_get_state(__mpStream)) == 0) {
+        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_NOT_INITIALIZED, "The stream[%p] is not created or not good state", __mpStream);
     }
-    if (pa_context_get_state(mpContext) != PA_CONTEXT_READY || pa_stream_get_state(mpStream)   != PA_STREAM_READY) {
-        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_NOT_INITIALIZED, "The context[%p] or stream[%p] state is not ready", mpContext, mpStream);
+    if (pa_context_get_state(__mpContext) != PA_CONTEXT_READY || pa_stream_get_state(__mpStream)   != PA_STREAM_READY) {
+        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_NOT_INITIALIZED, "The context[%p] or stream[%p] state is not ready", __mpContext, __mpStream);
     }
 
 #ifdef _AUDIO_IO_DEBUG_TIMING_
@@ -569,11 +569,11 @@ void CPulseAudioClient::checkRunningState() throw (CAudioError) {
 }
 
 bool CPulseAudioClient::isInThread() throw (CAudioError) {
-    if (mIsInit == false) {
+    if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
 
-    int ret = pa_threaded_mainloop_in_thread(mpMainloop);
+    int ret = pa_threaded_mainloop_in_thread(__mpMainloop);
 
 #ifdef _AUDIO_IO_DEBUG_TIMING_
     AUDIO_IO_LOGD("isInThread : [%d][TRUE:1][FALSE:0]", ret);
@@ -582,31 +582,31 @@ bool CPulseAudioClient::isInThread() throw (CAudioError) {
 }
 
 size_t CPulseAudioClient::getReadableSize() throw (CAudioError) {
-    if (mIsInit == false) {
+    if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
 
     checkRunningState();
 
-    if (mDirection != STREAM_DIRECTION_RECORD) {
+    if (__mDirection != STREAM_DIRECTION_RECORD) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_SUPPORTED, "This client is used for Capture");
     }
 
     size_t ret = 0;
 
     if (isInThread() == false) {
-        pa_threaded_mainloop_lock(mpMainloop);
-        ret = pa_stream_writable_size(mpStream);
-        pa_threaded_mainloop_unlock(mpMainloop);
+        pa_threaded_mainloop_lock(__mpMainloop);
+        ret = pa_stream_writable_size(__mpStream);
+        pa_threaded_mainloop_unlock(__mpMainloop);
     } else {
-        ret = pa_stream_writable_size(mpStream);
+        ret = pa_stream_writable_size(__mpStream);
     }
 
     return ret;
 }
 
 size_t CPulseAudioClient::getBufferSize() throw (CAudioError) {
-    if (mIsInit == false) {
+    if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
 
@@ -616,16 +616,16 @@ size_t CPulseAudioClient::getBufferSize() throw (CAudioError) {
 
     try {
         if (isInThread() == false) {
-            pa_threaded_mainloop_lock(mpMainloop);
+            pa_threaded_mainloop_lock(__mpMainloop);
         }
 
-        const pa_buffer_attr* attr = pa_stream_get_buffer_attr(mpStream);
+        const pa_buffer_attr* attr = pa_stream_get_buffer_attr(__mpStream);
         if (attr == NULL) {
-            int _err = pa_context_errno(mpContext);
+            int _err = pa_context_errno(__mpContext);
             THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_FAILED_OPERATION, "Failed pa_stream_get_buffer_attr() err:%d", _err);
         }
 
-        if (mDirection == STREAM_DIRECTION_PLAYBACK) {
+        if (__mDirection == STREAM_DIRECTION_PLAYBACK) {
             ret = attr->tlength;
             AUDIO_IO_LOGD("PLAYBACK buffer size : %d", ret);
         } else {
@@ -634,20 +634,20 @@ size_t CPulseAudioClient::getBufferSize() throw (CAudioError) {
         }
     } catch (CAudioError err) {
         if (isInThread() == false) {
-            pa_threaded_mainloop_unlock(mpMainloop);
+            pa_threaded_mainloop_unlock(__mpMainloop);
         }
         throw err;
     }
 
     if (isInThread() == false) {
-        pa_threaded_mainloop_unlock(mpMainloop);
+        pa_threaded_mainloop_unlock(__mpMainloop);
     }
 
     return ret;
 }
 
 pa_usec_t CPulseAudioClient::getLatency() throw (CAudioError) {
-    if (mIsInit == false) {
+    if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
 
@@ -657,8 +657,8 @@ pa_usec_t CPulseAudioClient::getLatency() throw (CAudioError) {
     int negative  = 0;
 
     if (isInThread() == false) {
-        if (pa_stream_get_latency(mpStream, &ret, &negative) < 0) {
-            int _err = pa_context_errno(mpContext);
+        if (pa_stream_get_latency(__mpStream, &ret, &negative) < 0) {
+            int _err = pa_context_errno(__mpContext);
             if (_err != PA_ERR_NODATA) {
                 THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_FAILED_OPERATION, "Failed pa_stream_get_latency() err:%d", _err);
             }
@@ -666,34 +666,34 @@ pa_usec_t CPulseAudioClient::getLatency() throw (CAudioError) {
         return negative ? 0 : ret;
     }
 
-        pa_threaded_mainloop_lock(mpMainloop);
+        pa_threaded_mainloop_lock(__mpMainloop);
 
     try {
         while (true) {
-            if (pa_stream_get_latency(mpStream, &ret, &negative) >= 0) {
+            if (pa_stream_get_latency(__mpStream, &ret, &negative) >= 0) {
                 break;
             }
 
-            int _err = pa_context_errno(mpContext);
+            int _err = pa_context_errno(__mpContext);
             if (_err != PA_ERR_NODATA) {
                 THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_FAILED_OPERATION, "Failed pa_stream_get_latency() err:%d", _err);
             }
 
             /* Wait until latency data is available again */
-            pa_threaded_mainloop_wait(mpMainloop);
+            pa_threaded_mainloop_wait(__mpMainloop);
         }
     } catch (CAudioError e) {
-        pa_threaded_mainloop_unlock(mpMainloop);
+        pa_threaded_mainloop_unlock(__mpMainloop);
         throw e;
     }
 
-    pa_threaded_mainloop_unlock(mpMainloop);
+    pa_threaded_mainloop_unlock(__mpMainloop);
 
     return negative ? 0 : ret;
 }
 
 pa_usec_t CPulseAudioClient::getFinalLatency() throw (CAudioError) {
-    if (mIsInit == false) {
+    if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
 
@@ -704,21 +704,21 @@ pa_usec_t CPulseAudioClient::getFinalLatency() throw (CAudioError) {
 
     try {
         if (isInThread() == false) {
-            pa_threaded_mainloop_lock(mpMainloop);
+            pa_threaded_mainloop_lock(__mpMainloop);
         }
 
-        ver = pa_context_get_server_protocol_version(mpContext);
+        ver = pa_context_get_server_protocol_version(__mpContext);
         if (ver >= 13) {
-            const pa_buffer_attr* buffer_attr = pa_stream_get_buffer_attr(mpStream);
-            const pa_sample_spec* sample_spec = pa_stream_get_sample_spec(mpStream);
-            const pa_timing_info* timing_info = pa_stream_get_timing_info(mpStream);
+            const pa_buffer_attr* buffer_attr = pa_stream_get_buffer_attr(__mpStream);
+            const pa_sample_spec* sample_spec = pa_stream_get_sample_spec(__mpStream);
+            const pa_timing_info* timing_info = pa_stream_get_timing_info(__mpStream);
 
             if (buffer_attr == NULL || sample_spec == NULL || timing_info == NULL) {
                 THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_OUT_OF_MEMORY, "Failed to get buffer_attr[%p] or sample_spec[%p] or timing_info[%p] from a pa_stream",
                         buffer_attr, sample_spec, timing_info);
             }
 
-            if (mDirection == STREAM_DIRECTION_PLAYBACK) {
+            if (__mDirection == STREAM_DIRECTION_PLAYBACK) {
                 ret = (pa_bytes_to_usec(buffer_attr->tlength, sample_spec) + timing_info->configured_sink_usec);
                 AUDIO_IO_LOGD("FINAL PLAYBACK LATENCY : %d", ret);
             } else {
@@ -730,11 +730,11 @@ pa_usec_t CPulseAudioClient::getFinalLatency() throw (CAudioError) {
         }
 
         if (isInThread() == false) {
-            pa_threaded_mainloop_unlock(mpMainloop);
+            pa_threaded_mainloop_unlock(__mpMainloop);
         }
     } catch (CAudioError e) {
         if (isInThread() == false) {
-            pa_threaded_mainloop_unlock(mpMainloop);
+            pa_threaded_mainloop_unlock(__mpMainloop);
         }
         throw e;
     }
@@ -743,9 +743,9 @@ pa_usec_t CPulseAudioClient::getFinalLatency() throw (CAudioError) {
 }
 
 CPulseAudioClient::EStreamDirection CPulseAudioClient::getStreamDirection() {
-    return mDirection;
+    return __mDirection;
 }
 
 CPulseStreamSpec CPulseAudioClient::getStreamSpec() {
-    return mSpec;
+    return __mSpec;
 }

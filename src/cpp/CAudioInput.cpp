@@ -27,10 +27,10 @@ using namespace tizen_media_audio;
  */
 CAudioInput::CAudioInput(CAudioInfo& info) :
     CAudioIO(info),
-    mpSyncReadDataPtr(NULL),
-    mSyncReadIndex(0),
-    mSyncReadLength(0),
-    mIsUsedSyncRead(true) {
+    __mpSyncReadDataPtr(NULL),
+    __mSyncReadIndex(0),
+    __mSyncReadLength(0),
+    __mIsUsedSyncRead(true) {
 }
 
 CAudioInput::CAudioInput(
@@ -38,10 +38,10 @@ CAudioInput::CAudioInput(
         CAudioInfo::EChannel    channel,
         CAudioInfo::ESampleType type,
         CAudioInfo::EAudioType  audioType) :
-    mpSyncReadDataPtr(NULL),
-    mSyncReadIndex(0),
-    mSyncReadLength(0),
-    mIsUsedSyncRead(true) {
+    __mpSyncReadDataPtr(NULL),
+    __mSyncReadIndex(0),
+    __mSyncReadLength(0),
+    __mIsUsedSyncRead(true) {
     mAudioInfo = CAudioInfo(sampleRate, channel, type, audioType, -1);
 }
 
@@ -55,7 +55,7 @@ void CAudioInput::onStream(CPulseAudioClient* pClient, size_t length) {
      * Does not call CAudioIO::onStream() for synchronization
      * if a user is using read()
      */
-    if (mIsUsedSyncRead == true) {
+    if (__mIsUsedSyncRead == true) {
 #ifdef _AUDIO_IO_DEBUG_TIMING_
         AUDIO_IO_LOGD("Sync Read Mode! - signal! - pClient:[%p], length:[%d]", pClient, length);
 #endif
@@ -84,20 +84,20 @@ void CAudioInput::onSignal(CAudioSessionHandler* pHandler, mm_sound_signal_name_
     CAudioIO::onSignal(pHandler, signal, value);
 }
 
-void CAudioInput::setInit(bool flag) {
-    mIsInit = flag;
+void CAudioInput::__setInit(bool flag) {
+    __mIsInit = flag;
 }
 
-bool CAudioInput::IsInit() {
-    return (CAudioIO::isInit() == true && mIsInit == true);
+bool CAudioInput::__IsInit() {
+    return (CAudioIO::isInit() == true && __mIsInit == true);
 }
 
-bool CAudioInput::IsReady() {
+bool CAudioInput::__IsReady() {
     return CAudioIO::IsReady();
 }
 
 void CAudioInput::initialize() throw (CAudioError) {
-    if (IsInit() == true) {
+    if (__IsInit() == true) {
         return;
     }
 
@@ -113,7 +113,7 @@ void CAudioInput::initialize() throw (CAudioError) {
         // Initialize ASM Handler
         mpAudioSessionHandler->initialize();
 
-        setInit(true);
+        __setInit(true);
         CAudioIO::onStateChanged(CAudioInfo::AUDIO_IO_STATE_IDLE);
     } catch (CAudioError err) {
         finalize();
@@ -122,7 +122,7 @@ void CAudioInput::initialize() throw (CAudioError) {
 }
 
 void CAudioInput::finalize() {
-    if (IsInit() == false) {
+    if (__IsInit() == false) {
         AUDIO_IO_LOGD("Did not initialize");
         return;
     }
@@ -132,15 +132,15 @@ void CAudioInput::finalize() {
 
     CAudioIO::finalize();
 
-    setInit(false);
+    __setInit(false);
 }
 
 void CAudioInput::prepare() throw (CAudioError) {
-    if (IsInit() == false) {
+    if (__IsInit() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioInput");
     }
 
-    if (IsReady() == true) {
+    if (__IsReady() == true) {
         AUDIO_IO_LOGD("Already prepared CAudioInput");
         return;
     }
@@ -193,11 +193,11 @@ void CAudioInput::prepare() throw (CAudioError) {
 }
 
 void CAudioInput::unprepare() throw (CAudioError) {
-    if (IsInit() == false) {
+    if (__IsInit() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioInput");
     }
 
-    if (IsReady() == false) {
+    if (__IsReady() == false) {
         AUDIO_IO_LOGD("Already unprepared");
         return;
     }
@@ -233,7 +233,7 @@ void CAudioInput::unprepare() throw (CAudioError) {
 }
 
 void CAudioInput::pause() throw (CAudioError) {
-    if (IsInit() == false || IsReady() == false) {
+    if (__IsInit() == false || __IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioInput");
     }
 
@@ -257,7 +257,7 @@ void CAudioInput::pause() throw (CAudioError) {
 }
 
 void CAudioInput::resume() throw (CAudioError) {
-    if (IsInit() == false || IsReady() == false) {
+    if (__IsInit() == false || __IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioInput");
     }
 
@@ -286,7 +286,7 @@ void CAudioInput::drain() throw (CAudioError) {
 }
 
 void CAudioInput::flush() throw (CAudioError) {
-    if (IsInit() == false || IsReady() == false) {
+    if (__IsInit() == false || __IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioInput");
     }
 
@@ -298,11 +298,11 @@ void CAudioInput::flush() throw (CAudioError) {
 }
 
 int CAudioInput::getBufferSize() throw (CAudioError) {
-    if (IsInit() == false) {
+    if (__IsInit() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioInput");
     }
 
-    if (IsReady() == false) {
+    if (__IsReady() == false) {
         AUDIO_IO_LOGD("Warning: Did not prepare CAudioInput, then return zero");
         return 0;
     }
@@ -319,23 +319,23 @@ int CAudioInput::getBufferSize() throw (CAudioError) {
 }
 
 void CAudioInput::setStreamCallback(SStreamCallback callback) throw (CAudioError) {
-    if (IsInit() == false) {
+    if (__IsInit() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioInput");
     }
 
     if (callback.onStream == NULL) {
-        AUDIO_IO_LOGD("mIsUsedSyncRead = true");
-        mIsUsedSyncRead = true;
+        AUDIO_IO_LOGD("__mIsUsedSyncRead = true");
+        __mIsUsedSyncRead = true;
     } else {
-        AUDIO_IO_LOGD("mIsUsedSyncRead = false");
-        mIsUsedSyncRead = false;
+        AUDIO_IO_LOGD("__mIsUsedSyncRead = false");
+        __mIsUsedSyncRead = false;
     }
 
     CAudioIO::setStreamCallback(callback);
 }
 
 size_t CAudioInput::read(void* buffer, size_t length) throw (CAudioError) {
-    if (IsInit() == false || IsReady() == false) {
+    if (__IsInit() == false || __IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioInput");
     }
 
@@ -344,7 +344,7 @@ size_t CAudioInput::read(void* buffer, size_t length) throw (CAudioError) {
     }
 
     /* Checks synchronous flag */
-    if (mIsUsedSyncRead == false) {
+    if (__mIsUsedSyncRead == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_INVALID_OPERATION, "Invalid operation of read() if receive stream callback");
     }
 
@@ -357,18 +357,18 @@ size_t CAudioInput::read(void* buffer, size_t length) throw (CAudioError) {
         while (lengthIter > 0) {
             size_t l;
 
-            while (mpSyncReadDataPtr == NULL) {
-                ret = mpPulseAudioClient->peek(&mpSyncReadDataPtr, &mSyncReadLength);
+            while (__mpSyncReadDataPtr == NULL) {
+                ret = mpPulseAudioClient->peek(&__mpSyncReadDataPtr, &__mSyncReadLength);
                 if (ret != 0) {
                     THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INTERNAL_OPERATION, "Failed CPulseAudioClient::peek() ret:[%d]", ret);
                 }
 
-                if (mSyncReadLength <= 0) {
+                if (__mSyncReadLength <= 0) {
 #ifdef _AUDIO_IO_DEBUG_TIMING_
-                    AUDIO_IO_LOGD("readLength(%d byte) is not valid.. wait..", mSyncReadLength);
+                    AUDIO_IO_LOGD("readLength(%d byte) is not valid.. wait..", __mSyncReadLength);
 #endif
                     internalWait();
-                } else if (mpSyncReadDataPtr == NULL) {
+                } else if (__mpSyncReadDataPtr == NULL) {
                     /* There's a hole in the stream, skip it. We could generate
                      * silence, but that wouldn't work for compressed streams.
                      */
@@ -377,33 +377,33 @@ size_t CAudioInput::read(void* buffer, size_t length) throw (CAudioError) {
                         THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INTERNAL_OPERATION, "Failed CPulseAudioClient::drop() ret:[%d]", ret);
                     }
                 } else {
-                    mSyncReadIndex = 0;
+                    __mSyncReadIndex = 0;
                 }
             }//end of while (pReadData == NULL)
 
-            if (mSyncReadLength < lengthIter) {
-                l = mSyncReadLength;
+            if (__mSyncReadLength < lengthIter) {
+                l = __mSyncReadLength;
             } else {
                 l = lengthIter;
             }
 
             // Copy partial pcm data on out parameter
 #ifdef _AUDIO_IO_DEBUG_TIMING_
-            AUDIO_IO_LOGD("memcpy() that a peeked buffer(%p), index(%d), length(%d), on out buffer", (const uint8_t*)(mpSyncReadDataPtr) + mSyncReadIndex, mSyncReadIndex, l);
+            AUDIO_IO_LOGD("memcpy() that a peeked buffer(%p), index(%d), length(%d), on out buffer", (const uint8_t*)(__mpSyncReadDataPtr) + __mSyncReadIndex, __mSyncReadIndex, l);
 #endif
-            memcpy(buffer, (const uint8_t*)mpSyncReadDataPtr + mSyncReadIndex, l);
+            memcpy(buffer, (const uint8_t*)__mpSyncReadDataPtr + __mSyncReadIndex, l);
 
             // Move next position
             buffer = (uint8_t*)buffer + l;
             lengthIter -= l;
 
             // Adjusts the rest length
-            mSyncReadIndex  += l;
-            mSyncReadLength -= l;
+            __mSyncReadIndex  += l;
+            __mSyncReadLength -= l;
 
-            if (mSyncReadLength == 0) {
+            if (__mSyncReadLength == 0) {
 #ifdef _AUDIO_IO_DEBUG_TIMING_
-                AUDIO_IO_LOGD("mSyncReadLength is zero - Do drop()");
+                AUDIO_IO_LOGD("__mSyncReadLength is zero - Do drop()");
 #endif
                 ret = mpPulseAudioClient->drop();
                 if (ret != 0) {
@@ -411,9 +411,9 @@ size_t CAudioInput::read(void* buffer, size_t length) throw (CAudioError) {
                 }
 
                 // Reset the internal pointer
-                mpSyncReadDataPtr = NULL;
-                mSyncReadLength   = 0;
-                mSyncReadIndex    = 0;
+                __mpSyncReadDataPtr = NULL;
+                __mSyncReadLength   = 0;
+                __mSyncReadIndex    = 0;
             }
         }  // End of while (length > 0)
 
@@ -427,7 +427,7 @@ size_t CAudioInput::read(void* buffer, size_t length) throw (CAudioError) {
 }
 
 int CAudioInput::peek(const void** buffer, size_t* length) throw (CAudioError) {
-    if (IsInit() == false || IsReady() == false) {
+    if (__IsInit() == false || __IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioInput");
     }
 
@@ -436,7 +436,7 @@ int CAudioInput::peek(const void** buffer, size_t* length) throw (CAudioError) {
     }
 
     /* Checks synchronous flag */
-    if (mIsUsedSyncRead == true) {
+    if (__mIsUsedSyncRead == true) {
         THROW_ERROR_MSG(CAudioError::ERROR_INVALID_OPERATION, "Invalid operation of peek() if does not receive a stream callback");
     }
 
@@ -452,12 +452,12 @@ int CAudioInput::peek(const void** buffer, size_t* length) throw (CAudioError) {
 }
 
 int CAudioInput::drop() throw (CAudioError) {
-    if (IsInit() == false || IsReady() == false) {
+    if (__IsInit() == false || __IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioInput");
     }
 
     /* Checks synchronous flag */
-    if (mIsUsedSyncRead == true) {
+    if (__mIsUsedSyncRead == true) {
         THROW_ERROR_MSG(CAudioError::ERROR_INVALID_OPERATION, "Invalid operation of drop() if does not receive a stream callback");
     }
 

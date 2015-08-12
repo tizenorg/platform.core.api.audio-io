@@ -40,82 +40,6 @@ namespace tizen_media_audio {
             AUDIO_SESSION_TYPE_PLAYBACK
         };
 
-    private:
-        /* Static Member */
-        static int                  sCaptureRef;
-        static int                  sFocusRef;
-
-        /* Members */
-        int                         mId;
-        int                         mOptions;
-
-        EAudioSessionType           mAudioSession;
-        MMSessionType               mMultimediaSession;
-
-        mm_sound_focus_type_e       mFocusType;        /* For audio focus */
-        mm_sound_focus_state_e      mState;            /* For audio focus */
-        char*                       mReasonForChange;  /* For audio focus */
-        char*                       mAdditionalInfo;   /* For audio focus */
-
-        CAudioInfo                  mAudioInfo;        /* Referenced from CAudioIO */
-
-        IAudioSessionEventListener* mpEventListener;
-
-        bool                        mIsInit;
-
-        bool                        mUseFocus;
-        int                         mSubscribeId;
-
-        struct stream_type_table_s {
-            const char* name;
-            MMSessionType type;
-        };
-        const struct stream_type_table_s stream_type_table_in[MM_SESSION_TYPE_NUM] = {
-            {"media",        MM_SESSION_TYPE_MEDIA},
-            {"media",        MM_SESSION_TYPE_MEDIA_RECORD},
-            {"media",        MM_SESSION_TYPE_ALARM},
-            {"media",        MM_SESSION_TYPE_NOTIFY},
-            {"media",        MM_SESSION_TYPE_EMERGENCY},
-            {"media",        MM_SESSION_TYPE_CALL},
-            {"media",        MM_SESSION_TYPE_VIDEOCALL},
-            {"voip",         MM_SESSION_TYPE_VOIP},
-            {"media",        MM_SESSION_TYPE_VOICE_RECOGNITION},
-            {"media",        MM_SESSION_TYPE_RECORD_AUDIO},
-            {"media",        MM_SESSION_TYPE_RECORD_VIDEO}
-        };
-        const struct stream_type_table_s stream_type_table_out[MM_SESSION_TYPE_NUM] = {
-            {"media",        MM_SESSION_TYPE_MEDIA},
-            {"media",        MM_SESSION_TYPE_MEDIA_RECORD},
-            {"alarm",        MM_SESSION_TYPE_ALARM},
-            {"notification", MM_SESSION_TYPE_NOTIFY},
-            {"emergency",    MM_SESSION_TYPE_EMERGENCY},
-            {"media",        MM_SESSION_TYPE_CALL},
-            {"media",        MM_SESSION_TYPE_VIDEOCALL},
-            {"voip",         MM_SESSION_TYPE_VOIP},
-            {"media",        MM_SESSION_TYPE_VOICE_RECOGNITION},
-            {"media",        MM_SESSION_TYPE_RECORD_AUDIO},
-            {"media",        MM_SESSION_TYPE_RECORD_VIDEO}
-        };
-
-        /* Private Static Methods */
-        static int PCM_CAPTURE_COUNT_INC();
-        static int PCM_CAPTURE_COUNT_DEC();
-        static int PCM_CAPTURE_COUNT_GET();
-        static int FOCUS_ID_COUNT_INC();
-        static int FOCUS_ID_COUNT_DEC();
-        static int FOCUS_ID_COUNT_GET();
-
-        static void _sound_pcm_signal_cb(mm_sound_signal_name_t signal, int value, void *user_data);
-        static ASM_cb_result_t _sound_pcm_asm_cb(int handle, ASM_event_sources_t eventSrc, ASM_sound_commands_t command, unsigned int soundState, void *cbData);
-        static void _sound_pcm_focus_cb(int id, mm_sound_focus_type_e focus_type, mm_sound_focus_state_e state, const char *reason_for_change, const char *additional_info, void *user_data);
-        static void _sound_pcm_focus_watch_cb(int id, mm_sound_focus_type_e focus_type, mm_sound_focus_state_e state, const char *reason_for_change, const char *additional_info, void *user_data);
-
-        /* Private Method */
-        CAudioError _convertStreamType(EAudioSessionType type1, MMSessionType type2, int *index);
-        CAudioError _getAsmInformation(MMSessionType *type, int *options);
-        bool _isFocusRequired(MMSessionType type, int options);
-
-    public:
         /* Constructor & Destructor */
         CAudioSessionHandler(EAudioSessionType sessionType, CAudioInfo& audioInfo, IAudioSessionEventListener* listener);
         virtual ~CAudioSessionHandler();
@@ -136,13 +60,84 @@ namespace tizen_media_audio {
         /* Setter & Getter */
         int getId();
         int getOptions();
-
-        EAudioSessionType    getAudioSession();
-        MMSessionType        getMultimediaSession();
-
+        EAudioSessionType  getAudioSession();
+        MMSessionType      getMultimediaSession();
         int getSubscribeId();
-
         CAudioInfo getAudioInfo();
+
+    private:
+        struct __streamTypeTable {
+            const char* name;
+            MMSessionType type;
+        };
+        const struct __streamTypeTable __STREAM_TYPE_TABLE_IN[MM_SESSION_TYPE_NUM] = {
+            {"media",        MM_SESSION_TYPE_MEDIA},
+            {"media",        MM_SESSION_TYPE_MEDIA_RECORD},
+            {"media",        MM_SESSION_TYPE_ALARM},
+            {"media",        MM_SESSION_TYPE_NOTIFY},
+            {"media",        MM_SESSION_TYPE_EMERGENCY},
+            {"media",        MM_SESSION_TYPE_CALL},
+            {"media",        MM_SESSION_TYPE_VIDEOCALL},
+            {"voip",         MM_SESSION_TYPE_VOIP},
+            {"media",        MM_SESSION_TYPE_VOICE_RECOGNITION},
+            {"media",        MM_SESSION_TYPE_RECORD_AUDIO},
+            {"media",        MM_SESSION_TYPE_RECORD_VIDEO}
+        };
+        const struct __streamTypeTable __STREAM_TYPE_TABLE_OUT[MM_SESSION_TYPE_NUM] = {
+            {"media",        MM_SESSION_TYPE_MEDIA},
+            {"media",        MM_SESSION_TYPE_MEDIA_RECORD},
+            {"alarm",        MM_SESSION_TYPE_ALARM},
+            {"notification", MM_SESSION_TYPE_NOTIFY},
+            {"emergency",    MM_SESSION_TYPE_EMERGENCY},
+            {"media",        MM_SESSION_TYPE_CALL},
+            {"media",        MM_SESSION_TYPE_VIDEOCALL},
+            {"voip",         MM_SESSION_TYPE_VOIP},
+            {"media",        MM_SESSION_TYPE_VOICE_RECOGNITION},
+            {"media",        MM_SESSION_TYPE_RECORD_AUDIO},
+            {"media",        MM_SESSION_TYPE_RECORD_VIDEO}
+        };
+
+        /* Private Static Methods */
+        static int __pcmCaptureCountInc();
+        static int __pcmCaptureCountDec();
+        static int __pcmCaptureCountGet();
+        static int __focusIdCountInc();
+        static int __focusIdCountDec();
+        static int __focusIdCountGet();
+
+        static void __sound_pcm_signal_cb(mm_sound_signal_name_t signal, int value, void *user_data);
+        static void __sound_pcm_focus_cb(int id, mm_sound_focus_type_e focus_type, mm_sound_focus_state_e state, const char *reason_for_change, const char *additional_info, void *user_data);
+        static void __sound_pcm_focus_watch_cb(int id, mm_sound_focus_type_e focus_type, mm_sound_focus_state_e state, const char *reason_for_change, const char *additional_info, void *user_data);
+
+        /* Private Method */
+        CAudioError __convertStreamType(EAudioSessionType type1, MMSessionType type2, int *index);
+        CAudioError __getAsmInformation(MMSessionType *type, int *options);
+        bool __isFocusRequired(MMSessionType type, int options);
+
+        /* Static Member */
+        static int                  __sCaptureRef;
+        static int                  __sFocusRef;
+
+        /* Members */
+        int                         __mId;
+        int                         __mOptions;
+
+        EAudioSessionType           __mAudioSession;
+        MMSessionType               __mMultimediaSession;
+
+        mm_sound_focus_type_e       __mFocusType;        /* For audio focus */
+        mm_sound_focus_state_e      __mState;            /* For audio focus */
+        char*                       __mReasonForChange;  /* For audio focus */
+        char*                       __mAdditionalInfo;   /* For audio focus */
+
+        CAudioInfo                  __mAudioInfo;        /* Referenced from CAudioIO */
+
+        IAudioSessionEventListener* __mpEventListener;
+
+        bool                        __mIsInit;
+
+        bool                        __mUseFocus;
+        int                         __mSubscribeId;
     };
 
 

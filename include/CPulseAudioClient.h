@@ -36,43 +36,14 @@ namespace tizen_media_audio {
     class CPulseStreamSpec;
     class CPulseAudioClient {
     public:
-        /* Constants */
-        static const char* CLIENT_NAME;
-
         enum EStreamDirection {
             STREAM_DIRECTION_RECORD,        /**< Record stream */
             STREAM_DIRECTION_PLAYBACK       /**< Playback stream */
         };
 
-    private:
-        /* Members */
-        EStreamDirection      mDirection;
-        CPulseStreamSpec      mSpec;
-        IPulseStreamListener* mpListener;
+        /* Constants */
+        static const char* CLIENT_NAME;
 
-        pa_threaded_mainloop* mpMainloop;
-        pa_context*           mpContext;
-        pa_stream*            mpStream;
-        pa_proplist*          mpPropList;
-
-        bool                  mIsInit;
-        bool                  mIsOperationSuccess;
-
-        /* Static Methods */
-
-        /* Private Method */
-
-        /* Private Calblack Method */
-        static void _contextStateChangeCb(pa_context* c, void* user_data);
-        static void _successContextCb(pa_context* c, int success, void* user_data);
-
-        static void _streamStateChangeCb(pa_stream* s, void* user_data);
-        static void _streamCaptureCb(pa_stream* s, size_t length, void* user_data);
-        static void _streamPlaybackCb(pa_stream* s, size_t length, void* user_data);
-        static void _streamLatencyUpdateCb(pa_stream* s, void* user_data);
-        static void _successStreamCb(pa_stream* s, int success, void* user_data);
-
-    public:
         /* Constructor & Destructor */
         CPulseAudioClient(EStreamDirection      direction,
                           CPulseStreamSpec&     spec,
@@ -108,6 +79,34 @@ namespace tizen_media_audio {
         /* Setter & Getter */
         EStreamDirection getStreamDirection();
         CPulseStreamSpec getStreamSpec();
+
+    private:
+        /* Members */
+        EStreamDirection      __mDirection;
+        CPulseStreamSpec      __mSpec;
+        IPulseStreamListener* __mpListener;
+
+        pa_threaded_mainloop* __mpMainloop;
+        pa_context*           __mpContext;
+        pa_stream*            __mpStream;
+        pa_proplist*          __mpPropList;
+
+        bool                  __mIsInit;
+        bool                  __mIsOperationSuccess;
+
+        /* Static Methods */
+
+        /* Private Method */
+
+        /* Private Calblack Method */
+        static void __contextStateChangeCb(pa_context* c, void* user_data);
+        static void __successContextCb(pa_context* c, int success, void* user_data);
+
+        static void __streamStateChangeCb(pa_stream* s, void* user_data);
+        static void __streamCaptureCb(pa_stream* s, size_t length, void* user_data);
+        static void __streamPlaybackCb(pa_stream* s, size_t length, void* user_data);
+        static void __streamLatencyUpdateCb(pa_stream* s, void* user_data);
+        static void __successStreamCb(pa_stream* s, int success, void* user_data);
     };
 
 

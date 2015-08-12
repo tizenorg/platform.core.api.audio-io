@@ -28,20 +28,6 @@ namespace tizen_media_audio {
      * A class CAudioInput that inherited from CAudioIO
      */
     class CAudioInput : public CAudioIO {
-    private:
-
-        const void* mpSyncReadDataPtr;
-        size_t      mSyncReadIndex;
-        size_t      mSyncReadLength;
-
-        bool mIsUsedSyncRead;
-        bool mIsInit;
-
-        /* Private Methods */
-        void setInit(bool flag);
-        bool IsInit();
-        bool IsReady();
-
     public:
         /* Constructor & Destructor */
         CAudioInput(CAudioInfo& info);
@@ -79,7 +65,22 @@ namespace tizen_media_audio {
         size_t read(void* buffer, size_t length) throw (CAudioError);
         int peek(const void** buffer, size_t* length) throw (CAudioError);
         int drop() throw (CAudioError);
+
+    private:
+        /* Private Methods */
+        void __setInit(bool flag);
+        bool __IsInit();
+        bool __IsReady();
+
+        const void* __mpSyncReadDataPtr;
+        size_t      __mSyncReadIndex;
+        size_t      __mSyncReadLength;
+
+        bool        __mIsUsedSyncRead;
+        bool        __mIsInit;
     };
+
+
 } /* namespace tizen_media_audio */
 
 #endif

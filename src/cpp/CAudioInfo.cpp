@@ -27,19 +27,19 @@ using namespace tizen_media_audio;
  * class CAudioInfo
  */
 CAudioInfo::CAudioInfo() :
-    mSampleRate(MAX_SYSTEM_SAMPLERATE),
-    mChannel(CHANNEL_MONO),
-    mSampleType(SAMPLE_TYPE_U8),
-    mAudioType(AUDIO_IN_TYPE_MEDIA),
-    mAudioIndex(-1) {
+    __mSampleRate(MAX_SYSTEM_SAMPLERATE),
+    __mChannel(CHANNEL_MONO),
+    __mSampleType(SAMPLE_TYPE_U8),
+    __mAudioType(AUDIO_IN_TYPE_MEDIA),
+    __mAudioIndex(-1) {
 }
 
 CAudioInfo::CAudioInfo(unsigned int sampleRate, EChannel channel, ESampleType sampleType, EAudioType audioType, int audioIndex) throw (CAudioError) :
-    mSampleRate(sampleRate),
-    mChannel(channel),
-    mSampleType(sampleType),
-    mAudioType(audioType),
-    mAudioIndex(audioIndex) {
+    __mSampleRate(sampleRate),
+    __mChannel(channel),
+    __mSampleType(sampleType),
+    __mAudioType(audioType),
+    __mAudioIndex(audioIndex) {
     // Check to invalid AudioInfo
     if (sampleRate < CAudioInfo::MIN_SYSTEM_SAMPLERATE || sampleRate > CAudioInfo::MAX_SYSTEM_SAMPLERATE) {
         THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "The sampleRate is invalid [sampleRate:%d]", sampleRate);
@@ -59,32 +59,32 @@ CAudioInfo::CAudioInfo(unsigned int sampleRate, EChannel channel, ESampleType sa
 }
 
 unsigned int CAudioInfo::getSampleRate() {
-    return mSampleRate;
+    return __mSampleRate;
 }
 
 CAudioInfo::EChannel CAudioInfo::getChannel() {
-    return mChannel;
+    return __mChannel;
 }
 
 CAudioInfo::ESampleType CAudioInfo::getSampleType() {
-    return mSampleType;
+    return __mSampleType;
 }
 
 CAudioInfo::EAudioType CAudioInfo::getAudioType() {
-    return mAudioType;
+    return __mAudioType;
 }
 
 void CAudioInfo::setAudioType(CAudioInfo::EAudioType AudioType) {
-    mAudioType = AudioType;
+    __mAudioType = AudioType;
     return;
 }
 
 int CAudioInfo::getAudioIndex() {
-    return mAudioIndex;
+    return __mAudioIndex;
 }
 
 void CAudioInfo::setAudioIndex(int AudioIndex) {
-    mAudioIndex = AudioIndex;
+    __mAudioIndex = AudioIndex;
     return;
 }
 
@@ -93,7 +93,7 @@ void CAudioInfo::convertAudioType2StreamType (CAudioInfo::EAudioType audioType, 
     if (audioType < CAudioInfo::AUDIO_IN_TYPE_MEDIA || audioType >= CAudioInfo::AUDIO_TYPE_MAX) {
         THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_NOT_SUPPORTED_TYPE, "The audioType is not supported [audioType:%d]", audioType);
     }
-    *streamType = (char *)StreamTypeTable[audioType];
+    *streamType = (char *)__STREAM_TYPE_TABLE[audioType];
     return;
 }
 
@@ -101,7 +101,7 @@ void CAudioInfo::convertInputStreamType2AudioType (char *streamType, CAudioInfo:
 {
     unsigned int i;
     for (i = CAudioInfo::AUDIO_IN_TYPE_MEDIA ; i < CAudioInfo::AUDIO_OUT_TYPE_MEDIA ; i++) {
-        if (!strcmp((char *)StreamTypeTable[i], streamType)) {
+        if (!strcmp((char *)__STREAM_TYPE_TABLE[i], streamType)) {
             break;
         }
     }
@@ -116,7 +116,7 @@ void CAudioInfo::convertOutputStreamType2AudioType (char *streamType, CAudioInfo
 {
     unsigned int i;
     for (i = CAudioInfo::AUDIO_OUT_TYPE_MEDIA ; i < CAudioInfo::AUDIO_TYPE_MAX ; i++) {
-        if (!strcmp((char *)StreamTypeTable[i], streamType)) {
+        if (!strcmp((char *)__STREAM_TYPE_TABLE[i], streamType)) {
             break;
         }
     }

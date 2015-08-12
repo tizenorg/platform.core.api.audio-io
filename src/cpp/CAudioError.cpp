@@ -27,51 +27,51 @@ using namespace tizen_media_audio;
 /**
  * class CAudioError
  */
-CAudioError::EError CAudioError::mLastError = CAudioError::ERROR_NONE;
-char CAudioError::mLastErrorMsg[CAudioError::MSG_LENGTH];
+CAudioError::EError CAudioError::__mLastError = CAudioError::ERROR_NONE;
+char CAudioError::__mLastErrorMsg[CAudioError::MSG_LENGTH];
 
 CAudioError::CAudioError(EError err) :
-    mError(err) {
-    mLastError = mError;
+    __mError(err) {
+    __mLastError = __mError;
 }
 
 CAudioError::CAudioError(EError err, const char* fileName, const char* parentFunc, int lineNum) :
-    mError(err) {
-    mLastError = mError;
+    __mError(err) {
+    __mLastError = __mError;
 
     const char* findFileName = strrchr(fileName, '/');
     findFileName++;
-    const char* errStr = __convertErrorToString(mError);
+    const char* errStr = __convertErrorToString(__mError);
 
-    snprintf(mErrorMsg, CAudioError::MSG_LENGTH, "["
+    snprintf(__mErrorMsg, CAudioError::MSG_LENGTH, "["
             COLOR_RED    "THROW" COLOR_END ":%s|"
             COLOR_YELLOW "ERR"    COLOR_END ":%s|"
             COLOR_YELLOW "FUNC"   COLOR_END ":%s(%d)]", findFileName, errStr, parentFunc, lineNum);
 
-    snprintf(mLastErrorMsg, CAudioError::MSG_LENGTH, "LastError:%s", mErrorMsg);
+    snprintf(__mLastErrorMsg, CAudioError::MSG_LENGTH, "LastError:%s", __mErrorMsg);
 }
 
 CAudioError::CAudioError(EError err, const char* msg, const char* fileName, const char* parentFunc, int lineNum) :
-    mError(err) {
-    mLastError = mError;
+    __mError(err) {
+    __mLastError = __mError;
 
     const char* findFileName = strrchr(fileName, '/');
     findFileName++;
-    const char* errStr = __convertErrorToString(mError);
+    const char* errStr = __convertErrorToString(__mError);
 
-    snprintf(mErrorMsg, CAudioError::MSG_LENGTH, "["
+    snprintf(__mErrorMsg, CAudioError::MSG_LENGTH, "["
             COLOR_RED    "THROW" COLOR_END ":%s|"
             COLOR_YELLOW "ERR"    COLOR_END ":%s|"
             COLOR_YELLOW "FUNC"   COLOR_END ":%s(%d)]"
             COLOR_YELLOW "MSG"    COLOR_END ":"
             COLOR_CYAN   "%s"     COLOR_END, findFileName, errStr, parentFunc, lineNum, msg);
 
-    snprintf(mLastErrorMsg, CAudioError::MSG_LENGTH, "LastError:%s", mErrorMsg);
+    snprintf(__mLastErrorMsg, CAudioError::MSG_LENGTH, "LastError:%s", __mErrorMsg);
 }
 
 //CAudioError::CAudioError(CAudioError& err) {
-//    mError = err.mError;
-//    strncpy(mErrorMsg, err.mErrorMsg, MSG_LENGTH);
+//    __mError = err.__mError;
+//    strncpy(__mErrorMsg, err.__mErrorMsg, MSG_LENGTH);
 //}
 
 CAudioError::~CAudioError() {
@@ -104,44 +104,44 @@ const char* CAudioError::__convertErrorToString(EError err) {
 }
 
 CAudioError::EError CAudioError::getLastError() {
-    return mLastError;
+    return __mLastError;
 }
 
 const char* CAudioError::getLastErrorMsg() {
-    return mLastErrorMsg;
+    return __mLastErrorMsg;
 }
 
 CAudioError::EError CAudioError::getError() {
-    return mError;
+    return __mError;
 }
 
 const char* CAudioError::getErrorMsg() {
-    return mErrorMsg;
+    return __mErrorMsg;
 }
 
 CAudioError& CAudioError::operator = (const EError err) {
-    mError = err;
-    mLastError = mError;
+    __mError = err;
+    __mLastError = __mError;
     return *this;
 }
 
 CAudioError& CAudioError::operator = (const CAudioError& err) {
-    mError = err.mError;
-    mLastError = mError;
-    memcpy(mErrorMsg, err.mErrorMsg, MSG_LENGTH);
-    memcpy(mLastErrorMsg, mErrorMsg, MSG_LENGTH);
+    __mError = err.__mError;
+    __mLastError = __mError;
+    memcpy(__mErrorMsg, err.__mErrorMsg, MSG_LENGTH);
+    memcpy(__mLastErrorMsg, __mErrorMsg, MSG_LENGTH);
     return *this;
 }
 
 bool CAudioError::operator != (const EError err) {
-    return (mError != err);
+    return (__mError != err);
 }
 
 bool CAudioError::operator == (const EError err) {
-    return (mError == err);
+    return (__mError == err);
 }
 
 //bool operator == (const CAudioError& src, const CAudioError::EError& err) {
-//    //return (src.mLastError == err);
+//    //return (src.__mLastError == err);
 //    return true;
 //}

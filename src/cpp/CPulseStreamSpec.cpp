@@ -39,104 +39,104 @@ static const char* STREAM_LATENCY_VOIP = "voip";
 
 
 CPulseStreamSpec::CPulseStreamSpec() throw (CAudioError) :
-    mLatency(STREAM_LATENCY_INPUT_MID),
-    mStreamName(NULL) {
-    _adjustSpec();
+    __mLatency(STREAM_LATENCY_INPUT_MID),
+    __mStreamName(NULL) {
+    __adjustSpec();
 }
 
 CPulseStreamSpec::CPulseStreamSpec(EStreamLatency latency, CAudioInfo& audioInfo) throw (CAudioError) :
-    mLatency(latency),
-    mAudioInfo(audioInfo),
-    mStreamName(NULL) {
-    _adjustSpec();
+    __mLatency(latency),
+    __mAudioInfo(audioInfo),
+    __mStreamName(NULL) {
+    __adjustSpec();
 }
 
 CPulseStreamSpec::CPulseStreamSpec(EStreamLatency latency, CAudioInfo& audioInfo, int customLatency) throw (CAudioError) :
-    mLatency(latency),
-    mAudioInfo(audioInfo),
-    mStreamName(NULL) {
-    _adjustSpec();
+    __mLatency(latency),
+    __mAudioInfo(audioInfo),
+    __mStreamName(NULL) {
+    __adjustSpec();
 }
 
 CPulseStreamSpec::~CPulseStreamSpec() {
 }
 
-void CPulseStreamSpec::_adjustSpec() throw (CAudioError) {
+void CPulseStreamSpec::__adjustSpec() throw (CAudioError) {
     // Sets a sampleRate
-    mSampleSpec.rate = mAudioInfo.getSampleRate();
+    __mSampleSpec.rate = __mAudioInfo.getSampleRate();
 
     // Convert channels for PA
-    switch (mAudioInfo.getChannel()) {
+    switch (__mAudioInfo.getChannel()) {
     case CAudioInfo::CHANNEL_MONO:
-        mSampleSpec.channels = 1;
+        __mSampleSpec.channels = 1;
         break;
 
     case CAudioInfo::CHANNEL_STEREO:
     default:
-        mSampleSpec.channels = 2;
+        __mSampleSpec.channels = 2;
         break;
     }
 
     // Convert format for PA
-    switch (mAudioInfo.getSampleType()) {
+    switch (__mAudioInfo.getSampleType()) {
     case CAudioInfo::SAMPLE_TYPE_U8:
-        mSampleSpec.format = PA_SAMPLE_U8;
+        __mSampleSpec.format = PA_SAMPLE_U8;
         break;
 
     case CAudioInfo::SAMPLE_TYPE_S16_LE:
     default:
-        mSampleSpec.format = PA_SAMPLE_S16LE;
+        __mSampleSpec.format = PA_SAMPLE_S16LE;
         break;
     }
 
     // Sets channelmap
-    pa_channel_map_init_auto(&mChannelMap, mSampleSpec.channels, PA_CHANNEL_MAP_ALSA);
+    pa_channel_map_init_auto(&__mChannelMap, __mSampleSpec.channels, PA_CHANNEL_MAP_ALSA);
 
     // Sets stream name
-    switch (mLatency) {
+    switch (__mLatency) {
     case STREAM_LATENCY_OUTPUT_MID:
-        mStreamName = STREAM_NAME_OUTPUT;
+        __mStreamName = STREAM_NAME_OUTPUT;
         break;
 
     case STREAM_LATENCY_OUTPUT_HIGH:
-        mStreamName = STREAM_NAME_OUTPUT_HIGH_LATENCY;
+        __mStreamName = STREAM_NAME_OUTPUT_HIGH_LATENCY;
         break;
 
     case STREAM_LATENCY_OUTPUT_LOW:
-        mStreamName = STREAM_NAME_OUTPUT_LOW_LATENCY;
+        __mStreamName = STREAM_NAME_OUTPUT_LOW_LATENCY;
         break;
 
     case STREAM_LATENCY_OUTPUT_VOIP:
-        mStreamName = STREAM_NAME_OUTPUT_VOIP;
+        __mStreamName = STREAM_NAME_OUTPUT_VOIP;
         break;
 
     case STREAM_LATENCY_INPUT_HIGH:
-        mStreamName = STREAM_NAME_INPUT_HIGH_LATENCY;
+        __mStreamName = STREAM_NAME_INPUT_HIGH_LATENCY;
         break;
 
     case STREAM_LATENCY_INPUT_LOW:
-        mStreamName = STREAM_NAME_INPUT_LOW_LATENCY;
+        __mStreamName = STREAM_NAME_INPUT_LOW_LATENCY;
         break;
 
     case STREAM_LATENCY_INPUT_VOIP:
-        mStreamName = STREAM_NAME_INPUT_VOIP;
+        __mStreamName = STREAM_NAME_INPUT_VOIP;
         break;
 
     case STREAM_LATENCY_INPUT_MID:
     default:
-        mStreamName = STREAM_NAME_INPUT;
+        __mStreamName = STREAM_NAME_INPUT;
         break;
     }
 }
 
 CPulseStreamSpec::EStreamLatency CPulseStreamSpec::getStreamLatency() {
-    return mLatency;
+    return __mLatency;
 }
 
 const char* CPulseStreamSpec::getStreamLatencyToString() {
     const char* latency;
 
-    switch (mLatency) {
+    switch (__mLatency) {
     case STREAM_LATENCY_INPUT_LOW:
     case STREAM_LATENCY_OUTPUT_LOW:
         latency = STREAM_LATENCY_LOW;
@@ -162,17 +162,17 @@ const char* CPulseStreamSpec::getStreamLatencyToString() {
 }
 
 CAudioInfo CPulseStreamSpec::getAudioInfo() {
-    return mAudioInfo;
+    return __mAudioInfo;
 }
 
 pa_sample_spec CPulseStreamSpec::getSampleSpec() {
-    return mSampleSpec;
+    return __mSampleSpec;
 }
 
 pa_channel_map CPulseStreamSpec::getChannelMap() {
-    return mChannelMap;
+    return __mChannelMap;
 }
 
 const char* CPulseStreamSpec::getStreamName() {
-    return mStreamName;
+    return __mStreamName;
 }

@@ -27,7 +27,7 @@ using namespace tizen_media_audio;
  */
 CAudioOutput::CAudioOutput(CAudioInfo& info) :
     CAudioIO(info),
-    mIsUsedSyncWrite(false) {
+    __mIsUsedSyncWrite(false) {
 }
 
 CAudioOutput::CAudioOutput(
@@ -35,7 +35,7 @@ CAudioOutput::CAudioOutput(
         CAudioInfo::EChannel    channel,
         CAudioInfo::ESampleType sampleType,
         CAudioInfo::EAudioType  audioType) :
-    mIsUsedSyncWrite(false) {
+    __mIsUsedSyncWrite(false) {
     mAudioInfo = CAudioInfo(sampleRate, channel, sampleType, audioType, -1);
 }
 
@@ -50,7 +50,7 @@ void CAudioOutput::onStream(CPulseAudioClient* pClient, size_t length) {
      * Does not call CAudioIO::onStream() for synchronization
      * if a user is using write()
      */
-    if (mIsUsedSyncWrite == true) {
+    if (__mIsUsedSyncWrite == true) {
 #ifdef _AUDIO_IO_DEBUG_TIMING_
         AUDIO_IO_LOGD("Sync Write Mode! - signal! - pClient:[%p], length:[%d]", pClient, length);
 #endif
@@ -79,20 +79,20 @@ void CAudioOutput::onSignal(CAudioSessionHandler* pHandler, mm_sound_signal_name
     CAudioIO::onSignal(pHandler, signal, value);
 }
 
-void CAudioOutput::setInit(bool flag) {
-    mIsInit = flag;
+void CAudioOutput::__setInit(bool flag) {
+    __mIsInit = flag;
 }
 
-bool CAudioOutput::IsInit() {
-    return (CAudioIO::isInit() == true && mIsInit == true);
+bool CAudioOutput::__IsInit() {
+    return (CAudioIO::isInit() == true && __mIsInit == true);
 }
 
-bool CAudioOutput::IsReady() {
+bool CAudioOutput::__IsReady() {
     return CAudioIO::IsReady();
 }
 
 void CAudioOutput::initialize() throw (CAudioError) {
-    if (IsInit() == true) {
+    if (__IsInit() == true) {
         return;
     }
 
@@ -108,7 +108,7 @@ void CAudioOutput::initialize() throw (CAudioError) {
         // Initialize ASM Handler
         mpAudioSessionHandler->initialize();
 
-        setInit(true);
+        __setInit(true);
         CAudioIO::onStateChanged(CAudioInfo::AUDIO_IO_STATE_IDLE);
     } catch (CAudioError err) {
         finalize();
@@ -117,7 +117,7 @@ void CAudioOutput::initialize() throw (CAudioError) {
 }
 
 void CAudioOutput::finalize() {
-    if (IsInit() == false) {
+    if (__IsInit() == false) {
         AUDIO_IO_LOGD("Did not initialize");
         return;
     }
@@ -127,11 +127,11 @@ void CAudioOutput::finalize() {
 
     CAudioIO::finalize();
 
-    setInit(false);
+    __setInit(false);
 }
 
 void CAudioOutput::prepare() throw (CAudioError) {
-    if (IsInit() == false) {
+    if (__IsInit() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioOutput");
     }
 
@@ -186,7 +186,7 @@ void CAudioOutput::prepare() throw (CAudioError) {
 }
 
 void CAudioOutput::unprepare() throw (CAudioError) {
-    if (IsInit() == false) {
+    if (__IsInit() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioOutput");
     }
 
@@ -225,7 +225,7 @@ void CAudioOutput::unprepare() throw (CAudioError) {
 }
 
 void CAudioOutput::pause() throw (CAudioError) {
-    if (IsInit() == false || IsReady() == false) {
+    if (__IsInit() == false || IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioOutput");
     }
 
@@ -249,7 +249,7 @@ void CAudioOutput::pause() throw (CAudioError) {
 }
 
 void CAudioOutput::resume() throw (CAudioError) {
-    if (IsInit() == false || IsReady() == false) {
+    if (__IsInit() == false || IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioOutput");
     }
 
@@ -274,7 +274,7 @@ void CAudioOutput::resume() throw (CAudioError) {
 }
 
 void CAudioOutput::drain() throw (CAudioError) {
-    if (IsInit() == false || IsReady() == false) {
+    if (__IsInit() == false || IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioOutput");
     }
 
@@ -286,7 +286,7 @@ void CAudioOutput::drain() throw (CAudioError) {
 }
 
 void CAudioOutput::flush() throw (CAudioError) {
-    if (IsInit() == false || IsReady() == false) {
+    if (__IsInit() == false || IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioOutput");
     }
 
@@ -298,7 +298,7 @@ void CAudioOutput::flush() throw (CAudioError) {
 }
 
 int CAudioOutput::getBufferSize() throw (CAudioError) {
-    if (IsInit() == false) {
+    if (__IsInit() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioOutput");
     }
 
@@ -319,7 +319,7 @@ int CAudioOutput::getBufferSize() throw (CAudioError) {
 }
 
 size_t CAudioOutput::write(const void* buffer, size_t length) throw (CAudioError) {
-    if (IsInit() == false || IsReady() == false) {
+    if (__IsInit() == false || IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioOutput");
     }
 
@@ -340,7 +340,7 @@ size_t CAudioOutput::write(const void* buffer, size_t length) throw (CAudioError
         internalLock();
 
         // Sets synchronous flag
-        mIsUsedSyncWrite = true;
+        __mIsUsedSyncWrite = true;
 
         size_t lengthIter = length;
 
@@ -372,11 +372,11 @@ size_t CAudioOutput::write(const void* buffer, size_t length) throw (CAudioError
         }  // End of while (length > 0)
 
         // Unsets synchronous flag
-        mIsUsedSyncWrite = false;
+        __mIsUsedSyncWrite = false;
         internalUnlock();
     } catch (CAudioError e) {
         // Unsets synchronous flag
-        mIsUsedSyncWrite = false;
+        __mIsUsedSyncWrite = false;
         internalUnlock();
         throw e;
     }

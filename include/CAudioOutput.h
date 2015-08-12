@@ -30,15 +30,6 @@ namespace tizen_media_audio {
      * A class CAudioOutput that inherited from CAudioIO
      */
     class CAudioOutput : public CAudioIO {
-    private:
-        bool mIsUsedSyncWrite;
-        bool mIsInit;
-
-        /* Private Methods */
-        void setInit(bool flag);
-        bool IsInit();
-        bool IsReady();
-
     public:
         /* Constructor & Destructor */
         CAudioOutput(CAudioInfo& info);
@@ -71,7 +62,17 @@ namespace tizen_media_audio {
 
         /* Methods */
         size_t write(const void* buffer, size_t length) throw (CAudioError);
+
+    private:
+        /* Private Methods */
+        void __setInit(bool flag);
+        bool __IsInit();
+        bool __IsReady();
+
+        bool __mIsUsedSyncWrite;
+        bool __mIsInit;
     };
+
 
 } /* namespace tizen_media_audio */
 
