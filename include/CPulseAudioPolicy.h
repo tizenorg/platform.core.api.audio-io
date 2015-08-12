@@ -31,7 +31,7 @@ namespace tizen_media_audio {
      */
     class CPulseAudioPolicy {
     public:
-        /* Constants */
+        /* Enums */
         enum EPolicy {
             POLICY_DEFAULT,
             POLICY_OUT_AUTO,
@@ -45,11 +45,6 @@ namespace tizen_media_audio {
             POLICY_MAX
         };
 
-    private:
-        /* Members */
-        EPolicy mPolicy;
-
-    public:
         /* Constructors */
         CPulseAudioPolicy();
         CPulseAudioPolicy(EPolicy policy);
@@ -62,6 +57,10 @@ namespace tizen_media_audio {
         /* Override */
         bool operator != (const EPolicy policy);
         bool operator == (const EPolicy policy);
+
+    private:
+        /* Members */
+        EPolicy mPolicy;
     };
 
 

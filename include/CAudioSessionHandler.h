@@ -40,32 +40,32 @@ namespace tizen_media_audio {
             AUDIO_SESSION_TYPE_PLAYBACK
         };
 
+        /* Constructor & Destructor */
+        CAudioSessionHandler(EAudioSessionType sessionType, CAudioInfo& audioInfo, IAudioSessionEventListener* listener);
+        virtual ~CAudioSessionHandler();
+
+        /* Methods */
+        virtual void initialize() throw (CAudioError);
+        virtual void finalize();
+
+        bool isSkipSessionEvent() throw (CAudioError);
+
+        void registerSound() throw (CAudioError);
+        void unregisterSound() throw (CAudioError);
+
+        void updatePlaying() throw (CAudioError);
+        void updateStop() throw (CAudioError);
+        void disableSessionHandler() throw (CAudioError);
+
+        /* Setter & Getter */
+        int getId();
+        int getOptions();
+        EAudioSessionType  getAudioSession();
+        MMSessionType      getMultimediaSession();
+        int getSubscribeId();
+        CAudioInfo getAudioInfo();
+
     private:
-        /* Static Member */
-        static int                  sCaptureRef;
-        static int                  sFocusRef;
-
-        /* Members */
-        int                         mId;
-        int                         mOptions;
-
-        EAudioSessionType           mAudioSession;
-        MMSessionType               mMultimediaSession;
-
-        mm_sound_focus_type_e       mFocusType;        /* For audio focus */
-        mm_sound_focus_state_e      mState;            /* For audio focus */
-        char*                       mReasonForChange;  /* For audio focus */
-        char*                       mAdditionalInfo;   /* For audio focus */
-
-        CAudioInfo                  mAudioInfo;        /* Referenced from CAudioIO */
-
-        IAudioSessionEventListener* mpEventListener;
-
-        bool                        mIsInit;
-
-        bool                        mUseFocus;
-        int                         mSubscribeId;
-
         struct stream_type_table_s {
             const char* name;
             MMSessionType type;
@@ -115,34 +115,30 @@ namespace tizen_media_audio {
         CAudioError _getAsmInformation(MMSessionType *type, int *options);
         bool _isFocusRequired(MMSessionType type, int options);
 
-    public:
-        /* Constructor & Destructor */
-        CAudioSessionHandler(EAudioSessionType sessionType, CAudioInfo& audioInfo, IAudioSessionEventListener* listener);
-        virtual ~CAudioSessionHandler();
+        /* Static Member */
+        static int                  sCaptureRef;
+        static int                  sFocusRef;
 
-        /* Methods */
-        virtual void initialize() throw (CAudioError);
-        virtual void finalize();
+        /* Members */
+        int                         mId;
+        int                         mOptions;
 
-        bool isSkipSessionEvent() throw (CAudioError);
+        EAudioSessionType           mAudioSession;
+        MMSessionType               mMultimediaSession;
 
-        void registerSound() throw (CAudioError);
-        void unregisterSound() throw (CAudioError);
+        mm_sound_focus_type_e       mFocusType;        /* For audio focus */
+        mm_sound_focus_state_e      mState;            /* For audio focus */
+        char*                       mReasonForChange;  /* For audio focus */
+        char*                       mAdditionalInfo;   /* For audio focus */
 
-        void updatePlaying() throw (CAudioError);
-        void updateStop() throw (CAudioError);
-        void disableSessionHandler() throw (CAudioError);
+        CAudioInfo                  mAudioInfo;        /* Referenced from CAudioIO */
 
-        /* Setter & Getter */
-        int getId();
-        int getOptions();
+        IAudioSessionEventListener* mpEventListener;
 
-        EAudioSessionType    getAudioSession();
-        MMSessionType        getMultimediaSession();
+        bool                        mIsInit;
 
-        int getSubscribeId();
-
-        CAudioInfo getAudioInfo();
+        bool                        mUseFocus;
+        int                         mSubscribeId;
     };
 
 

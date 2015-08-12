@@ -37,7 +37,7 @@ namespace tizen_media_audio {
             void (*onStream)(size_t nbytes, void* user_data);
 
             SStreamCallback() : mUserData(NULL), onStream(NULL)
-            {/* Empty Body */}
+            { /* Empty Body */ }
         };
 
         struct SStateChangedCallback {
@@ -45,7 +45,7 @@ namespace tizen_media_audio {
             void (*onStateChanged)(CAudioInfo::EAudioIOState state, CAudioInfo::EAudioIOState statePrev, bool byPolicy, void* user_data);
 
             SStateChangedCallback() : mUserData(NULL), onStateChanged(NULL)
-            {/* Empty Body */}
+            { /* Empty Body */ }
         };
 
         struct SInterruptCallback {
@@ -53,41 +53,9 @@ namespace tizen_media_audio {
             void (*onInterrupt)(IAudioSessionEventListener::EInterruptCode code, void* user_data);
 
             SInterruptCallback() : mUserData(NULL), onInterrupt(NULL)
-            {/* Empty Body */}
+            { /* Empty Body */ }
         };
 
-    private:
-        pthread_mutex_t       mMutex;
-        pthread_cond_t        mCond;
-        bool                  mIsInit;
-        bool                  mForceIgnore;
-
-    protected:
-        CAudioSessionHandler* mpAudioSessionHandler;
-        CPulseAudioClient*    mpPulseAudioClient;
-        CAudioInfo            mAudioInfo;
-
-        SStreamCallback       mStreamCallback;
-        SStateChangedCallback mStateChangedCallback;
-        SInterruptCallback    mInterruptCallback;
-
-        CAudioInfo::EAudioIOState mState;
-        CAudioInfo::EAudioIOState mStatePrev;
-        bool                  mByPolicy;
-
-        /* Protected Methods */
-        virtual void setInit(bool flag);
-        virtual bool isInit();
-        virtual bool IsReady();
-
-        void internalLock()   throw (CAudioError);
-        void internalUnlock() throw (CAudioError);
-        void internalWait()   throw (CAudioError);
-        void internalSignal() throw (CAudioError);
-
-        bool isForceIgnore();
-
-    public:
         /* Constructor & Destructor */
         CAudioIO();
         CAudioIO(CAudioInfo& audioInfo);
@@ -128,7 +96,39 @@ namespace tizen_media_audio {
         SInterruptCallback getInterruptCallback() throw (CAudioError);
 
         void ignoreSession() throw (CAudioError);
+
+    protected:
+        /* Protected Methods */
+        virtual void setInit(bool flag);
+        virtual bool isInit();
+        virtual bool IsReady();
+
+        void internalLock()   throw (CAudioError);
+        void internalUnlock() throw (CAudioError);
+        void internalWait()   throw (CAudioError);
+        void internalSignal() throw (CAudioError);
+
+        bool isForceIgnore();
+
+        CAudioSessionHandler* mpAudioSessionHandler;
+        CPulseAudioClient*    mpPulseAudioClient;
+        CAudioInfo            mAudioInfo;
+
+        SStreamCallback       mStreamCallback;
+        SStateChangedCallback mStateChangedCallback;
+        SInterruptCallback    mInterruptCallback;
+
+        CAudioInfo::EAudioIOState mState;
+        CAudioInfo::EAudioIOState mStatePrev;
+        bool                  mByPolicy;
+
+    private:
+        pthread_mutex_t       mMutex;
+        pthread_cond_t        mCond;
+        bool                  mIsInit;
+        bool                  mForceIgnore;
     };
+
 
 } /* namespace tizen_media_audio */
 

@@ -29,9 +29,6 @@ namespace tizen_media_audio {
      */
     class CAudioInfo {
     public:
-        const static unsigned int MIN_SYSTEM_SAMPLERATE = 8000;
-        const static unsigned int MAX_SYSTEM_SAMPLERATE = 48000;
-
         enum EChannel {
             CHANNEL_MONO = 1,               /**< 1 channel, mono */
             CHANNEL_STEREO,                 /**< 2 channel, stereo */
@@ -87,6 +84,25 @@ namespace tizen_media_audio {
             AUDIO_IO_STATE_PAUSED,    /**< Audio-io handle is ready and the stream is paused */
         };
 
+        const static unsigned int MIN_SYSTEM_SAMPLERATE = 8000;
+        const static unsigned int MAX_SYSTEM_SAMPLERATE = 48000;
+
+        /* Constructors */
+        CAudioInfo();
+        CAudioInfo(unsigned int sampleRate, EChannel channel, ESampleType sampleType, EAudioType audioType, int audioIndex) throw (CAudioError);
+
+        /* Setter & Getter */
+        unsigned int getSampleRate();
+        EChannel getChannel();
+        ESampleType getSampleType();
+        EAudioType getAudioType();
+        void setAudioType(EAudioType AudioType);
+        int getAudioIndex();
+        void setAudioIndex(int AudioIndex);
+        void convertAudioType2StreamType (CAudioInfo::EAudioType audioType, char **streamType);
+        void convertInputStreamType2AudioType (char *streamType, CAudioInfo::EAudioType *audioType);
+        void convertOutputStreamType2AudioType (char *streamType, CAudioInfo::EAudioType *audioType);
+
     private:
         unsigned int mSampleRate;
         EChannel     mChannel;
@@ -127,24 +143,8 @@ namespace tizen_media_audio {
             //"radio",                  /**< AUDIO_OUT_TYPE_RADIO */
             //"loopback",               /**< AUDIO_OUT_TYPE_LOOPBACK */
         };
-
-    public:
-        /* Constructors */
-        CAudioInfo();
-        CAudioInfo(unsigned int sampleRate, EChannel channel, ESampleType sampleType, EAudioType audioType, int audioIndex) throw (CAudioError);
-
-        /* Setter & Getter */
-        unsigned int getSampleRate();
-        EChannel getChannel();
-        ESampleType getSampleType();
-        EAudioType getAudioType();
-        void setAudioType(EAudioType AudioType);
-        int getAudioIndex();
-        void setAudioIndex(int AudioIndex);
-        void convertAudioType2StreamType (CAudioInfo::EAudioType audioType, char **streamType);
-        void convertInputStreamType2AudioType (char *streamType, CAudioInfo::EAudioType *audioType);
-        void convertOutputStreamType2AudioType (char *streamType, CAudioInfo::EAudioType *audioType);
     };
+
 
 } /* namespace tizen_media_audio */
 

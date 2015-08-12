@@ -31,7 +31,7 @@ namespace tizen_media_audio {
      */
     class CPulseAudioVolume {
     public:
-        /* Constants */
+        /* Enums */
         enum EVolume {
             VOLUME_SYSTEM,                         /**< System volume type */
             VOLUME_NOTIFICATION,                   /**< Notification volume type */
@@ -61,12 +61,6 @@ namespace tizen_media_audio {
             VOLUME_GAIN_MAX
         };
 
-    private:
-        /* Members */
-        EVolume     mVolume;
-        EVolumeGain mVolumeGain;
-
-    public:
         /* Constructor & Destructor */
         CPulseAudioVolume();
         CPulseAudioVolume(EVolume volume, EVolumeGain gain);
@@ -80,6 +74,11 @@ namespace tizen_media_audio {
 
         void setVolumeGain(EVolumeGain volumeGain);
         EVolumeGain getVolumeGain();
+
+    private:
+        /* Members */
+        EVolume     mVolume;
+        EVolumeGain mVolumeGain;
     };
 
 

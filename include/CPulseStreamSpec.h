@@ -32,7 +32,7 @@ namespace tizen_media_audio {
      */
     class CPulseStreamSpec {
     public:
-        /* Constants */
+        /* Enums */
         enum EStreamLatency {
             STREAM_LATENCY_INPUT_LOW,
             STREAM_LATENCY_INPUT_MID,
@@ -45,18 +45,6 @@ namespace tizen_media_audio {
             STREAM_LATENCY_MAX
         };
 
-    private:
-        /* Members */
-        EStreamLatency mLatency;
-        CAudioInfo     mAudioInfo;
-        pa_sample_spec mSampleSpec;
-        pa_channel_map mChannelMap;
-        const char*    mStreamName;
-
-        /* private meethod */
-        void _adjustSpec() throw (CAudioError);
-
-    public:
         /* Constructor & Destructor */
         CPulseStreamSpec() throw (CAudioError);
         CPulseStreamSpec(EStreamLatency latency, CAudioInfo& audioInfo) throw (CAudioError);
@@ -70,6 +58,17 @@ namespace tizen_media_audio {
         pa_sample_spec getSampleSpec();
         pa_channel_map getChannelMap();
         const char*    getStreamName();
+
+    private:
+        /* Private Methods */
+        void _adjustSpec() throw (CAudioError);
+
+        /* Members */
+        EStreamLatency mLatency;
+        CAudioInfo     mAudioInfo;
+        pa_sample_spec mSampleSpec;
+        pa_channel_map mChannelMap;
+        const char*    mStreamName;
     };
 
 
