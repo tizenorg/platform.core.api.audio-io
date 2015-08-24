@@ -135,7 +135,7 @@ void CAudioOutput::prepare() throw (CAudioError) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioOutput");
     }
 
-    if (IsReady() == true) {
+    if (__IsReady() == true) {
         AUDIO_IO_LOGD("Already prepared CAudioOutput");
         return;
     }
@@ -190,7 +190,7 @@ void CAudioOutput::unprepare() throw (CAudioError) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioOutput");
     }
 
-    if (IsReady() == false) {
+    if (__IsReady() == false) {
         AUDIO_IO_LOGD("Already unprepared");
         return;
     }
@@ -225,7 +225,7 @@ void CAudioOutput::unprepare() throw (CAudioError) {
 }
 
 void CAudioOutput::pause() throw (CAudioError) {
-    if (__IsInit() == false || IsReady() == false) {
+    if (__IsInit() == false || __IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioOutput");
     }
 
@@ -249,7 +249,7 @@ void CAudioOutput::pause() throw (CAudioError) {
 }
 
 void CAudioOutput::resume() throw (CAudioError) {
-    if (__IsInit() == false || IsReady() == false) {
+    if (__IsInit() == false || __IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioOutput");
     }
 
@@ -274,7 +274,7 @@ void CAudioOutput::resume() throw (CAudioError) {
 }
 
 void CAudioOutput::drain() throw (CAudioError) {
-    if (__IsInit() == false || IsReady() == false) {
+    if (__IsInit() == false || __IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioOutput");
     }
 
@@ -286,7 +286,7 @@ void CAudioOutput::drain() throw (CAudioError) {
 }
 
 void CAudioOutput::flush() throw (CAudioError) {
-    if (__IsInit() == false || IsReady() == false) {
+    if (__IsInit() == false || __IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioOutput");
     }
 
@@ -302,7 +302,7 @@ int CAudioOutput::getBufferSize() throw (CAudioError) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioOutput");
     }
 
-    if (IsReady() == false) {
+    if (__IsReady() == false) {
         AUDIO_IO_LOGD("Warning: Did not prepare CAudioOutput, then return zero");
         return 0;
     }
@@ -319,7 +319,7 @@ int CAudioOutput::getBufferSize() throw (CAudioError) {
 }
 
 size_t CAudioOutput::write(const void* buffer, size_t length) throw (CAudioError) {
-    if (__IsInit() == false || IsReady() == false) {
+    if (__IsInit() == false || __IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioOutput");
     }
 
