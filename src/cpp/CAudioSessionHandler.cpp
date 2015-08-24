@@ -101,7 +101,7 @@ CAudioError CAudioSessionHandler::__convertStreamType(EAudioSessionType type1, M
 
     assert(index != NULL);
 
-    if (type1 == AUDIO_SESSION_TYPE_CAPTURE) {
+    if (type1 == EAudioSessionType::AUDIO_SESSION_TYPE_CAPTURE) {
         for (i = 0 ; i < sizeof(__STREAM_TYPE_TABLE_IN) / sizeof(__STREAM_TYPE_TABLE_IN[0]) ; i++) {
             if (__STREAM_TYPE_TABLE_IN[i].type == type2) {
                 idx = i;
@@ -118,10 +118,10 @@ CAudioError CAudioSessionHandler::__convertStreamType(EAudioSessionType type1, M
     }
 
     if (idx < 0) {
-        RET_ERROR_MSG(CAudioError::ERROR_NOT_SUPPORTED, "Does not support session type.");
+        RET_ERROR_MSG(CAudioError::EError::ERROR_NOT_SUPPORTED, "Does not support session type.");
     }
     *index = idx;
-    RET_ERROR(CAudioError::ERROR_NONE);
+    RET_ERROR(CAudioError::EError::ERROR_NONE);
 }
 
 CAudioError CAudioSessionHandler::__getAsmInformation(MMSessionType *type, int *options) {
@@ -135,16 +135,16 @@ CAudioError CAudioSessionHandler::__getAsmInformation(MMSessionType *type, int *
     int ret = 0;
     if ((ret = _mm_session_util_read_information(-1, (int*)&currentSession, &sessionOptions)) < 0) {
         if (ret == (int) MM_ERROR_INVALID_HANDLE) {
-            RET_ERROR_MSG(CAudioError::ERROR_INVALID_HANDLE, "Failed _mm_session_util_read_information(). Invalid handle");
+            RET_ERROR_MSG(CAudioError::EError::ERROR_INVALID_HANDLE, "Failed _mm_session_util_read_information(). Invalid handle");
         } else {
-            RET_ERROR_MSG(CAudioError::ERROR_FAILED_OPERATION, "Failed _mm_session_util_read_information(). Not exist");
+            RET_ERROR_MSG(CAudioError::EError::ERROR_FAILED_OPERATION, "Failed _mm_session_util_read_information(). Not exist");
         }
     }
 
     *type    = currentSession;
     *options = sessionOptions;
 
-    RET_ERROR(CAudioError::ERROR_NONE);
+    RET_ERROR(CAudioError::EError::ERROR_NONE);
 }
 
 bool CAudioSessionHandler::__isFocusRequired(MMSessionType type, int options) {
@@ -200,18 +200,18 @@ void CAudioSessionHandler::initialize() throw (CAudioError) {
     int           sessionOptions = 0;  // Mix with others by default
 
     CAudioError err = __getAsmInformation(&currentSession, &sessionOptions);
-    if (err == CAudioError::ERROR_NONE) {
+    if (err == CAudioError::EError::ERROR_NONE) {
         // Session was configured before, use focus callback
         __mUseFocus = true;
         AUDIO_IO_LOGD("Use audio focus concept internally!");
     } else {
-        if (err == CAudioError::ERROR_INVALID_HANDLE) {
+        if (err == CAudioError::EError::ERROR_INVALID_HANDLE) {
             int value = 0;
             unsigned int subscribe_id;
 
             int errorCode = mm_sound_get_signal_value(MM_SOUND_SIGNAL_RELEASE_INTERNAL_FOCUS, &value);
             if (errorCode != MM_ERROR_NONE) {
-                THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_POLICY_BLOCKED, "Failed mm_sound_get_signal_value() err:0x%x", errorCode);
+                THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_POLICY_BLOCKED, "Failed mm_sound_get_signal_value() err:0x%x", errorCode);
             }
 
             if (value == 1) {
@@ -223,7 +223,7 @@ void CAudioSessionHandler::initialize() throw (CAudioError) {
                 // Use focus watch callback with signal subscribe
                 errorCode = mm_sound_subscribe_signal(MM_SOUND_SIGNAL_RELEASE_INTERNAL_FOCUS, &subscribe_id, __sound_pcm_signal_cb, static_cast<void*>(this));
                 if (errorCode != MM_ERROR_NONE) {
-                    THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_POLICY_BLOCKED, "Failed mm_sound_get_signal_value() err:0x%x", errorCode);
+                    THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_POLICY_BLOCKED, "Failed mm_sound_get_signal_value() err:0x%x", errorCode);
                 }
 
                 __mSubscribeId = (int)subscribe_id;
@@ -238,7 +238,7 @@ void CAudioSessionHandler::initialize() throw (CAudioError) {
             AUDIO_IO_LOGD("Skip audio focus concept!");
         }
 
-        if (__mAudioSession == AUDIO_SESSION_TYPE_CAPTURE) {
+        if (__mAudioSession == EAudioSessionType::AUDIO_SESSION_TYPE_CAPTURE) {
             AUDIO_IO_LOGD("Set default \"Media_Record\" type");
             currentSession = MM_SESSION_TYPE_MEDIA_RECORD;
         } else {
@@ -251,7 +251,7 @@ void CAudioSessionHandler::initialize() throw (CAudioError) {
     __mMultimediaSession = currentSession;
     __mOptions           = sessionOptions;
 
-    if (this->__mAudioSession == AUDIO_SESSION_TYPE_CAPTURE) {
+    if (this->__mAudioSession == EAudioSessionType::AUDIO_SESSION_TYPE_CAPTURE) {
         __pcmCaptureCountInc();
     }
 
@@ -264,7 +264,7 @@ void CAudioSessionHandler::finalize() {
         return;
     }
 
-    if (__mAudioSession == AUDIO_SESSION_TYPE_CAPTURE) {
+    if (__mAudioSession == EAudioSessionType::AUDIO_SESSION_TYPE_CAPTURE) {
         __pcmCaptureCountDec();
     }
 
@@ -345,12 +345,12 @@ void CAudioSessionHandler::__sound_pcm_focus_watch_cb(int id, mm_sound_focus_typ
 
 void CAudioSessionHandler::registerSound() throw (CAudioError) {
     if (__mIsInit == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioSessionHandler");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioSessionHandler");
     }
 
     if (__mUseFocus == true) {
         if (__mId >= 0) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_POLICY_BLOCKED, "Already registered [id:%d]", __mId);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_POLICY_BLOCKED, "Already registered [id:%d]", __mId);
         }
 
         int errorCode = 0;
@@ -358,22 +358,22 @@ void CAudioSessionHandler::registerSound() throw (CAudioError) {
         if (__isFocusRequired(__mMultimediaSession, __mOptions)) {
             int index = 0;
             CAudioError err = __convertStreamType(__mAudioSession, __mMultimediaSession, &index);
-            if (err != CAudioError::ERROR_NONE) {
+            if (err != CAudioError::EError::ERROR_NONE) {
                 throw err;
             }
 
             errorCode = mm_sound_focus_get_id(&__mId);
             if (errorCode != MM_ERROR_NONE) {
-                THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_POLICY_BLOCKED, "Failed mm_sound_focus_get_id() err:0x%x", errorCode);
+                THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_POLICY_BLOCKED, "Failed mm_sound_focus_get_id() err:0x%x", errorCode);
             }
 
             // Register focus callback
             errorCode = mm_sound_register_focus(__mId,
-                                                __mAudioSession == AUDIO_SESSION_TYPE_CAPTURE ? __STREAM_TYPE_TABLE_IN[index].name : __STREAM_TYPE_TABLE_OUT[index].name,
+                                                __mAudioSession == EAudioSessionType::AUDIO_SESSION_TYPE_CAPTURE ? __STREAM_TYPE_TABLE_IN[index].name : __STREAM_TYPE_TABLE_OUT[index].name,
                                                 __sound_pcm_focus_cb,
                                                 static_cast<void*>(this));
             if (errorCode != MM_ERROR_NONE) {
-                THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_POLICY_BLOCKED, "Failed mm_sound_register_focus() err:0x%x", errorCode);
+                THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_POLICY_BLOCKED, "Failed mm_sound_register_focus() err:0x%x", errorCode);
             }
 
             __focusIdCountInc();
@@ -383,7 +383,7 @@ void CAudioSessionHandler::registerSound() throw (CAudioError) {
             // Register focus watch callback
             errorCode = mm_sound_set_focus_watch_callback(FOCUS_FOR_BOTH, __sound_pcm_focus_watch_cb, static_cast<void*>(this), &__mId);
             if (errorCode < 0) {
-                THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_POLICY_BLOCKED, "Failed mm_sound_set_focus_watch_callback() err:0x%x", errorCode);
+                THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_POLICY_BLOCKED, "Failed mm_sound_set_focus_watch_callback() err:0x%x", errorCode);
             }
 
             __focusIdCountInc();
@@ -395,12 +395,12 @@ void CAudioSessionHandler::registerSound() throw (CAudioError) {
 
 void CAudioSessionHandler::unregisterSound() throw (CAudioError) {
     if (__mIsInit == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioSessionHandler");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioSessionHandler");
     }
 
     if (__mUseFocus == true) {
         if (__mId < 0) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_POLICY_BLOCKED, "Did not register [id:%d]", __mId);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_POLICY_BLOCKED, "Did not register [id:%d]", __mId);
         }
 
         int errorCode = 0;
@@ -409,7 +409,7 @@ void CAudioSessionHandler::unregisterSound() throw (CAudioError) {
             // Unregister focus callback
             errorCode = mm_sound_unregister_focus(__mId);
             if (errorCode != MM_ERROR_NONE) {
-                THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_POLICY_BLOCKED, "Failed mm_sound_unregister_focus() err:0x%x", errorCode);
+                THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_POLICY_BLOCKED, "Failed mm_sound_unregister_focus() err:0x%x", errorCode);
             }
 
             __focusIdCountDec();
@@ -420,7 +420,7 @@ void CAudioSessionHandler::unregisterSound() throw (CAudioError) {
             // Unregister focus watch callback.
             errorCode = mm_sound_unset_focus_watch_callback(__mId);
             if (errorCode < 0) {
-                THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_POLICY_BLOCKED, "Failed mm_sound_unset_focus_watch_callback() err:0x%x", errorCode);
+                THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_POLICY_BLOCKED, "Failed mm_sound_unset_focus_watch_callback() err:0x%x", errorCode);
             }
 
             __focusIdCountDec();
@@ -433,14 +433,14 @@ void CAudioSessionHandler::unregisterSound() throw (CAudioError) {
 
 void CAudioSessionHandler::updatePlaying() throw (CAudioError) {
     if (__mIsInit == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioSessionHandler");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioSessionHandler");
     }
 
     if (__mUseFocus && __isFocusRequired(__mMultimediaSession, __mOptions)) {
         if (__mId >= 0) {
             int ret = mm_sound_acquire_focus(__mId, FOCUS_FOR_BOTH, "audio-io acquire focus");
             if (ret != MM_ERROR_NONE) {
-                THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_POLICY_BLOCKED, "Failed mm_sound_acquire_focus() err:0x%x", ret);
+                THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_POLICY_BLOCKED, "Failed mm_sound_acquire_focus() err:0x%x", ret);
             }
             AUDIO_IO_LOGD("Focus acquired successfully [id:%d]", __mId);
         }
@@ -449,14 +449,14 @@ void CAudioSessionHandler::updatePlaying() throw (CAudioError) {
 
 void CAudioSessionHandler::updateStop() throw (CAudioError) {
     if (__mIsInit == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioSessionHandler");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioSessionHandler");
     }
 
     if (__mUseFocus && __isFocusRequired(__mMultimediaSession, __mOptions)) {
         if (__mId >= 0) {
             int ret = mm_sound_release_focus(__mId, FOCUS_FOR_BOTH, "audio-io release focus");
             if (ret != MM_ERROR_NONE) {
-                THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_POLICY_BLOCKED, "Failed mm_sound_release_focus() err:0x%x", ret);
+                THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_POLICY_BLOCKED, "Failed mm_sound_release_focus() err:0x%x", ret);
             }
             AUDIO_IO_LOGD("Focus released successfully [id:%d]", __mId);
         }
@@ -474,29 +474,29 @@ void CAudioSessionHandler::disableSessionHandler() throw (CAudioError) {
  * class IAudioSessionEventListener
  */
 IAudioSessionEventListener::EInterruptCode IAudioSessionEventListener::convertInterruptedCode(int code, const char *reason_for_change) {
-    EInterruptCode e = INTERRUPT_COMPLETED;
+    EInterruptCode e = EInterruptCode::INTERRUPT_COMPLETED;
 
     switch (code)
     {
     case FOCUS_IS_ACQUIRED:
-        e = INTERRUPT_COMPLETED;
+        e = EInterruptCode::INTERRUPT_COMPLETED;
         break;
 
     case FOCUS_IS_RELEASED:
-        if (!strcmp(reason_for_change, "media"))              e = INTERRUPT_BY_MEDIA;
-        if (!strcmp(reason_for_change, "radio"))              e = INTERRUPT_BY_MEDIA;
-        if (!strcmp(reason_for_change, "loopback"))           e = INTERRUPT_BY_MEDIA;
-        if (!strcmp(reason_for_change, "system"))             e = INTERRUPT_BY_MEDIA;
-        if (!strcmp(reason_for_change, "alarm"))              e = INTERRUPT_BY_ALARM;
-        if (!strcmp(reason_for_change, "notification"))       e = INTERRUPT_BY_NOTIFICATION;
-        if (!strcmp(reason_for_change, "emergency"))          e = INTERRUPT_BY_EMERGENCY;
-        if (!strcmp(reason_for_change, "voice-information"))  e = INTERRUPT_BY_MEDIA;  //for what?
-        if (!strcmp(reason_for_change, "voice-recognition"))  e = INTERRUPT_BY_MEDIA;  //for what?
-        if (!strcmp(reason_for_change, "ringtone-voip"))      e = INTERRUPT_BY_MEDIA;  //for what?
-        if (!strcmp(reason_for_change, "ringtone-call"))      e = INTERRUPT_BY_MEDIA;  //for what?
-        if (!strcmp(reason_for_change, "voip"))               e = INTERRUPT_BY_MEDIA;  //for what?
-        if (!strcmp(reason_for_change, "call-voice"))         e = INTERRUPT_BY_MEDIA;  //for what?
-        if (!strcmp(reason_for_change, "call-video"))         e = INTERRUPT_BY_MEDIA;  //for what?
+        if (!strcmp(reason_for_change, "media"))              e = EInterruptCode::INTERRUPT_BY_MEDIA;
+        if (!strcmp(reason_for_change, "radio"))              e = EInterruptCode::INTERRUPT_BY_MEDIA;
+        if (!strcmp(reason_for_change, "loopback"))           e = EInterruptCode::INTERRUPT_BY_MEDIA;
+        if (!strcmp(reason_for_change, "system"))             e = EInterruptCode::INTERRUPT_BY_MEDIA;
+        if (!strcmp(reason_for_change, "alarm"))              e = EInterruptCode::INTERRUPT_BY_ALARM;
+        if (!strcmp(reason_for_change, "notification"))       e = EInterruptCode::INTERRUPT_BY_NOTIFICATION;
+        if (!strcmp(reason_for_change, "emergency"))          e = EInterruptCode::INTERRUPT_BY_EMERGENCY;
+        if (!strcmp(reason_for_change, "voice-information"))  e = EInterruptCode::INTERRUPT_BY_MEDIA;  //for what?
+        if (!strcmp(reason_for_change, "voice-recognition"))  e = EInterruptCode::INTERRUPT_BY_MEDIA;  //for what?
+        if (!strcmp(reason_for_change, "ringtone-voip"))      e = EInterruptCode::INTERRUPT_BY_MEDIA;  //for what?
+        if (!strcmp(reason_for_change, "ringtone-call"))      e = EInterruptCode::INTERRUPT_BY_MEDIA;  //for what?
+        if (!strcmp(reason_for_change, "voip"))               e = EInterruptCode::INTERRUPT_BY_MEDIA;  //for what?
+        if (!strcmp(reason_for_change, "call-voice"))         e = EInterruptCode::INTERRUPT_BY_MEDIA;  //for what?
+        if (!strcmp(reason_for_change, "call-video"))         e = EInterruptCode::INTERRUPT_BY_MEDIA;  //for what?
         break;
     }
 

@@ -28,9 +28,9 @@ using namespace tizen_media_audio;
  */
 CAudioInfo::CAudioInfo() :
     __mSampleRate(MAX_SYSTEM_SAMPLERATE),
-    __mChannel(CHANNEL_MONO),
-    __mSampleType(SAMPLE_TYPE_U8),
-    __mAudioType(AUDIO_IN_TYPE_MEDIA),
+    __mChannel(EChannel::CHANNEL_MONO),
+    __mSampleType(ESampleType::SAMPLE_TYPE_U8),
+    __mAudioType(EAudioType::AUDIO_IN_TYPE_MEDIA),
     __mAudioIndex(-1) {
 }
 
@@ -42,19 +42,19 @@ CAudioInfo::CAudioInfo(unsigned int sampleRate, EChannel channel, ESampleType sa
     __mAudioIndex(audioIndex) {
     // Check to invalid AudioInfo
     if (sampleRate < CAudioInfo::MIN_SYSTEM_SAMPLERATE || sampleRate > CAudioInfo::MAX_SYSTEM_SAMPLERATE) {
-        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "The sampleRate is invalid [sampleRate:%d]", sampleRate);
+        THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "The sampleRate is invalid [sampleRate:%d]", sampleRate);
     }
 
-    if (channel < CAudioInfo::CHANNEL_MONO || channel >= CAudioInfo::CHANNEL_MAX) {
-        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "The channel is invalid [channel:%d]", channel);
+    if (channel < CAudioInfo::EChannel::CHANNEL_MONO || channel >= CAudioInfo::EChannel::CHANNEL_MAX) {
+        THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "The channel is invalid [channel:%d]", channel);
     }
 
-    if (sampleType < CAudioInfo::SAMPLE_TYPE_U8 || sampleType >= CAudioInfo::SAMPLE_TYPE_MAX) {
-        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "The sampleType is invalid [sampleType:%d]", sampleType);
+    if (sampleType < CAudioInfo::ESampleType::SAMPLE_TYPE_U8 || sampleType >= CAudioInfo::ESampleType::SAMPLE_TYPE_MAX) {
+        THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "The sampleType is invalid [sampleType:%d]", sampleType);
     }
 
-    if (audioType < CAudioInfo::AUDIO_IN_TYPE_MEDIA || audioType >= CAudioInfo::AUDIO_TYPE_MAX) {
-        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "The audioType is invalid [audioType:%d]", audioType);
+    if (audioType < CAudioInfo::EAudioType::AUDIO_IN_TYPE_MEDIA || audioType >= CAudioInfo::EAudioType::AUDIO_TYPE_MAX) {
+        THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "The audioType is invalid [audioType:%d]", audioType);
     }
 }
 
@@ -90,23 +90,23 @@ void CAudioInfo::setAudioIndex(int AudioIndex) {
 
 void CAudioInfo::convertAudioType2StreamType (CAudioInfo::EAudioType audioType, char **streamType)
 {
-    if (audioType < CAudioInfo::AUDIO_IN_TYPE_MEDIA || audioType >= CAudioInfo::AUDIO_TYPE_MAX) {
-        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_NOT_SUPPORTED_TYPE, "The audioType is not supported [audioType:%d]", audioType);
+    if (audioType < CAudioInfo::EAudioType::AUDIO_IN_TYPE_MEDIA || audioType >= CAudioInfo::EAudioType::AUDIO_TYPE_MAX) {
+        THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_NOT_SUPPORTED_TYPE, "The audioType is not supported [audioType:%d]", audioType);
     }
-    *streamType = (char *)__STREAM_TYPE_TABLE[audioType];
+    *streamType = (char *)__STREAM_TYPE_TABLE[(unsigned int)audioType];
     return;
 }
 
 void CAudioInfo::convertInputStreamType2AudioType (char *streamType, CAudioInfo::EAudioType *audioType)
 {
     unsigned int i;
-    for (i = CAudioInfo::AUDIO_IN_TYPE_MEDIA ; i < CAudioInfo::AUDIO_OUT_TYPE_MEDIA ; i++) {
+    for (i = (unsigned int)CAudioInfo::EAudioType::AUDIO_IN_TYPE_MEDIA ; i < (unsigned int)CAudioInfo::EAudioType::AUDIO_OUT_TYPE_MEDIA ; i++) {
         if (!strcmp((char *)__STREAM_TYPE_TABLE[i], streamType)) {
             break;
         }
     }
-    if (i >= CAudioInfo::AUDIO_OUT_TYPE_MEDIA) {
-        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_NOT_SUPPORTED_TYPE, "The streamType is not supported [streamType:%s]", streamType);
+    if (i >= (unsigned int)CAudioInfo::EAudioType::AUDIO_OUT_TYPE_MEDIA) {
+        THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_NOT_SUPPORTED_TYPE, "The streamType is not supported [streamType:%s]", streamType);
     }
     *audioType = (CAudioInfo::EAudioType)i;
     return;
@@ -115,13 +115,13 @@ void CAudioInfo::convertInputStreamType2AudioType (char *streamType, CAudioInfo:
 void CAudioInfo::convertOutputStreamType2AudioType (char *streamType, CAudioInfo::EAudioType *audioType)
 {
     unsigned int i;
-    for (i = CAudioInfo::AUDIO_OUT_TYPE_MEDIA ; i < CAudioInfo::AUDIO_TYPE_MAX ; i++) {
+    for (i = (unsigned int)CAudioInfo::EAudioType::AUDIO_OUT_TYPE_MEDIA ; i < (unsigned int)CAudioInfo::EAudioType::AUDIO_TYPE_MAX ; i++) {
         if (!strcmp((char *)__STREAM_TYPE_TABLE[i], streamType)) {
             break;
         }
     }
-    if (i >= CAudioInfo::AUDIO_TYPE_MAX) {
-        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_NOT_SUPPORTED_TYPE, "The streamType is not supported [streamType:%s]", streamType);
+    if (i >= (unsigned int)CAudioInfo::EAudioType::AUDIO_TYPE_MAX) {
+        THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_NOT_SUPPORTED_TYPE, "The streamType is not supported [streamType:%s]", streamType);
     }
     *audioType = (CAudioInfo::EAudioType)i;
     return;

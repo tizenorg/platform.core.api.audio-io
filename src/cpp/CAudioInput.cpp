@@ -105,16 +105,16 @@ void CAudioInput::initialize() throw (CAudioError) {
         CAudioIO::initialize();
 
         // Create ASM Handler
-        mpAudioSessionHandler = new CAudioSessionHandler(CAudioSessionHandler::AUDIO_SESSION_TYPE_CAPTURE, mAudioInfo, this);
+        mpAudioSessionHandler = new CAudioSessionHandler(CAudioSessionHandler::EAudioSessionType::AUDIO_SESSION_TYPE_CAPTURE, mAudioInfo, this);
         if (mpAudioSessionHandler == NULL) {
-            THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed to allocate CAudioSessionHandler object");
+            THROW_ERROR_MSG(CAudioError::EError::ERROR_OUT_OF_MEMORY, "Failed to allocate CAudioSessionHandler object");
         }
 
         // Initialize ASM Handler
         mpAudioSessionHandler->initialize();
 
         __setInit(true);
-        CAudioIO::onStateChanged(CAudioInfo::AUDIO_IO_STATE_IDLE);
+        CAudioIO::onStateChanged(CAudioInfo::EAudioIOState::AUDIO_IO_STATE_IDLE);
     } catch (CAudioError err) {
         finalize();
         throw err;
@@ -137,7 +137,7 @@ void CAudioInput::finalize() {
 
 void CAudioInput::prepare() throw (CAudioError) {
     if (__IsInit() == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioInput");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioInput");
     }
 
     if (__IsReady() == true) {
@@ -150,8 +150,8 @@ void CAudioInput::prepare() throw (CAudioError) {
 
         // Check to invalid AudioType
         CAudioInfo::EAudioType audioType = mAudioInfo.getAudioType();
-        if (audioType < CAudioInfo::AUDIO_IN_TYPE_MEDIA || audioType > CAudioInfo::AUDIO_IN_TYPE_LOOPBACK) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "The audioType is invalid [type:%d]", static_cast<int>(audioType));
+        if (audioType < CAudioInfo::EAudioType::AUDIO_IN_TYPE_MEDIA || audioType > CAudioInfo::EAudioType::AUDIO_IN_TYPE_LOOPBACK) {
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "The audioType is invalid [type:%d]", static_cast<int>(audioType));
         }
 
         if (mpAudioSessionHandler->getId() < 0) {  //Did not registerSound()
@@ -165,13 +165,13 @@ void CAudioInput::prepare() throw (CAudioError) {
 
         // Init StreamSpec
         AUDIO_IO_LOGD("Set Strem Spec : CPulseStreamSpec::STREAM_LATENCY_INPUT_MID");
-        CPulseStreamSpec::EStreamLatency streamSpec = CPulseStreamSpec::STREAM_LATENCY_INPUT_MID;
+        CPulseStreamSpec::EStreamLatency streamSpec = CPulseStreamSpec::EStreamLatency::STREAM_LATENCY_INPUT_MID;
         CPulseStreamSpec spec(streamSpec, mAudioInfo);
 
         // Create PulseAudio Handler
-        mpPulseAudioClient = new CPulseAudioClient(CPulseAudioClient::STREAM_DIRECTION_RECORD, spec, this);
+        mpPulseAudioClient = new CPulseAudioClient(CPulseAudioClient::EStreamDirection::STREAM_DIRECTION_RECORD, spec, this);
         if (mpPulseAudioClient == NULL) {
-            THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed to allocate CPulseAudioClient object");
+            THROW_ERROR_MSG(CAudioError::EError::ERROR_OUT_OF_MEMORY, "Failed to allocate CPulseAudioClient object");
         }
 
         // Initialize PulseAudio Handler
@@ -194,7 +194,7 @@ void CAudioInput::prepare() throw (CAudioError) {
 
 void CAudioInput::unprepare() throw (CAudioError) {
     if (__IsInit() == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioInput");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioInput");
     }
 
     if (__IsReady() == false) {
@@ -225,7 +225,7 @@ void CAudioInput::unprepare() throw (CAudioError) {
 
         internalUnlock();
 
-        CAudioIO::onStateChanged(CAudioInfo::AUDIO_IO_STATE_IDLE);
+        CAudioIO::onStateChanged(CAudioInfo::EAudioIOState::AUDIO_IO_STATE_IDLE);
     } catch (CAudioError e) {
         internalUnlock();
         throw e;
@@ -234,7 +234,7 @@ void CAudioInput::unprepare() throw (CAudioError) {
 
 void CAudioInput::pause() throw (CAudioError) {
     if (__IsInit() == false || __IsReady() == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioInput");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioInput");
     }
 
     try{
@@ -249,7 +249,7 @@ void CAudioInput::pause() throw (CAudioError) {
 
         internalUnlock();
 
-        CAudioIO::onStateChanged(CAudioInfo::AUDIO_IO_STATE_PAUSED);
+        CAudioIO::onStateChanged(CAudioInfo::EAudioIOState::AUDIO_IO_STATE_PAUSED);
     } catch (CAudioError e) {
         internalUnlock();
         throw e;
@@ -258,7 +258,7 @@ void CAudioInput::pause() throw (CAudioError) {
 
 void CAudioInput::resume() throw (CAudioError) {
     if (__IsInit() == false || __IsReady() == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioInput");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioInput");
     }
 
     try {
@@ -274,7 +274,7 @@ void CAudioInput::resume() throw (CAudioError) {
 
         CAudioIO::resume();
 
-        CAudioIO::onStateChanged(CAudioInfo::AUDIO_IO_STATE_RUNNING);
+        CAudioIO::onStateChanged(CAudioInfo::EAudioIOState::AUDIO_IO_STATE_RUNNING);
     } catch (CAudioError e) {
         internalUnlock();
         throw e;
@@ -282,12 +282,12 @@ void CAudioInput::resume() throw (CAudioError) {
 }
 
 void CAudioInput::drain() throw (CAudioError) {
-    THROW_ERROR_MSG(CAudioError::ERROR_NOT_SUPPORTED, "Did not support drain of CAudioInput");
+    THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_SUPPORTED, "Did not support drain of CAudioInput");
 }
 
 void CAudioInput::flush() throw (CAudioError) {
     if (__IsInit() == false || __IsReady() == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioInput");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioInput");
     }
 
     try {
@@ -299,7 +299,7 @@ void CAudioInput::flush() throw (CAudioError) {
 
 int CAudioInput::getBufferSize() throw (CAudioError) {
     if (__IsInit() == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioInput");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioInput");
     }
 
     if (__IsReady() == false) {
@@ -320,7 +320,7 @@ int CAudioInput::getBufferSize() throw (CAudioError) {
 
 void CAudioInput::setStreamCallback(SStreamCallback callback) throw (CAudioError) {
     if (__IsInit() == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioInput");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioInput");
     }
 
     if (callback.onStream == NULL) {
@@ -336,16 +336,16 @@ void CAudioInput::setStreamCallback(SStreamCallback callback) throw (CAudioError
 
 size_t CAudioInput::read(void* buffer, size_t length) throw (CAudioError) {
     if (__IsInit() == false || __IsReady() == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioInput");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioInput");
     }
 
     if (buffer == NULL) {
-        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are invalid - buffer:%p, length:%zu", buffer, length);
+        THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are invalid - buffer:%p, length:%zu", buffer, length);
     }
 
     /* Checks synchronous flag */
     if (__mIsUsedSyncRead == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_INVALID_OPERATION, "Invalid operation of read() if receive stream callback");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_INVALID_OPERATION, "Invalid operation of read() if receive stream callback");
     }
 
     size_t lengthIter = length;
@@ -360,7 +360,7 @@ size_t CAudioInput::read(void* buffer, size_t length) throw (CAudioError) {
             while (__mpSyncReadDataPtr == NULL) {
                 ret = mpPulseAudioClient->peek(&__mpSyncReadDataPtr, &__mSyncReadLength);
                 if (ret != 0) {
-                    THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INTERNAL_OPERATION, "Failed CPulseAudioClient::peek() ret:[%d]", ret);
+                    THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INTERNAL_OPERATION, "Failed CPulseAudioClient::peek() ret:[%d]", ret);
                 }
 
                 if (__mSyncReadLength <= 0) {
@@ -374,7 +374,7 @@ size_t CAudioInput::read(void* buffer, size_t length) throw (CAudioError) {
                      */
                     ret = mpPulseAudioClient->drop();
                     if (ret != 0) {
-                        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INTERNAL_OPERATION, "Failed CPulseAudioClient::drop() ret:[%d]", ret);
+                        THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INTERNAL_OPERATION, "Failed CPulseAudioClient::drop() ret:[%d]", ret);
                     }
                 } else {
                     __mSyncReadIndex = 0;
@@ -407,7 +407,7 @@ size_t CAudioInput::read(void* buffer, size_t length) throw (CAudioError) {
 #endif
                 ret = mpPulseAudioClient->drop();
                 if (ret != 0) {
-                    THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INTERNAL_OPERATION, "Failed CPulseAudioClient::drop() ret:[%d]", ret);
+                    THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INTERNAL_OPERATION, "Failed CPulseAudioClient::drop() ret:[%d]", ret);
                 }
 
                 // Reset the internal pointer
@@ -428,16 +428,16 @@ size_t CAudioInput::read(void* buffer, size_t length) throw (CAudioError) {
 
 int CAudioInput::peek(const void** buffer, size_t* length) throw (CAudioError) {
     if (__IsInit() == false || __IsReady() == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioInput");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioInput");
     }
 
     if (buffer == NULL || length == NULL) {
-        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL buffer:%p, length:%p", buffer, length);
+        THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL buffer:%p, length:%p", buffer, length);
     }
 
     /* Checks synchronous flag */
     if (__mIsUsedSyncRead == true) {
-        THROW_ERROR_MSG(CAudioError::ERROR_INVALID_OPERATION, "Invalid operation of peek() if does not receive a stream callback");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_INVALID_OPERATION, "Invalid operation of peek() if does not receive a stream callback");
     }
 
     int ret = 0;
@@ -453,12 +453,12 @@ int CAudioInput::peek(const void** buffer, size_t* length) throw (CAudioError) {
 
 int CAudioInput::drop() throw (CAudioError) {
     if (__IsInit() == false || __IsReady() == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioInput");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioInput");
     }
 
     /* Checks synchronous flag */
     if (__mIsUsedSyncRead == true) {
-        THROW_ERROR_MSG(CAudioError::ERROR_INVALID_OPERATION, "Invalid operation of drop() if does not receive a stream callback");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_INVALID_OPERATION, "Invalid operation of drop() if does not receive a stream callback");
     }
 
     int ret = 0;

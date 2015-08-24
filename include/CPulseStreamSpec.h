@@ -33,7 +33,7 @@ namespace tizen_media_audio {
     class CPulseStreamSpec {
     public:
         /* Enums */
-        enum EStreamLatency {
+        enum class EStreamLatency : unsigned int {
             STREAM_LATENCY_INPUT_LOW,
             STREAM_LATENCY_INPUT_MID,
             STREAM_LATENCY_INPUT_HIGH,

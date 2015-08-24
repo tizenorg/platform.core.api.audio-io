@@ -29,19 +29,19 @@ namespace tizen_media_audio {
      */
     class CAudioInfo {
     public:
-        enum EChannel {
+        enum class EChannel : unsigned int {
             CHANNEL_MONO = 1,               /**< 1 channel, mono */
             CHANNEL_STEREO,                 /**< 2 channel, stereo */
             CHANNEL_MAX
         };
 
-        enum ESampleType {
+        enum class ESampleType : unsigned int {
             SAMPLE_TYPE_U8 = 1,             /**< Unsigned 8-bit audio samples */
             SAMPLE_TYPE_S16_LE,             /**< Signed 16-bit audio samples */
             SAMPLE_TYPE_MAX
         };
 
-        enum EAudioType {
+        enum class EAudioType : unsigned int {
             /* Input Type */
             AUDIO_IN_TYPE_MEDIA = 0,
             //AUDIO_IN_TYPE_SYSTEM,
@@ -77,11 +77,12 @@ namespace tizen_media_audio {
             AUDIO_TYPE_MAX
         };
 
-        enum EAudioIOState {
+        enum class EAudioIOState : unsigned int {
             AUDIO_IO_STATE_NONE,      /**< Audio-io handle is not created */
             AUDIO_IO_STATE_IDLE,      /**< Audio-io handle is created, but not prepared */
             AUDIO_IO_STATE_RUNNING,   /**< Audio-io handle is ready and the stream is running */
             AUDIO_IO_STATE_PAUSED,    /**< Audio-io handle is ready and the stream is paused */
+            AUDIO_IO_STATE_MAX
         };
 
         const static unsigned int MIN_SYSTEM_SAMPLERATE = 8000;
@@ -104,7 +105,7 @@ namespace tizen_media_audio {
         void convertOutputStreamType2AudioType (char *streamType, CAudioInfo::EAudioType *audioType);
 
     private:
-        const char *__STREAM_TYPE_TABLE[AUDIO_TYPE_MAX] = {
+        const char *__STREAM_TYPE_TABLE[(unsigned int)EAudioType::AUDIO_TYPE_MAX] = {
             /* Input Type */
             "media",                  /**< AUDIO_IN_TYPE_MEDIA */
             //"system",                 /**< AUDIO_IN_TYPE_SYSTEM */

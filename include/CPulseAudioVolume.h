@@ -32,7 +32,7 @@ namespace tizen_media_audio {
     class CPulseAudioVolume {
     public:
         /* Enums */
-        enum EVolume {
+        enum class EVolume : unsigned int {
             VOLUME_SYSTEM,                         /**< System volume type */
             VOLUME_NOTIFICATION,                   /**< Notification volume type */
             VOLUME_ALARM,                          /**< Alarm volume type */
@@ -46,7 +46,7 @@ namespace tizen_media_audio {
             VOLUME_MAX                             /**< Volume type count */
         };
 
-        enum EVolumeGain {
+        enum class EVolumeGain : unsigned int {
             VOLUME_GAIN_DEFAULT,
             VOLUME_GAIN_DIALER,
             VOLUME_GAIN_TOUCH,

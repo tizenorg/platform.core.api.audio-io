@@ -27,7 +27,7 @@ using namespace tizen_media_audio;
  * class CPulseAudioPolicy
  */
 CPulseAudioPolicy::CPulseAudioPolicy() :
-    __mPolicy(POLICY_DEFAULT) {
+    __mPolicy(EPolicy::POLICY_DEFAULT) {
 }
 
 CPulseAudioPolicy::CPulseAudioPolicy(EPolicy policy) :
@@ -38,8 +38,8 @@ CPulseAudioPolicy::~CPulseAudioPolicy() {
 }
 
 void CPulseAudioPolicy::setPolicy(EPolicy policy) throw (CAudioError) {
-    if (policy < POLICY_DEFAULT || policy >= POLICY_MAX) {
-        THROW_ERROR_MSG(CAudioError::ERROR_INVALID_ARGUMENT, "The argument is out of range");
+    if (policy < EPolicy::POLICY_DEFAULT || policy >= EPolicy::POLICY_MAX) {
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_INVALID_ARGUMENT, "The argument is out of range");
     }
 
     __mPolicy = policy;

@@ -34,7 +34,7 @@ namespace tizen_media_audio {
     class CAudioSessionHandler;
     class IAudioSessionEventListener {
     public:
-        enum EInterruptCode {
+        enum class EInterruptCode : unsigned int {
             INTERRUPT_COMPLETED = 0,         /**< Interrupt completed */
             INTERRUPT_BY_MEDIA,              /**< Interrupted by a media application */
             INTERRUPT_BY_CALL,               /**< Interrupted by an incoming call */

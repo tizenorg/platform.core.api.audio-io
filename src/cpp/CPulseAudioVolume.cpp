@@ -26,7 +26,7 @@ using namespace tizen_media_audio;
 /**
  * class CPulseAudioVolume
  */
-CPulseAudioVolume::CPulseAudioVolume() : __mVolume(VOLUME_MEDIA), __mVolumeGain(VOLUME_GAIN_DEFAULT) {
+CPulseAudioVolume::CPulseAudioVolume() : __mVolume(EVolume::VOLUME_MEDIA), __mVolumeGain(EVolumeGain::VOLUME_GAIN_DEFAULT) {
 }
 
 CPulseAudioVolume::CPulseAudioVolume(EVolume volume, EVolumeGain gain) :

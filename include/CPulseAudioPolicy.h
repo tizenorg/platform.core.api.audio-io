@@ -32,7 +32,7 @@ namespace tizen_media_audio {
     class CPulseAudioPolicy {
     public:
         /* Enums */
-        enum EPolicy {
+        enum class EPolicy : unsigned int {
             POLICY_DEFAULT,
             POLICY_OUT_AUTO,
             POLICY_OUT_PHONE,

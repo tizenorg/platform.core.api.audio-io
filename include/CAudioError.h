@@ -30,7 +30,7 @@ namespace tizen_media_audio {
     class CAudioError {
     public:
         /* Enums Definition */
-        enum EError {
+        enum class EError : unsigned int {
             ERROR_NONE,
 
             ERROR_INVALID_ARGUMENT,

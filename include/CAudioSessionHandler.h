@@ -35,7 +35,7 @@ namespace tizen_media_audio {
      */
     class CAudioSessionHandler {
     public:
-        enum EAudioSessionType {
+        enum class EAudioSessionType : unsigned int {
             AUDIO_SESSION_TYPE_CAPTURE,
             AUDIO_SESSION_TYPE_PLAYBACK
         };

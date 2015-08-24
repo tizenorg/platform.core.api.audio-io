@@ -35,15 +35,15 @@ CAudioIO::CAudioIO() :
     mpPulseAudioClient(NULL),
     __mIsInit(false),
     __mForceIgnore(false) {
-    mState = CAudioInfo::AUDIO_IO_STATE_NONE;
-    mStatePrev = CAudioInfo::AUDIO_IO_STATE_NONE;
+    mState = CAudioInfo::EAudioIOState::AUDIO_IO_STATE_NONE;
+    mStatePrev = CAudioInfo::EAudioIOState::AUDIO_IO_STATE_NONE;
     mByPolicy = false;
 }
 
 CAudioIO::CAudioIO(CAudioInfo& audioInfo) : mpAudioSessionHandler(NULL), mpPulseAudioClient(NULL), __mIsInit(false), __mForceIgnore(false) {
     mAudioInfo = audioInfo;
-    mState = CAudioInfo::AUDIO_IO_STATE_NONE;
-    mStatePrev = CAudioInfo::AUDIO_IO_STATE_NONE;
+    mState = CAudioInfo::EAudioIOState::AUDIO_IO_STATE_NONE;
+    mStatePrev = CAudioInfo::EAudioIOState::AUDIO_IO_STATE_NONE;
     mByPolicy = false;
 }
 
@@ -59,16 +59,16 @@ bool CAudioIO::isInit() {
 }
 
 bool CAudioIO::IsReady() {
-    return ((mState == CAudioInfo::AUDIO_IO_STATE_RUNNING || mState == CAudioInfo::AUDIO_IO_STATE_PAUSED)? true : false);
+    return ((mState == CAudioInfo::EAudioIOState::AUDIO_IO_STATE_RUNNING || mState == CAudioInfo::EAudioIOState::AUDIO_IO_STATE_PAUSED)? true : false);
 }
 
 void CAudioIO::internalLock() throw (CAudioError) {
     if (__mIsInit == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
 
     if (pthread_mutex_lock(&__mMutex) != 0) {
-        THROW_ERROR_MSG(CAudioError::ERROR_INTERNAL_OPERATION, "Failed pthread_mutex_lock()");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_INTERNAL_OPERATION, "Failed pthread_mutex_lock()");
     }
 #ifdef _AUDIO_IO_DEBUG_TIMING_
     AUDIO_IO_LOGD(COLOR_RED "LOCK" COLOR_END);
@@ -77,11 +77,11 @@ void CAudioIO::internalLock() throw (CAudioError) {
 
 void CAudioIO::internalUnlock() throw (CAudioError) {
     if (__mIsInit == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
 
     if (pthread_mutex_unlock(&__mMutex) != 0) {
-        THROW_ERROR_MSG(CAudioError::ERROR_INTERNAL_OPERATION, "Failed pthread_mutex_lock()");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_INTERNAL_OPERATION, "Failed pthread_mutex_lock()");
     }
 #ifdef _AUDIO_IO_DEBUG_TIMING_
     AUDIO_IO_LOGD(COLOR_GREEN "UNLOCK" COLOR_END);
@@ -90,7 +90,7 @@ void CAudioIO::internalUnlock() throw (CAudioError) {
 
 void CAudioIO::internalWait() throw (CAudioError) {
     if (__mIsInit == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
 
 #ifdef _AUDIO_IO_DEBUG_TIMING_
@@ -102,7 +102,7 @@ void CAudioIO::internalWait() throw (CAudioError) {
 
 void CAudioIO::internalSignal() throw (CAudioError) {
     if (__mIsInit == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
 
 #ifdef _AUDIO_IO_DEBUG_TIMING_
@@ -125,12 +125,12 @@ void CAudioIO::initialize() throw (CAudioError) {
 
     int ret = pthread_mutex_init(&__mMutex, NULL);
     if (ret != 0) {
-        THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed pthread_mutex_init()");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_OUT_OF_MEMORY, "Failed pthread_mutex_init()");
     }
 
     ret = pthread_cond_init(&__mCond, NULL);
     if (ret != 0) {
-        THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed pthread_cond_init()");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_OUT_OF_MEMORY, "Failed pthread_cond_init()");
     }
 
     __mIsInit = true;
@@ -145,12 +145,12 @@ void CAudioIO::finalize() {
 
     int ret = pthread_mutex_destroy(&__mMutex);
     if (ret != 0) {
-        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_OUT_OF_MEMORY, "Failed pthread_mutex_destroy() ret:%d", ret);
+        THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_OUT_OF_MEMORY, "Failed pthread_mutex_destroy() ret:%d", ret);
     }
 
     ret = pthread_cond_destroy(&__mCond);
     if (ret != 0) {
-        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_OUT_OF_MEMORY, "Failed pthread_cond_destroy() ret:%d", ret);
+        THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_OUT_OF_MEMORY, "Failed pthread_cond_destroy() ret:%d", ret);
     }
 
     __mIsInit = false;
@@ -172,7 +172,7 @@ void CAudioIO::onStream(CPulseAudioClient* pClient, size_t length) {
 
 void CAudioIO::onStateChanged(CAudioInfo::EAudioIOState state, bool byPolicy) {
     assert(__mIsInit == true);
-    assert(state > 0);
+    assert(state >= CAudioInfo::EAudioIOState::AUDIO_IO_STATE_NONE && state < CAudioInfo::EAudioIOState::AUDIO_IO_STATE_MAX);
 
     mStatePrev = mState;
     mState     = state;
@@ -209,7 +209,7 @@ void CAudioIO::onInterrupt(CAudioSessionHandler* pHandler, int id, mm_sound_focu
             internalLock();
 
             mpPulseAudioClient->cork(false);
-            onStateChanged(CAudioInfo::AUDIO_IO_STATE_RUNNING);
+            onStateChanged(CAudioInfo::EAudioIOState::AUDIO_IO_STATE_RUNNING);
 
             internalUnlock();
 
@@ -219,14 +219,14 @@ void CAudioIO::onInterrupt(CAudioSessionHandler* pHandler, int id, mm_sound_focu
             // Focus handle(id) of the other application was acquired, do pause if possible
             internalLock();
 
-            if (mpPulseAudioClient->getStreamDirection() == CPulseAudioClient::STREAM_DIRECTION_PLAYBACK) {
+            if (mpPulseAudioClient->getStreamDirection() == CPulseAudioClient::EStreamDirection::STREAM_DIRECTION_PLAYBACK) {
                 if (mpPulseAudioClient->drain() == false) {
                     AUDIO_IO_LOGE("Failed CPulseAudioClient::drain()");
                 }
             }
 
             mpPulseAudioClient->cork(true);
-            onStateChanged(CAudioInfo::AUDIO_IO_STATE_PAUSED);
+            onStateChanged(CAudioInfo::EAudioIOState::AUDIO_IO_STATE_PAUSED);
 
             internalUnlock();
 
@@ -251,14 +251,14 @@ void CAudioIO::onInterrupt(CAudioSessionHandler* pHandler, int id, mm_sound_focu
             // Focus handle(id) was released, do pause here
             internalLock();
 
-            if (mpPulseAudioClient->getStreamDirection() == CPulseAudioClient::STREAM_DIRECTION_PLAYBACK) {
+            if (mpPulseAudioClient->getStreamDirection() == CPulseAudioClient::EStreamDirection::STREAM_DIRECTION_PLAYBACK) {
                 if (mpPulseAudioClient->drain() == false) {
                     AUDIO_IO_LOGE("Failed CPulseAudioClient::drain()");
                 }
             }
 
             mpPulseAudioClient->cork(true);
-            onStateChanged(CAudioInfo::AUDIO_IO_STATE_PAUSED);
+            onStateChanged(CAudioInfo::EAudioIOState::AUDIO_IO_STATE_PAUSED);
 
             internalUnlock();
         } else if (state == FOCUS_IS_ACQUIRED) {
@@ -268,14 +268,14 @@ void CAudioIO::onInterrupt(CAudioSessionHandler* pHandler, int id, mm_sound_focu
             internalLock();
 
             mpPulseAudioClient->cork(false);
-            onStateChanged(CAudioInfo::AUDIO_IO_STATE_RUNNING);
+            onStateChanged(CAudioInfo::EAudioIOState::AUDIO_IO_STATE_RUNNING);
 
             internalUnlock();
         }
     }
 
     if (mInterruptCallback.onInterrupt != NULL) {
-        IAudioSessionEventListener::EInterruptCode e = IAudioSessionEventListener::INTERRUPT_COMPLETED;
+        IAudioSessionEventListener::EInterruptCode e = IAudioSessionEventListener::EInterruptCode::INTERRUPT_COMPLETED;
         e = IAudioSessionEventListener::convertInterruptedCode(state, reason_for_change);
         mInterruptCallback.onInterrupt(e, mInterruptCallback.mUserData);
     }
@@ -297,7 +297,7 @@ void CAudioIO::onSignal(CAudioSessionHandler* pHandler, mm_sound_signal_name_t s
 
 void CAudioIO::prepare() throw (CAudioError) {
     if (__mIsInit == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
 
     try {
@@ -310,7 +310,7 @@ void CAudioIO::prepare() throw (CAudioError) {
 
 void CAudioIO::unprepare() throw (CAudioError) {
     if (__mIsInit == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
 
     try {
@@ -323,7 +323,7 @@ void CAudioIO::unprepare() throw (CAudioError) {
 
 void CAudioIO::pause() throw (CAudioError) {
     if (__mIsInit == false || IsReady() == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioIO");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioIO");
     }
 
     try {
@@ -339,7 +339,7 @@ void CAudioIO::pause() throw (CAudioError) {
 
 void CAudioIO::resume() throw (CAudioError) {
     if (__mIsInit == false || IsReady() == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioIO");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioIO");
     }
 
     try {
@@ -355,7 +355,7 @@ void CAudioIO::resume() throw (CAudioError) {
 
 void CAudioIO::drain() throw (CAudioError) {
     if (__mIsInit == false || IsReady() == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioIO");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioIO");
     }
 
     try {
@@ -371,7 +371,7 @@ void CAudioIO::drain() throw (CAudioError) {
 
 void CAudioIO::flush() throw (CAudioError) {
     if (__mIsInit == false || IsReady() == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioIO");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioIO");
     }
 
     try {
@@ -387,7 +387,7 @@ void CAudioIO::flush() throw (CAudioError) {
 
 CAudioInfo CAudioIO::getAudioInfo() throw (CAudioError) {
     if (__mIsInit == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
 
     return mAudioInfo;
@@ -395,7 +395,7 @@ CAudioInfo CAudioIO::getAudioInfo() throw (CAudioError) {
 
 void CAudioIO::setStreamCallback(SStreamCallback callback) throw (CAudioError) {
     if (__mIsInit == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
 
     mStreamCallback = callback;
@@ -403,7 +403,7 @@ void CAudioIO::setStreamCallback(SStreamCallback callback) throw (CAudioError) {
 
 CAudioIO::SStreamCallback CAudioIO::getStreamCallback() throw (CAudioError) {
     if (__mIsInit == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
 
     return mStreamCallback;
@@ -411,7 +411,7 @@ CAudioIO::SStreamCallback CAudioIO::getStreamCallback() throw (CAudioError) {
 
 void CAudioIO::setStateChangedCallback(SStateChangedCallback callback) throw (CAudioError) {
     if (__mIsInit == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
 
     mStateChangedCallback = callback;
@@ -419,7 +419,7 @@ void CAudioIO::setStateChangedCallback(SStateChangedCallback callback) throw (CA
 
 CAudioIO::SStateChangedCallback CAudioIO::getStateChangedCallback() throw (CAudioError) {
     if (__mIsInit == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
 
     return mStateChangedCallback;
@@ -427,7 +427,7 @@ CAudioIO::SStateChangedCallback CAudioIO::getStateChangedCallback() throw (CAudi
 
 void CAudioIO::setInterruptCallback(SInterruptCallback callback) throw (CAudioError) {
     if (__mIsInit == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
 
     mInterruptCallback = callback;
@@ -435,7 +435,7 @@ void CAudioIO::setInterruptCallback(SInterruptCallback callback) throw (CAudioEr
 
 CAudioIO::SInterruptCallback CAudioIO::getInterruptCallback() throw (CAudioError) {
     if (__mIsInit == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
 
     return mInterruptCallback;
@@ -444,14 +444,14 @@ CAudioIO::SInterruptCallback CAudioIO::getInterruptCallback() throw (CAudioError
 
 void CAudioIO::ignoreSession() throw (CAudioError) {
     if (__mIsInit == false) {
-        THROW_ERROR_MSG(CAudioError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
 
     try {
         internalLock();
 
         if (mpPulseAudioClient != NULL && mpPulseAudioClient->isCorked() == false) {
-            THROW_ERROR_MSG(CAudioError::ERROR_INVALID_OPERATION, "An Operation is not permitted while started");
+            THROW_ERROR_MSG(CAudioError::EError::ERROR_INVALID_OPERATION, "An Operation is not permitted while started");
         }
 
         bool isSkip = mpAudioSessionHandler->isSkipSessionEvent();

@@ -96,45 +96,45 @@ static audio_io_error_e __convert_CAudioError(CAudioError& error) {
 
     switch (err)
     {
-    case CAudioError::ERROR_NONE:
+    case CAudioError::EError::ERROR_NONE:
         ret = AUDIO_IO_ERROR_NONE;
         break;
-    case CAudioError::ERROR_INVALID_ARGUMENT:
-    case CAudioError::ERROR_INVALID_HANDLE:
-    case CAudioError::ERROR_INVALID_SAMPLERATE:
-    case CAudioError::ERROR_INVALID_CHANNEL:
-    case CAudioError::ERROR_INVALID_FORMAT:
+    case CAudioError::EError::ERROR_INVALID_ARGUMENT:
+    case CAudioError::EError::ERROR_INVALID_HANDLE:
+    case CAudioError::EError::ERROR_INVALID_SAMPLERATE:
+    case CAudioError::EError::ERROR_INVALID_CHANNEL:
+    case CAudioError::EError::ERROR_INVALID_FORMAT:
         ret = AUDIO_IO_ERROR_INVALID_PARAMETER;
         break;
-    case CAudioError::ERROR_DEVICE_NOT_OPENED:
+    case CAudioError::EError::ERROR_DEVICE_NOT_OPENED:
         ret = AUDIO_IO_ERROR_DEVICE_NOT_OPENED;
         break;
-    case CAudioError::ERROR_DEVICE_NOT_CLOSED:
+    case CAudioError::EError::ERROR_DEVICE_NOT_CLOSED:
         ret = AUDIO_IO_ERROR_DEVICE_NOT_CLOSED;
         break;
-    case CAudioError::ERROR_PERMISSION_DENIED:
+    case CAudioError::EError::ERROR_PERMISSION_DENIED:
         ret = AUDIO_IO_ERROR_PERMISSION_DENIED;
         break;
-    case CAudioError::ERROR_NOT_SUPPORTED:
+    case CAudioError::EError::ERROR_NOT_SUPPORTED:
         ret = AUDIO_IO_ERROR_NOT_SUPPORTED;
         break;
-    case CAudioError::ERROR_NOT_SUPPORTED_TYPE:
+    case CAudioError::EError::ERROR_NOT_SUPPORTED_TYPE:
         ret = AUDIO_IO_ERROR_NOT_SUPPORTED_TYPE;
         break;
-    case CAudioError::ERROR_MAX:
-    case CAudioError::ERROR_INTERNAL_OPERATION:
-    case CAudioError::ERROR_NOT_INITIALIZED:
-    case CAudioError::ERROR_FAILED_OPERATION:
-    case CAudioError::ERROR_INVALID_OPERATION:
+    case CAudioError::EError::ERROR_MAX:
+    case CAudioError::EError::ERROR_INTERNAL_OPERATION:
+    case CAudioError::EError::ERROR_NOT_INITIALIZED:
+    case CAudioError::EError::ERROR_FAILED_OPERATION:
+    case CAudioError::EError::ERROR_INVALID_OPERATION:
         ret = AUDIO_IO_ERROR_INVALID_OPERATION;
         break;
-    case CAudioError::ERROR_OUT_OF_MEMORY:
-    case CAudioError::ERROR_INVALID_POINTER:
+    case CAudioError::EError::ERROR_OUT_OF_MEMORY:
+    case CAudioError::EError::ERROR_INVALID_POINTER:
         ret = AUDIO_IO_ERROR_INVALID_BUFFER;
         break;
-    case CAudioError::ERROR_POLICY_BLOCKED:
-    case CAudioError::ERROR_POLICY_INTERRUPTED:
-    case CAudioError::ERROR_POLICY_DUPLICATED:
+    case CAudioError::EError::ERROR_POLICY_BLOCKED:
+    case CAudioError::EError::ERROR_POLICY_INTERRUPTED:
+    case CAudioError::EError::ERROR_POLICY_DUPLICATED:
         ret = AUDIO_IO_ERROR_SOUND_POLICY;
         break;
     }
@@ -145,22 +145,22 @@ static audio_io_error_e __convert_CAudioError(CAudioError& error) {
 static void __convert_channel_2_audio_info_channel(const audio_channel_e& src_channel, CAudioInfo::EChannel& dst_channel) {
     switch (src_channel) {
     case AUDIO_CHANNEL_MONO:
-        dst_channel = CAudioInfo::CHANNEL_MONO;
+        dst_channel = CAudioInfo::EChannel::CHANNEL_MONO;
         break;
     case AUDIO_CHANNEL_STEREO:
-        dst_channel = CAudioInfo::CHANNEL_STEREO;
+        dst_channel = CAudioInfo::EChannel::CHANNEL_STEREO;
         break;
     default:
-        dst_channel = CAudioInfo::CHANNEL_MONO;
+        dst_channel = CAudioInfo::EChannel::CHANNEL_MONO;
     }
 }
 
 static void __convert_audio_info_channel_2_channel(const CAudioInfo::EChannel& src_channel, audio_channel_e& dst_channel) {
     switch (src_channel) {
-    case CAudioInfo::CHANNEL_MONO:
+    case CAudioInfo::EChannel::CHANNEL_MONO:
         dst_channel = AUDIO_CHANNEL_MONO;
         break;
-    case CAudioInfo::CHANNEL_STEREO:
+    case CAudioInfo::EChannel::CHANNEL_STEREO:
         dst_channel = AUDIO_CHANNEL_STEREO;
         break;
     default:
@@ -171,22 +171,22 @@ static void __convert_audio_info_channel_2_channel(const CAudioInfo::EChannel& s
 static void __convert_sample_type_2_audio_info_sample_type(const audio_sample_type_e& src_type, CAudioInfo::ESampleType& dst_type) {
     switch (src_type) {
     case AUDIO_SAMPLE_TYPE_U8:
-        dst_type = CAudioInfo::SAMPLE_TYPE_U8;
+        dst_type = CAudioInfo::ESampleType::SAMPLE_TYPE_U8;
         break;
     case AUDIO_SAMPLE_TYPE_S16_LE:
-        dst_type = CAudioInfo::SAMPLE_TYPE_S16_LE;
+        dst_type = CAudioInfo::ESampleType::SAMPLE_TYPE_S16_LE;
         break;
     default:
-        dst_type = CAudioInfo::SAMPLE_TYPE_U8;
+        dst_type = CAudioInfo::ESampleType::SAMPLE_TYPE_U8;
     }
 }
 
 static void __convert_audio_info_sample_type_2_sample_type(const CAudioInfo::ESampleType& src_type, audio_sample_type_e& dst_type) {
     switch (src_type) {
-    case CAudioInfo::SAMPLE_TYPE_U8:
+    case CAudioInfo::ESampleType::SAMPLE_TYPE_U8:
         dst_type = AUDIO_SAMPLE_TYPE_U8;
         break;
-    case CAudioInfo::SAMPLE_TYPE_S16_LE:
+    case CAudioInfo::ESampleType::SAMPLE_TYPE_S16_LE:
         dst_type = AUDIO_SAMPLE_TYPE_S16_LE;
         break;
     default:
@@ -197,57 +197,57 @@ static void __convert_audio_info_sample_type_2_sample_type(const CAudioInfo::ESa
 static void __convert_sound_type_2_audio_info_audio_type(const sound_type_e& src_type, CAudioInfo::EAudioType& dst_type) {
     switch (src_type) {
     case SOUND_TYPE_SYSTEM:
-        dst_type = CAudioInfo::AUDIO_OUT_TYPE_SYSTEM;
+        dst_type = CAudioInfo::EAudioType::AUDIO_OUT_TYPE_SYSTEM;
         break;
     case SOUND_TYPE_NOTIFICATION:
-        dst_type = CAudioInfo::AUDIO_OUT_TYPE_NOTIFICATION;
+        dst_type = CAudioInfo::EAudioType::AUDIO_OUT_TYPE_NOTIFICATION;
         break;
     case SOUND_TYPE_ALARM:
-        dst_type = CAudioInfo::AUDIO_OUT_TYPE_ALARM;
+        dst_type = CAudioInfo::EAudioType::AUDIO_OUT_TYPE_ALARM;
         break;
     case SOUND_TYPE_RINGTONE:
-        dst_type = CAudioInfo::AUDIO_OUT_TYPE_RINGTONE_VOIP;
+        dst_type = CAudioInfo::EAudioType::AUDIO_OUT_TYPE_RINGTONE_VOIP;
         break;
     case SOUND_TYPE_MEDIA:
-        dst_type = CAudioInfo::AUDIO_OUT_TYPE_MEDIA;
+        dst_type = CAudioInfo::EAudioType::AUDIO_OUT_TYPE_MEDIA;
         break;
     case SOUND_TYPE_CALL:
-        dst_type = CAudioInfo::AUDIO_OUT_TYPE_SYSTEM;
+        dst_type = CAudioInfo::EAudioType::AUDIO_OUT_TYPE_SYSTEM;
         break;
     case SOUND_TYPE_VOIP:
-        dst_type = CAudioInfo::AUDIO_OUT_TYPE_VOIP;
+        dst_type = CAudioInfo::EAudioType::AUDIO_OUT_TYPE_VOIP;
         break;
     case SOUND_TYPE_VOICE:
-        dst_type = CAudioInfo::AUDIO_OUT_TYPE_VOICE_INFORMATION;
+        dst_type = CAudioInfo::EAudioType::AUDIO_OUT_TYPE_VOICE_INFORMATION;
         break;
     default:
-        dst_type = CAudioInfo::AUDIO_OUT_TYPE_MEDIA;
+        dst_type = CAudioInfo::EAudioType::AUDIO_OUT_TYPE_MEDIA;
         break;
     }
 }
 
 static void __convert_audio_info_audio_type_2_sound_type(const CAudioInfo::EAudioType& src_type, sound_type_e& dst_type) {
     switch (src_type) {
-    case CAudioInfo::AUDIO_OUT_TYPE_MEDIA:
+    case CAudioInfo::EAudioType::AUDIO_OUT_TYPE_MEDIA:
         dst_type = SOUND_TYPE_MEDIA;
         break;
-    case CAudioInfo::AUDIO_OUT_TYPE_SYSTEM:
+    case CAudioInfo::EAudioType::AUDIO_OUT_TYPE_SYSTEM:
         dst_type = SOUND_TYPE_SYSTEM;
         break;
-    case CAudioInfo::AUDIO_OUT_TYPE_ALARM:
+    case CAudioInfo::EAudioType::AUDIO_OUT_TYPE_ALARM:
         dst_type = SOUND_TYPE_ALARM;
         break;
-    case CAudioInfo::AUDIO_OUT_TYPE_NOTIFICATION:
-    case CAudioInfo::AUDIO_OUT_TYPE_EMERGENCY:
+    case CAudioInfo::EAudioType::AUDIO_OUT_TYPE_NOTIFICATION:
+    case CAudioInfo::EAudioType::AUDIO_OUT_TYPE_EMERGENCY:
         dst_type = SOUND_TYPE_NOTIFICATION;
         break;
-    case CAudioInfo::AUDIO_OUT_TYPE_VOICE_INFORMATION:
+    case CAudioInfo::EAudioType::AUDIO_OUT_TYPE_VOICE_INFORMATION:
         dst_type = SOUND_TYPE_VOICE;
         break;
-    case CAudioInfo::AUDIO_OUT_TYPE_RINGTONE_VOIP:
+    case CAudioInfo::EAudioType::AUDIO_OUT_TYPE_RINGTONE_VOIP:
         dst_type = SOUND_TYPE_RINGTONE;
         break;
-    case CAudioInfo::AUDIO_OUT_TYPE_VOIP:
+    case CAudioInfo::EAudioType::AUDIO_OUT_TYPE_VOIP:
         dst_type = SOUND_TYPE_VOIP;
         break;
     default:
@@ -259,16 +259,16 @@ static void __convert_audio_info_audio_type_2_sound_type(const CAudioInfo::EAudi
 static audio_io_state_e __convert_state_type(const CAudioInfo::EAudioIOState src_state) {
     audio_io_state_e dst_state;
     switch (src_state) {
-    case CAudioInfo::AUDIO_IO_STATE_NONE:
+    case CAudioInfo::EAudioIOState::AUDIO_IO_STATE_NONE:
         dst_state = AUDIO_IO_STATE_IDLE;
         break;
-    case CAudioInfo::AUDIO_IO_STATE_IDLE:
+    case CAudioInfo::EAudioIOState::AUDIO_IO_STATE_IDLE:
         dst_state = AUDIO_IO_STATE_IDLE;
         break;
-    case CAudioInfo::AUDIO_IO_STATE_RUNNING:
+    case CAudioInfo::EAudioIOState::AUDIO_IO_STATE_RUNNING:
         dst_state = AUDIO_IO_STATE_RUNNING;
         break;
-    case CAudioInfo::AUDIO_IO_STATE_PAUSED:
+    case CAudioInfo::EAudioIOState::AUDIO_IO_STATE_PAUSED:
         dst_state = AUDIO_IO_STATE_PAUSED;
         break;
     default:
@@ -279,15 +279,15 @@ static audio_io_state_e __convert_state_type(const CAudioInfo::EAudioIOState src
 
 static void __check_audio_param(int sample_rate, audio_channel_e channel, audio_sample_type_e type)  throw (CAudioError) {
     if (sample_rate < 0) {
-        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Invalid sample rate :%d", sample_rate);
+        THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Invalid sample rate :%d", sample_rate);
     }
 
     if (channel != AUDIO_CHANNEL_MONO && channel != AUDIO_CHANNEL_STEREO) {
-        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Invalid channel :%d", channel);
+        THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Invalid channel :%d", channel);
     }
 
     if (type != AUDIO_SAMPLE_TYPE_U8 && type != AUDIO_SAMPLE_TYPE_S16_LE) {
-        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Invalid sample type :%d", type);
+        THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Invalid sample type :%d", type);
     }
 }
 
@@ -295,14 +295,14 @@ static void __check_audio_param(int sample_rate, audio_channel_e channel, audio_
     __check_audio_param(sample_rate, channel, type);
 
     if (sound_type < SOUND_TYPE_SYSTEM || sound_type > SOUND_TYPE_VOICE) {
-        THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Invalid sound type : %d", sound_type);
+        THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Invalid sound type : %d", sound_type);
     }
 }
 
 static CAudioInfo __generate_audio_input_info(int sampleRate, audio_channel_e channel, audio_sample_type_e sample_type) throw (CAudioError) {
     CAudioInfo::EChannel     dstChannel;
     CAudioInfo::ESampleType dstSampleType;
-    CAudioInfo::EAudioType  dstAudioType = CAudioInfo::AUDIO_IN_TYPE_MEDIA;
+    CAudioInfo::EAudioType  dstAudioType = CAudioInfo::EAudioType::AUDIO_IN_TYPE_MEDIA;
 
     __convert_channel_2_audio_info_channel(channel, dstChannel);
     __convert_sample_type_2_audio_info_sample_type(sample_type, dstSampleType);
@@ -313,7 +313,7 @@ static CAudioInfo __generate_audio_input_info(int sampleRate, audio_channel_e ch
 static CAudioInfo __generate_audio_input_loopback_info(int sampleRate, audio_channel_e channel, audio_sample_type_e sample_type) throw (CAudioError) {
     CAudioInfo::EChannel     dstChannel;
     CAudioInfo::ESampleType dstSampleType;
-    CAudioInfo::EAudioType  dstAudioType = CAudioInfo::AUDIO_IN_TYPE_LOOPBACK;
+    CAudioInfo::EAudioType  dstAudioType = CAudioInfo::EAudioType::AUDIO_IN_TYPE_LOOPBACK;
 
     __convert_channel_2_audio_info_channel(channel, dstChannel);
     __convert_sample_type_2_audio_info_sample_type(sample_type, dstSampleType);
@@ -335,22 +335,22 @@ static CAudioInfo __generate_audio_output_info(int sampleRate, audio_channel_e c
 
 static audio_io_interrupted_code_e __convert_interrupted_code(IAudioSessionEventListener::EInterruptCode code) {
     switch (code) {
-    case IAudioSessionEventListener::INTERRUPT_COMPLETED:
+    case IAudioSessionEventListener::EInterruptCode::INTERRUPT_COMPLETED:
         return AUDIO_IO_INTERRUPTED_COMPLETED;
-    case IAudioSessionEventListener::INTERRUPT_BY_CALL:
+    case IAudioSessionEventListener::EInterruptCode::INTERRUPT_BY_CALL:
         return AUDIO_IO_INTERRUPTED_BY_CALL;
-    case IAudioSessionEventListener::INTERRUPT_BY_EARJACK_UNPLUG:
+    case IAudioSessionEventListener::EInterruptCode::INTERRUPT_BY_EARJACK_UNPLUG:
         return AUDIO_IO_INTERRUPTED_BY_EARJACK_UNPLUG;
-    case IAudioSessionEventListener::INTERRUPT_BY_RESOURCE_CONFLICT:
+    case IAudioSessionEventListener::EInterruptCode::INTERRUPT_BY_RESOURCE_CONFLICT:
         return AUDIO_IO_INTERRUPTED_BY_RESOURCE_CONFLICT;
-    case IAudioSessionEventListener::INTERRUPT_BY_ALARM:
+    case IAudioSessionEventListener::EInterruptCode::INTERRUPT_BY_ALARM:
         return AUDIO_IO_INTERRUPTED_BY_ALARM;
-    case IAudioSessionEventListener::INTERRUPT_BY_EMERGENCY:
+    case IAudioSessionEventListener::EInterruptCode::INTERRUPT_BY_EMERGENCY:
         return AUDIO_IO_INTERRUPTED_BY_EMERGENCY;
-    case IAudioSessionEventListener::INTERRUPT_BY_NOTIFICATION:
+    case IAudioSessionEventListener::EInterruptCode::INTERRUPT_BY_NOTIFICATION:
         return AUDIO_IO_INTERRUPTED_BY_NOTIFICATION;
-    case IAudioSessionEventListener::INTERRUPT_BY_MEDIA:
-    case IAudioSessionEventListener::INTERRUPT_MAX:
+    case IAudioSessionEventListener::EInterruptCode::INTERRUPT_BY_MEDIA:
+    case IAudioSessionEventListener::EInterruptCode::INTERRUPT_MAX:
     default:
         return AUDIO_IO_INTERRUPTED_BY_MEDIA;
     }
@@ -363,21 +363,21 @@ int cpp_audio_in_create(int sample_rate, audio_channel_e channel, audio_sample_t
     audio_io_s* handle = NULL;
     try {
         if (input == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
         }
 
         __check_audio_param(sample_rate, channel, type);
 
         handle = new audio_io_s;
         if (handle == NULL) {
-            THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed allocation handle");
+            THROW_ERROR_MSG(CAudioError::EError::ERROR_OUT_OF_MEMORY, "Failed allocation handle");
         }
 
         CAudioInfo audioInfo = __generate_audio_input_info(sample_rate, channel, type);
 
         handle->audioIoHandle = new CAudioInput(audioInfo);
         if (handle == NULL) {
-            THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed allocation internal handle");
+            THROW_ERROR_MSG(CAudioError::EError::ERROR_OUT_OF_MEMORY, "Failed allocation internal handle");
         }
 
         handle->audioIoHandle->initialize();
@@ -407,21 +407,21 @@ int cpp_audio_in_create_loopback(int sample_rate, audio_channel_e channel, audio
     audio_io_s* handle = NULL;
     try {
         if (input == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
         }
 
         __check_audio_param(sample_rate, channel, type);
 
         handle = new audio_io_s;
         if (handle == NULL) {
-            THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed allocation handle");
+            THROW_ERROR_MSG(CAudioError::EError::ERROR_OUT_OF_MEMORY, "Failed allocation handle");
         }
 
         CAudioInfo audioInfo = __generate_audio_input_loopback_info(sample_rate, channel, type);
 
         handle->audioIoHandle = new CAudioInput(audioInfo);
         if (handle == NULL) {
-            THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed allocation internal handle");
+            THROW_ERROR_MSG(CAudioError::EError::ERROR_OUT_OF_MEMORY, "Failed allocation internal handle");
         }
 
         handle->audioIoHandle->initialize();
@@ -451,7 +451,7 @@ int cpp_audio_in_destroy(audio_in_h input) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
         }
 
         assert(handle->audioIoHandle);
@@ -472,24 +472,24 @@ int cpp_audio_in_set_stream_info(audio_in_h input, sound_stream_info_h stream_in
 
     try {
         if (handle == NULL || stream_info == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p, stream_info:%p", input, stream_info);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p, stream_info:%p", input, stream_info);
         }
 
         assert(handle->audioIoHandle);
 
         int errorCode = SOUND_MANAGER_ERROR_NONE;
-        CAudioInfo::EAudioType AudioType = CAudioInfo::AUDIO_IN_TYPE_MEDIA;
+        CAudioInfo::EAudioType AudioType = CAudioInfo::EAudioType::AUDIO_IN_TYPE_MEDIA;
         char *type = NULL;
         int index = -1;
 
         if ((errorCode = sound_manager_get_type_from_stream_information (stream_info, &type)) != SOUND_MANAGER_ERROR_NONE) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameter stream_info->stream_type is invalid [ret:%d]", errorCode);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameter stream_info->stream_type is invalid [ret:%d]", errorCode);
         }
         handle->audioIoHandle->getAudioInfo().convertInputStreamType2AudioType(type, &AudioType);
         handle->audioIoHandle->getAudioInfo().setAudioType(AudioType);
 
         if ((errorCode = sound_manager_get_index_from_stream_information (stream_info, &index)) != SOUND_MANAGER_ERROR_NONE) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameter stream_info->index is invalid [ret:%d]", errorCode);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameter stream_info->index is invalid [ret:%d]", errorCode);
         }
         handle->audioIoHandle->getAudioInfo().setAudioIndex(index);
     } catch (CAudioError e) {
@@ -505,7 +505,7 @@ int cpp_audio_in_prepare(audio_in_h input) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
         }
 
         assert(handle->audioIoHandle);
@@ -524,7 +524,7 @@ int cpp_audio_in_unprepare(audio_in_h input) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
         }
 
         assert(handle->audioIoHandle);
@@ -543,7 +543,7 @@ int cpp_audio_in_pause(audio_in_h input) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
         }
 
         assert(handle->audioIoHandle);
@@ -562,7 +562,7 @@ int cpp_audio_in_resume(audio_in_h input) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
         }
 
         assert(handle->audioIoHandle);
@@ -581,7 +581,7 @@ int cpp_audio_in_drain(audio_in_h input) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
         }
 
         assert(handle->audioIoHandle);
@@ -600,7 +600,7 @@ int cpp_audio_in_flush(audio_in_h input) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
         }
 
         assert(handle->audioIoHandle);
@@ -620,7 +620,7 @@ int cpp_audio_in_read(audio_in_h input, void *buffer, unsigned int length) {
 
     try {
         if (handle == NULL || buffer == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p, buffer:%p", input, buffer);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p, buffer:%p", input, buffer);
         }
 
         assert(handle->audioIoHandle);
@@ -644,7 +644,7 @@ int cpp_audio_in_get_buffer_size(audio_in_h input, int *size) {
 
     try {
         if (handle == NULL || size == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p, size:%p", input, size);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p, size:%p", input, size);
         }
 
         assert(handle->audioIoHandle);
@@ -664,7 +664,7 @@ int cpp_audio_in_get_sample_rate(audio_in_h input, int *sample_rate) {
 
     try {
         if (handle == NULL || sample_rate == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p, sample_rate:%p", input, sample_rate);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p, sample_rate:%p", input, sample_rate);
         }
 
         assert(handle->audioIoHandle);
@@ -682,7 +682,7 @@ int cpp_audio_in_get_channel(audio_in_h input, audio_channel_e *channel) {
 
     try {
         if (handle == NULL || channel == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p, channel:%p", input, channel);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p, channel:%p", input, channel);
         }
 
         assert(handle->audioIoHandle);
@@ -705,7 +705,7 @@ int cpp_audio_in_get_sample_type(audio_in_h input, audio_sample_type_e *type) {
 
     try {
         if (handle == NULL || type == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p, type:%p", input, type);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p, type:%p", input, type);
         }
 
         assert(handle->audioIoHandle);
@@ -739,7 +739,7 @@ int cpp_audio_in_set_interrupted_cb(audio_in_h input, audio_io_interrupted_cb ca
 
     try {
         if (handle == NULL || callback == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p, callback:%p", input, callback);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p, callback:%p", input, callback);
         }
 
         assert(handle->audioIoHandle);
@@ -765,7 +765,7 @@ int cpp_audio_in_unset_interrupted_cb(audio_in_h input) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
         }
 
         assert(handle->audioIoHandle);
@@ -791,11 +791,11 @@ int cpp_audio_in_ignore_session(audio_in_h input) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
         }
 
         if (handle->stream_callback.onStream) {
-            THROW_ERROR_MSG(CAudioError::ERROR_INVALID_OPERATION, "Not support ignore session in async mode");
+            THROW_ERROR_MSG(CAudioError::EError::ERROR_INVALID_OPERATION, "Not support ignore session in async mode");
         }
 
         assert(handle->audioIoHandle);
@@ -832,7 +832,7 @@ int cpp_audio_in_set_stream_cb(audio_in_h input, audio_in_stream_cb callback, vo
 
     try {
         if (handle == NULL || callback == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p, callback:%p", input, callback);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p, callback:%p", input, callback);
         }
 
         assert(handle->audioIoHandle);
@@ -858,7 +858,7 @@ int cpp_audio_in_unset_stream_cb(audio_in_h input) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
         }
 
         assert(handle->audioIoHandle);
@@ -885,7 +885,7 @@ int cpp_audio_in_peek(audio_in_h input, const void **buffer, unsigned int *lengt
 
     try {
         if (handle == NULL || buffer == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p, buffer:%p", input, buffer);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p, buffer:%p", input, buffer);
         }
 
         CAudioInput* inputHandle = dynamic_cast<CAudioInput*>(handle->audioIoHandle);
@@ -907,7 +907,7 @@ int cpp_audio_in_drop(audio_in_h input) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
         }
 
         CAudioInput* inputHandle = dynamic_cast<CAudioInput*>(handle->audioIoHandle);
@@ -927,7 +927,7 @@ int cpp_audio_in_set_state_changed_cb(audio_in_h input, audio_in_state_changed_c
 
     try {
         if (handle == NULL || callback == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p, callback:%p", input, callback);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p, callback:%p", input, callback);
         }
 
         assert(handle->audioIoHandle);
@@ -953,7 +953,7 @@ int cpp_audio_in_unset_state_changed_cb(audio_in_h input) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p", input);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p", input);
         }
 
         assert(handle->audioIoHandle);
@@ -982,21 +982,21 @@ int cpp_audio_out_create(int sample_rate, audio_channel_e channel, audio_sample_
     audio_io_s* handle = NULL;
     try {
         if (output == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p", output);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p", output);
         }
 
         __check_audio_param(sample_rate, channel, type, sound_type);
 
         handle = new audio_io_s;
         if (handle == NULL) {
-            THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed allocation handle");
+            THROW_ERROR_MSG(CAudioError::EError::ERROR_OUT_OF_MEMORY, "Failed allocation handle");
         }
 
         CAudioInfo audioInfo = __generate_audio_output_info(sample_rate, channel, type, sound_type);
 
         handle->audioIoHandle = new CAudioOutput(audioInfo);
         if (handle == NULL) {
-            THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed allocation internal handle");
+            THROW_ERROR_MSG(CAudioError::EError::ERROR_OUT_OF_MEMORY, "Failed allocation internal handle");
         }
 
         handle->audioIoHandle->initialize();
@@ -1025,21 +1025,21 @@ int cpp_audio_out_create_new(int sample_rate, audio_channel_e channel, audio_sam
     audio_io_s* handle = NULL;
     try {
         if (output == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p", output);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p", output);
         }
 
         __check_audio_param(sample_rate, channel, type, SOUND_TYPE_SYSTEM /*default check */);
 
         handle = new audio_io_s;
         if (handle == NULL) {
-            THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed allocation handle");
+            THROW_ERROR_MSG(CAudioError::EError::ERROR_OUT_OF_MEMORY, "Failed allocation handle");
         }
 
         CAudioInfo audioInfo = __generate_audio_output_info(sample_rate, channel, type, SOUND_TYPE_MEDIA /* default sound_type */);
 
         handle->audioIoHandle = new CAudioOutput(audioInfo);
         if (handle == NULL) {
-            THROW_ERROR_MSG(CAudioError::ERROR_OUT_OF_MEMORY, "Failed allocation internal handle");
+            THROW_ERROR_MSG(CAudioError::EError::ERROR_OUT_OF_MEMORY, "Failed allocation internal handle");
         }
 
         handle->audioIoHandle->initialize();
@@ -1069,7 +1069,7 @@ int cpp_audio_out_destroy(audio_out_h output) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameter is NULL output:%p", output);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameter is NULL output:%p", output);
         }
 
         assert(handle->audioIoHandle);
@@ -1090,24 +1090,24 @@ int cpp_audio_out_set_stream_info(audio_out_h output, sound_stream_info_h stream
 
     try {
         if (handle == NULL || stream_info == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p, stream_info:%p", output, stream_info);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p, stream_info:%p", output, stream_info);
         }
 
         assert(handle->audioIoHandle);
 
         int errorCode = SOUND_MANAGER_ERROR_NONE;
-        CAudioInfo::EAudioType AudioType = CAudioInfo::AUDIO_OUT_TYPE_MEDIA;
+        CAudioInfo::EAudioType AudioType = CAudioInfo::EAudioType::AUDIO_OUT_TYPE_MEDIA;
         char *type = NULL;
         int index = -1;
 
         if ((errorCode = sound_manager_get_type_from_stream_information (stream_info, &type)) != SOUND_MANAGER_ERROR_NONE) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameter stream_info->stream_type is invalid [ret:%d]", errorCode);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameter stream_info->stream_type is invalid [ret:%d]", errorCode);
         }
         handle->audioIoHandle->getAudioInfo().convertOutputStreamType2AudioType(type, &AudioType);
         handle->audioIoHandle->getAudioInfo().setAudioType(AudioType);
 
         if ((errorCode = sound_manager_get_index_from_stream_information (stream_info, &index)) != SOUND_MANAGER_ERROR_NONE) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameter stream_info->index is invalid [ret:%d]", errorCode);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameter stream_info->index is invalid [ret:%d]", errorCode);
         }
         handle->audioIoHandle->getAudioInfo().setAudioIndex(index);
     } catch (CAudioError e) {
@@ -1123,7 +1123,7 @@ int cpp_audio_out_prepare(audio_out_h output) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameter is NULL output:%p", output);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameter is NULL output:%p", output);
         }
 
         assert(handle->audioIoHandle);
@@ -1142,7 +1142,7 @@ int cpp_audio_out_unprepare(audio_out_h output) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameter is NULL output:%p", output);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameter is NULL output:%p", output);
         }
 
         assert(handle->audioIoHandle);
@@ -1161,7 +1161,7 @@ int cpp_audio_out_pause(audio_out_h output) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameter is NULL output:%p", output);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameter is NULL output:%p", output);
         }
 
         assert(handle->audioIoHandle);
@@ -1180,7 +1180,7 @@ int cpp_audio_out_resume(audio_out_h output) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameter is NULL output:%p", output);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameter is NULL output:%p", output);
         }
 
         assert(handle->audioIoHandle);
@@ -1199,7 +1199,7 @@ int cpp_audio_out_drain(audio_out_h output) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameter is NULL output:%p", output);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameter is NULL output:%p", output);
         }
 
         assert(handle->audioIoHandle);
@@ -1218,7 +1218,7 @@ int cpp_audio_out_flush(audio_out_h output) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameter is NULL output:%p", output);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameter is NULL output:%p", output);
         }
 
         assert(handle->audioIoHandle);
@@ -1238,7 +1238,7 @@ int cpp_audio_out_write(audio_out_h output, void *buffer, unsigned int length) {
 
     try {
         if (handle == NULL || buffer == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameter is NULL output:%p, buffer:%p", output, buffer);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameter is NULL output:%p, buffer:%p", output, buffer);
         }
 
         assert(handle->audioIoHandle);
@@ -1262,7 +1262,7 @@ int cpp_audio_out_get_buffer_size(audio_out_h output, int *size) {
 
     try {
         if (handle == NULL || size == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p, size:%p", output, size);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p, size:%p", output, size);
         }
 
         assert(handle->audioIoHandle);
@@ -1282,7 +1282,7 @@ int cpp_audio_out_get_sample_rate(audio_out_h output, int *sample_rate) {
 
     try {
         if (handle == NULL || sample_rate == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p, sample_rate:%p", output, sample_rate);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p, sample_rate:%p", output, sample_rate);
         }
 
         assert(handle->audioIoHandle);
@@ -1300,7 +1300,7 @@ int cpp_audio_out_get_channel(audio_out_h output, audio_channel_e *channel) {
 
     try {
         if (handle == NULL || channel == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p, channel:%p", output, channel);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p, channel:%p", output, channel);
         }
 
         assert(handle->audioIoHandle);
@@ -1323,7 +1323,7 @@ int cpp_audio_out_get_sample_type(audio_out_h output, audio_sample_type_e *type)
 
     try {
         if (handle == NULL || type == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p, type:%p", output, type);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p, type:%p", output, type);
         }
 
         assert(handle->audioIoHandle);
@@ -1346,7 +1346,7 @@ int cpp_audio_out_get_sound_type(audio_out_h output, sound_type_e *type) {
 
     try {
         if (handle == NULL || type == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p, type:%p", output, type);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p, type:%p", output, type);
         }
 
         assert(handle->audioIoHandle);
@@ -1369,7 +1369,7 @@ int cpp_audio_out_set_interrupted_cb(audio_out_h output, audio_io_interrupted_cb
 
     try {
         if (handle == NULL || callback == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p, callback:%p", output, callback);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p, callback:%p", output, callback);
         }
 
         assert(handle->audioIoHandle);
@@ -1395,7 +1395,7 @@ int cpp_audio_out_unset_interrupted_cb(audio_out_h output) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p", output);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p", output);
         }
 
         assert(handle->audioIoHandle);
@@ -1421,11 +1421,11 @@ int cpp_audio_out_ignore_session(audio_out_h output) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p", output);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p", output);
         }
 
         if (handle->stream_callback.onStream) {
-            THROW_ERROR_MSG(CAudioError::ERROR_INVALID_OPERATION, "Not support ignore session in async mode");
+            THROW_ERROR_MSG(CAudioError::EError::ERROR_INVALID_OPERATION, "Not support ignore session in async mode");
         }
 
         assert(handle->audioIoHandle);
@@ -1444,7 +1444,7 @@ int cpp_audio_out_set_stream_cb(audio_out_h output, audio_out_stream_cb callback
 
     try {
         if (handle == NULL || callback == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p, callback:%p", output, callback);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p, callback:%p", output, callback);
         }
 
         assert(handle->audioIoHandle);
@@ -1470,7 +1470,7 @@ int cpp_audio_out_unset_stream_cb(audio_out_h output) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p", output);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p", output);
         }
 
         assert(handle->audioIoHandle);
@@ -1496,7 +1496,7 @@ int cpp_audio_out_set_state_changed_cb(audio_out_h output, audio_in_state_change
 
     try {
         if (handle == NULL || callback == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p, callback:%p", output, callback);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p, callback:%p", output, callback);
         }
 
         assert(handle->audioIoHandle);
@@ -1522,7 +1522,7 @@ int cpp_audio_out_unset_state_changed_cb(audio_out_h output) {
 
     try {
         if (handle == NULL) {
-            THROW_ERROR_MSG_FORMAT(CAudioError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p", output);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL output:%p", output);
         }
 
         assert(handle->audioIoHandle);

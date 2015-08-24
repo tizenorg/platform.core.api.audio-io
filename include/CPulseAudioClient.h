@@ -36,7 +36,7 @@ namespace tizen_media_audio {
     class CPulseStreamSpec;
     class CPulseAudioClient {
     public:
-        enum EStreamDirection {
+        enum class EStreamDirection : unsigned int {
             STREAM_DIRECTION_RECORD,        /**< Record stream */
             STREAM_DIRECTION_PLAYBACK       /**< Playback stream */
         };

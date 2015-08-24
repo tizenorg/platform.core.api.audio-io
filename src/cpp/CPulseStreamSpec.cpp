@@ -39,7 +39,7 @@ static const char* STREAM_LATENCY_VOIP = "voip";
 
 
 CPulseStreamSpec::CPulseStreamSpec() throw (CAudioError) :
-    __mLatency(STREAM_LATENCY_INPUT_MID),
+    __mLatency(EStreamLatency::STREAM_LATENCY_INPUT_MID),
     __mStreamName(NULL) {
     __adjustSpec();
 }
@@ -67,11 +67,11 @@ void CPulseStreamSpec::__adjustSpec() throw (CAudioError) {
 
     // Convert channels for PA
     switch (__mAudioInfo.getChannel()) {
-    case CAudioInfo::CHANNEL_MONO:
+    case CAudioInfo::EChannel::CHANNEL_MONO:
         __mSampleSpec.channels = 1;
         break;
 
-    case CAudioInfo::CHANNEL_STEREO:
+    case CAudioInfo::EChannel::CHANNEL_STEREO:
     default:
         __mSampleSpec.channels = 2;
         break;
@@ -79,11 +79,11 @@ void CPulseStreamSpec::__adjustSpec() throw (CAudioError) {
 
     // Convert format for PA
     switch (__mAudioInfo.getSampleType()) {
-    case CAudioInfo::SAMPLE_TYPE_U8:
+    case CAudioInfo::ESampleType::SAMPLE_TYPE_U8:
         __mSampleSpec.format = PA_SAMPLE_U8;
         break;
 
-    case CAudioInfo::SAMPLE_TYPE_S16_LE:
+    case CAudioInfo::ESampleType::SAMPLE_TYPE_S16_LE:
     default:
         __mSampleSpec.format = PA_SAMPLE_S16LE;
         break;
@@ -94,35 +94,35 @@ void CPulseStreamSpec::__adjustSpec() throw (CAudioError) {
 
     // Sets stream name
     switch (__mLatency) {
-    case STREAM_LATENCY_OUTPUT_MID:
+    case EStreamLatency::STREAM_LATENCY_OUTPUT_MID:
         __mStreamName = STREAM_NAME_OUTPUT;
         break;
 
-    case STREAM_LATENCY_OUTPUT_HIGH:
+    case EStreamLatency::STREAM_LATENCY_OUTPUT_HIGH:
         __mStreamName = STREAM_NAME_OUTPUT_HIGH_LATENCY;
         break;
 
-    case STREAM_LATENCY_OUTPUT_LOW:
+    case EStreamLatency::STREAM_LATENCY_OUTPUT_LOW:
         __mStreamName = STREAM_NAME_OUTPUT_LOW_LATENCY;
         break;
 
-    case STREAM_LATENCY_OUTPUT_VOIP:
+    case EStreamLatency::STREAM_LATENCY_OUTPUT_VOIP:
         __mStreamName = STREAM_NAME_OUTPUT_VOIP;
         break;
 
-    case STREAM_LATENCY_INPUT_HIGH:
+    case EStreamLatency::STREAM_LATENCY_INPUT_HIGH:
         __mStreamName = STREAM_NAME_INPUT_HIGH_LATENCY;
         break;
 
-    case STREAM_LATENCY_INPUT_LOW:
+    case EStreamLatency::STREAM_LATENCY_INPUT_LOW:
         __mStreamName = STREAM_NAME_INPUT_LOW_LATENCY;
         break;
 
-    case STREAM_LATENCY_INPUT_VOIP:
+    case EStreamLatency::STREAM_LATENCY_INPUT_VOIP:
         __mStreamName = STREAM_NAME_INPUT_VOIP;
         break;
 
-    case STREAM_LATENCY_INPUT_MID:
+    case EStreamLatency::STREAM_LATENCY_INPUT_MID:
     default:
         __mStreamName = STREAM_NAME_INPUT;
         break;
@@ -137,20 +137,20 @@ const char* CPulseStreamSpec::getStreamLatencyToString() {
     const char* latency;
 
     switch (__mLatency) {
-    case STREAM_LATENCY_INPUT_LOW:
-    case STREAM_LATENCY_OUTPUT_LOW:
+    case EStreamLatency::STREAM_LATENCY_INPUT_LOW:
+    case EStreamLatency::STREAM_LATENCY_OUTPUT_LOW:
         latency = STREAM_LATENCY_LOW;
         break;
-    case STREAM_LATENCY_INPUT_MID:
-    case STREAM_LATENCY_OUTPUT_MID:
+    case EStreamLatency::STREAM_LATENCY_INPUT_MID:
+    case EStreamLatency::STREAM_LATENCY_OUTPUT_MID:
         latency = STREAM_LATENCY_MID;
         break;
-    case STREAM_LATENCY_INPUT_HIGH:
-    case STREAM_LATENCY_OUTPUT_HIGH:
+    case EStreamLatency::STREAM_LATENCY_INPUT_HIGH:
+    case EStreamLatency::STREAM_LATENCY_OUTPUT_HIGH:
         latency = STREAM_LATENCY_HIGH;
         break;
-    case STREAM_LATENCY_INPUT_VOIP:
-    case STREAM_LATENCY_OUTPUT_VOIP:
+    case EStreamLatency::STREAM_LATENCY_INPUT_VOIP:
+    case EStreamLatency::STREAM_LATENCY_OUTPUT_VOIP:
         latency = STREAM_LATENCY_VOIP;
         break;
     default:
