@@ -18,7 +18,6 @@
 #include <mm.h>
 #include <pthread.h>
 #include <assert.h>
-#include <audio-session-manager.h>
 #include "CAudioIODef.h"
 
 #define AUDIO_IO_DEBUG
@@ -199,7 +198,7 @@ void CAudioIO::onInterrupt(CAudioSessionHandler* pHandler, int id, mm_sound_focu
         // Triggered by 'focus watch callback'
         ///////////////////////////////////////
 
-        if (session_option & (ASM_SESSION_OPTION_PAUSE_OTHERS | ASM_SESSION_OPTION_UNINTERRUPTIBLE)) {
+        if (session_option & (MM_SESSION_OPTION_PAUSE_OTHERS | MM_SESSION_OPTION_UNINTERRUPTIBLE)) {
             AUDIO_IO_LOGD("Session option is pausing others or uninterruptible, skip...");
             return;
         }
@@ -242,7 +241,7 @@ void CAudioIO::onInterrupt(CAudioSessionHandler* pHandler, int id, mm_sound_focu
             AUDIO_IO_LOGW("Id is different, why? [mId : %d]", pHandler->getId());
         }
 
-        if (session_option & ASM_SESSION_OPTION_UNINTERRUPTIBLE) {
+        if (session_option & MM_SESSION_OPTION_UNINTERRUPTIBLE) {
             AUDIO_IO_LOGD("Session option is uninterruptible, skip...");
             return;
         }
