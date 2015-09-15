@@ -84,7 +84,7 @@ namespace tizen_media_audio {
         virtual void onSignal(CAudioSessionHandler* pHandler, mm_sound_signal_name_t signal, int value);
 
         /* Methods */
-        CAudioInfo getAudioInfo() throw (CAudioError);
+        CAudioInfo& getAudioInfo() throw (CAudioError);
 
         virtual void setStreamCallback(SStreamCallback callback) throw (CAudioError);
         SStreamCallback getStreamCallback() throw (CAudioError);

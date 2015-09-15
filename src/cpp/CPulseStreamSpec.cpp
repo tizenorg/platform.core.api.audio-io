@@ -161,7 +161,7 @@ const char* CPulseStreamSpec::getStreamLatencyToString() {
     return latency;
 }
 
-CAudioInfo CPulseStreamSpec::getAudioInfo() {
+CAudioInfo& CPulseStreamSpec::getAudioInfo() {
     return __mAudioInfo;
 }
 
