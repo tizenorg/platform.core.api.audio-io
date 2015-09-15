@@ -54,7 +54,7 @@ namespace tizen_media_audio {
         /* Setter & Getter */
         EStreamLatency getStreamLatency();
         const char*    getStreamLatencyToString();
-        CAudioInfo     getAudioInfo();
+        CAudioInfo&    getAudioInfo();
         pa_sample_spec getSampleSpec();
         pa_channel_map getChannelMap();
         const char*    getStreamName();

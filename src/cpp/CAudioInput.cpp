@@ -164,7 +164,7 @@ void CAudioInput::prepare() throw (CAudioError) {
         }
 
         // Init StreamSpec
-        AUDIO_IO_LOGD("Set Strem Spec : CPulseStreamSpec::STREAM_LATENCY_INPUT_MID");
+        AUDIO_IO_LOGD("Set Stream Spec : CPulseStreamSpec::STREAM_LATENCY_INPUT_MID");
         CPulseStreamSpec::EStreamLatency streamSpec = CPulseStreamSpec::EStreamLatency::STREAM_LATENCY_INPUT_MID;
         CPulseStreamSpec spec(streamSpec, mAudioInfo);
 

@@ -97,9 +97,9 @@ namespace tizen_media_audio {
         EChannel getChannel();
         ESampleType getSampleType();
         EAudioType getAudioType();
-        void setAudioType(EAudioType AudioType);
+        void setAudioType(EAudioType audioType);
         int getAudioIndex();
-        void setAudioIndex(int AudioIndex);
+        void setAudioIndex(int audioIndex);
         void convertAudioType2StreamType (CAudioInfo::EAudioType audioType, char **streamType);
         void convertInputStreamType2AudioType (char *streamType, CAudioInfo::EAudioType *audioType);
         void convertOutputStreamType2AudioType (char *streamType, CAudioInfo::EAudioType *audioType);
