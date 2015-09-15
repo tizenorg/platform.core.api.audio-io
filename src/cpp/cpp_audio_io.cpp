@@ -478,15 +478,15 @@ int cpp_audio_in_set_stream_info(audio_in_h input, sound_stream_info_h stream_in
         assert(handle->audioIoHandle);
 
         int errorCode = SOUND_MANAGER_ERROR_NONE;
-        CAudioInfo::EAudioType AudioType = CAudioInfo::EAudioType::AUDIO_IN_TYPE_MEDIA;
+        CAudioInfo::EAudioType audioType = CAudioInfo::EAudioType::AUDIO_IN_TYPE_MEDIA;
         char *type = NULL;
         int index = -1;
 
         if ((errorCode = sound_manager_get_type_from_stream_information (stream_info, &type)) != SOUND_MANAGER_ERROR_NONE) {
             THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameter stream_info->stream_type is invalid [ret:%d]", errorCode);
         }
-        handle->audioIoHandle->getAudioInfo().convertInputStreamType2AudioType(type, &AudioType);
-        handle->audioIoHandle->getAudioInfo().setAudioType(AudioType);
+        handle->audioIoHandle->getAudioInfo().convertInputStreamType2AudioType(type, &audioType);
+        handle->audioIoHandle->getAudioInfo().setAudioType(audioType);
 
         if ((errorCode = sound_manager_get_index_from_stream_information (stream_info, &index)) != SOUND_MANAGER_ERROR_NONE) {
             THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameter stream_info->index is invalid [ret:%d]", errorCode);
@@ -1096,15 +1096,15 @@ int cpp_audio_out_set_stream_info(audio_out_h output, sound_stream_info_h stream
         assert(handle->audioIoHandle);
 
         int errorCode = SOUND_MANAGER_ERROR_NONE;
-        CAudioInfo::EAudioType AudioType = CAudioInfo::EAudioType::AUDIO_OUT_TYPE_MEDIA;
+        CAudioInfo::EAudioType audioType = CAudioInfo::EAudioType::AUDIO_OUT_TYPE_MEDIA;
         char *type = NULL;
         int index = -1;
 
         if ((errorCode = sound_manager_get_type_from_stream_information (stream_info, &type)) != SOUND_MANAGER_ERROR_NONE) {
             THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameter stream_info->stream_type is invalid [ret:%d]", errorCode);
         }
-        handle->audioIoHandle->getAudioInfo().convertOutputStreamType2AudioType(type, &AudioType);
-        handle->audioIoHandle->getAudioInfo().setAudioType(AudioType);
+        handle->audioIoHandle->getAudioInfo().convertOutputStreamType2AudioType(type, &audioType);
+        handle->audioIoHandle->getAudioInfo().setAudioType(audioType);
 
         if ((errorCode = sound_manager_get_index_from_stream_information (stream_info, &index)) != SOUND_MANAGER_ERROR_NONE) {
             THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameter stream_info->index is invalid [ret:%d]", errorCode);
