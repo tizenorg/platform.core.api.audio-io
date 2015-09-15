@@ -171,6 +171,7 @@ void CPulseAudioClient::initialize() throw (CAudioError) {
         // Adds values on proplist for delivery to PULSEAUDIO
         char *streamType = NULL;
         CAudioInfo::EAudioType audioType = __mSpec.getAudioInfo().getAudioType();
+
         __mSpec.getAudioInfo().convertAudioType2StreamType(audioType, &streamType);
         pa_proplist_sets(__mpPropList, PA_PROP_MEDIA_ROLE, streamType);
 

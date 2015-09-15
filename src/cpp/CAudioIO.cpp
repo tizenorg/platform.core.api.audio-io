@@ -384,7 +384,7 @@ void CAudioIO::flush() throw (CAudioError) {
     }
 }
 
-CAudioInfo CAudioIO::getAudioInfo() throw (CAudioError) {
+CAudioInfo& CAudioIO::getAudioInfo() throw (CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
