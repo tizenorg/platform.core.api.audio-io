@@ -15,6 +15,7 @@
  */
 
 
+#include <unistd.h>
 #include <mm_error.h>
 #include "CAudioIODef.h"
 
@@ -369,6 +370,7 @@ void CAudioSessionHandler::registerSound() throw (CAudioError) {
 
             // Register focus callback
             errorCode = mm_sound_register_focus_for_session(__mId,
+                                                getpid(),
                                                 __mAudioSession == EAudioSessionType::AUDIO_SESSION_TYPE_CAPTURE ? __STREAM_TYPE_TABLE_IN[index].name : __STREAM_TYPE_TABLE_OUT[index].name,
                                                 __sound_pcm_focus_cb,
                                                 static_cast<void*>(this));
@@ -381,9 +383,9 @@ void CAudioSessionHandler::registerSound() throw (CAudioError) {
             AUDIO_IO_LOGD("Focus callback registered successfully [id:%d]", __mId);
         } else if (!(__mOptions & MM_SESSION_OPTION_UNINTERRUPTIBLE)) {
             // Register focus watch callback
-            errorCode = mm_sound_set_focus_watch_callback(FOCUS_FOR_BOTH, __sound_pcm_focus_watch_cb, static_cast<void*>(this), &__mId);
+            errorCode = mm_sound_set_focus_watch_callback_for_session(getpid(), FOCUS_FOR_BOTH, __sound_pcm_focus_watch_cb, static_cast<void*>(this), &__mId);
             if (errorCode < 0) {
-                THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_POLICY_BLOCKED, "Failed mm_sound_set_focus_watch_callback() err:0x%x", errorCode);
+                THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_POLICY_BLOCKED, "Failed mm_sound_set_focus_watch_callback_for_session() err:0x%x", errorCode);
             }
 
             __focusIdCountInc();
