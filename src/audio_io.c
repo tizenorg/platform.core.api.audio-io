@@ -64,7 +64,7 @@ int audio_in_flush(audio_in_h input)
     return cpp_audio_in_flush(input);
 }
 
-int audio_in_read(audio_in_h input, void *buffer, unsigned int length )
+int audio_in_read(audio_in_h input, void *buffer, unsigned int length)
 {
     return cpp_audio_in_read(input, buffer, length);
 }
