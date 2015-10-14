@@ -70,8 +70,7 @@ typedef struct audio_io_s *audio_out_h;
  * @brief Enumeration for audio sample type with bit depth.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
-typedef enum
-{
+typedef enum {
     AUDIO_SAMPLE_TYPE_U8 = 0x70,    /**< Unsigned 8-bit audio samples */
     AUDIO_SAMPLE_TYPE_S16_LE,       /**< Signed 16-bit audio samples */
 } audio_sample_type_e;
@@ -89,8 +88,7 @@ typedef enum {
  * @brief Enumeration for audio input and output state.
  * @since_tizen 3.0
  */
-typedef enum
-{
+typedef enum {
     AUDIO_IO_STATE_IDLE,      /**< Audio-io handle is created, but not prepared */
     AUDIO_IO_STATE_RUNNING,   /**< Audio-io handle is ready and the stream is running */
     AUDIO_IO_STATE_PAUSED,    /**< Audio-io handle is ready and the stream is paused */
@@ -100,7 +98,7 @@ typedef enum
  * @brief Enumeration for audio input and output error.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
-typedef enum{
+typedef enum {
     AUDIO_IO_ERROR_NONE                = TIZEN_ERROR_NONE,              /**< Successful */
     AUDIO_IO_ERROR_OUT_OF_MEMORY       = TIZEN_ERROR_OUT_OF_MEMORY,     /**< Out of memory */
     AUDIO_IO_ERROR_INVALID_PARAMETER   = TIZEN_ERROR_INVALID_PARAMETER, /**< Invalid parameter */
@@ -120,8 +118,7 @@ typedef enum{
  * @brief Enumeration for audio IO interrupted messages.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
-typedef enum
-{
+typedef enum {
     AUDIO_IO_INTERRUPTED_COMPLETED = 0,         /**< Interrupt completed */
     AUDIO_IO_INTERRUPTED_BY_MEDIA,              /**< Interrupted by a media application */
     AUDIO_IO_INTERRUPTED_BY_CALL,               /**< Interrupted by an incoming call */
@@ -155,10 +152,6 @@ typedef void (*audio_io_interrupted_cb)(audio_io_interrupted_code_e code, void *
  * @addtogroup CAPI_MEDIA_AUDIO_IN_MODULE
  * @{
  */
-
-//
-//AUDIO INPUT
-//
 
 /**
  * @brief Called when audio input data is available in asynchronous(event) mode.
@@ -658,10 +651,6 @@ int audio_in_unset_state_changed_cb(audio_in_h input);
 /**
  * @}
  */
-
-//
-// AUDIO OUTPUT
-//
 
 /**
  * @addtogroup CAPI_MEDIA_AUDIO_OUT_MODULE
