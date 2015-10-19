@@ -22,7 +22,6 @@
 
 
 #include <pulse/pulseaudio.h>
-#include <pulse/ext-policy.h>
 
 
 namespace tizen_media_audio {
