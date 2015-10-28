@@ -40,7 +40,6 @@ CAudioOutput::CAudioOutput(
 }
 
 CAudioOutput::~CAudioOutput() {
-
 }
 
 void CAudioOutput::onStream(CPulseAudioClient* pClient, size_t length) {
@@ -330,9 +329,10 @@ size_t CAudioOutput::write(const void* buffer, size_t length) throw (CAudioError
     /* When write() is called in PulseAudio callback, bypass a pcm data to PulseAudioClient (For Asynchronous) */
     if (mpPulseAudioClient->isInThread() == true) {
         int ret = mpPulseAudioClient->write(buffer, length);
-        if (ret == 0) {
-            return length;
+        if (ret < 0) {
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INTERNAL_OPERATION, "The written result is invalid ret:%d", ret);
         }
+        return length;
     }
 
     try {
@@ -362,9 +362,9 @@ size_t CAudioOutput::write(const void* buffer, size_t length) throw (CAudioError
             AUDIO_IO_LOGD("PulseAudioClient->write(buffer:%p, length:%d)", buffer, l);
 #endif
 
-            int r = mpPulseAudioClient->write(buffer, l);
-            if (r < 0) {
-                THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INTERNAL_OPERATION, "The written result is invalid ret:%d", r);
+            int ret = mpPulseAudioClient->write(buffer, l);
+            if (ret < 0) {
+                THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INTERNAL_OPERATION, "The written result is invalid ret:%d", ret);
             }
 
             buffer = static_cast<const uint8_t*>(buffer) + l;

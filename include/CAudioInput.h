@@ -72,12 +72,8 @@ namespace tizen_media_audio {
         bool __IsInit();
         bool __IsReady();
 
-        const void* __mpSyncReadDataPtr;
-        size_t      __mSyncReadIndex;
-        size_t      __mSyncReadLength;
-
-        bool        __mIsUsedSyncRead;
-        bool        __mIsInit;
+        bool __mIsUsedSyncRead;
+        bool __mIsInit;
     };
 
 

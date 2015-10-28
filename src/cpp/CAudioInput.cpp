@@ -27,9 +27,6 @@ using namespace tizen_media_audio;
  */
 CAudioInput::CAudioInput(CAudioInfo& info) :
     CAudioIO(info),
-    __mpSyncReadDataPtr(NULL),
-    __mSyncReadIndex(0),
-    __mSyncReadLength(0),
     __mIsUsedSyncRead(true) {
 }
 
@@ -38,9 +35,6 @@ CAudioInput::CAudioInput(
         CAudioInfo::EChannel    channel,
         CAudioInfo::ESampleType type,
         CAudioInfo::EAudioType  audioType) :
-    __mpSyncReadDataPtr(NULL),
-    __mSyncReadIndex(0),
-    __mSyncReadLength(0),
     __mIsUsedSyncRead(true) {
     mAudioInfo = CAudioInfo(sampleRate, channel, type, audioType, -1);
 }
@@ -57,9 +51,8 @@ void CAudioInput::onStream(CPulseAudioClient* pClient, size_t length) {
      */
     if (__mIsUsedSyncRead == true) {
 #ifdef _AUDIO_IO_DEBUG_TIMING_
-        AUDIO_IO_LOGD("Sync Read Mode! - signal! - pClient:[%p], length:[%d]", pClient, length);
+        AUDIO_IO_LOGD("Sync Read Mode! - pClient:[%p], length:[%d]", pClient, length);
 #endif
-        internalSignal();
         return;
     }
 
@@ -340,7 +333,7 @@ size_t CAudioInput::read(void* buffer, size_t length) throw (CAudioError) {
     }
 
     if (buffer == NULL) {
-        THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are invalid - buffer:%p, length:%zu", buffer, length);
+        THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL buffer:%p", buffer);
     }
 
     /* Checks synchronous flag */
@@ -348,82 +341,16 @@ size_t CAudioInput::read(void* buffer, size_t length) throw (CAudioError) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_INVALID_OPERATION, "Invalid operation of read() if receive stream callback");
     }
 
-    size_t lengthIter = length;
     int ret = 0;
 
     try {
-        internalLock();
-
-        while (lengthIter > 0) {
-            size_t l;
-
-            while (__mpSyncReadDataPtr == NULL) {
-                ret = mpPulseAudioClient->peek(&__mpSyncReadDataPtr, &__mSyncReadLength);
-                if (ret != 0) {
-                    THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INTERNAL_OPERATION, "Failed CPulseAudioClient::peek() ret:[%d]", ret);
-                }
-
-                if (__mSyncReadLength <= 0) {
-#ifdef _AUDIO_IO_DEBUG_TIMING_
-                    AUDIO_IO_LOGD("readLength(%d byte) is not valid.. wait..", __mSyncReadLength);
-#endif
-                    internalWait();
-                } else if (__mpSyncReadDataPtr == NULL) {
-                    /* There's a hole in the stream, skip it. We could generate
-                     * silence, but that wouldn't work for compressed streams.
-                     */
-                    ret = mpPulseAudioClient->drop();
-                    if (ret != 0) {
-                        THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INTERNAL_OPERATION, "Failed CPulseAudioClient::drop() ret:[%d]", ret);
-                    }
-                } else {
-                    __mSyncReadIndex = 0;
-                }
-            }//end of while (pReadData == NULL)
-
-            if (__mSyncReadLength < lengthIter) {
-                l = __mSyncReadLength;
-            } else {
-                l = lengthIter;
-            }
-
-            // Copy partial pcm data on out parameter
-#ifdef _AUDIO_IO_DEBUG_TIMING_
-            AUDIO_IO_LOGD("memcpy() that a peeked buffer(%p), index(%d), length(%d), on out buffer", (const uint8_t*)(__mpSyncReadDataPtr) + __mSyncReadIndex, __mSyncReadIndex, l);
-#endif
-            memcpy(buffer, (const uint8_t*)__mpSyncReadDataPtr + __mSyncReadIndex, l);
-
-            // Move next position
-            buffer = (uint8_t*)buffer + l;
-            lengthIter -= l;
-
-            // Adjusts the rest length
-            __mSyncReadIndex  += l;
-            __mSyncReadLength -= l;
-
-            if (__mSyncReadLength == 0) {
-#ifdef _AUDIO_IO_DEBUG_TIMING_
-                AUDIO_IO_LOGD("__mSyncReadLength is zero - Do drop()");
-#endif
-                ret = mpPulseAudioClient->drop();
-                if (ret != 0) {
-                    THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INTERNAL_OPERATION, "Failed CPulseAudioClient::drop() ret:[%d]", ret);
-                }
-
-                // Reset the internal pointer
-                __mpSyncReadDataPtr = NULL;
-                __mSyncReadLength   = 0;
-                __mSyncReadIndex    = 0;
-            }
-        }  // End of while (length > 0)
-
-        internalUnlock();
+        // Block until read done
+        ret = mpPulseAudioClient->read(buffer, length);
     } catch (CAudioError e) {
-        internalUnlock();
         throw e;
     }
 
-    return length;
+    return ret;
 }
 
 int CAudioInput::peek(const void** buffer, size_t* length) throw (CAudioError) {

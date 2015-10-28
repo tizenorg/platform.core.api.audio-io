@@ -54,9 +54,10 @@ namespace tizen_media_audio {
         void finalize();
 
         /* Methods */
-        int  peek(const void** data, size_t* length) throw (CAudioError);
-        int  drop() throw (CAudioError);
-        int  write(const void* data, size_t length) throw (CAudioError);
+        int read(void* buffer, size_t length) throw (CAudioError);
+        int peek(const void** buffer, size_t* length) throw (CAudioError);
+        int drop() throw (CAudioError);
+        int write(const void* buffer, size_t length) throw (CAudioError);
 
         void cork(bool cork) throw (CAudioError);
         bool isCorked() throw (CAudioError);
@@ -92,6 +93,11 @@ namespace tizen_media_audio {
 
         bool                  __mIsInit;
         bool                  __mIsOperationSuccess;
+
+        const void*           __mpSyncReadDataPtr;
+        size_t                __mSyncReadIndex;
+        size_t                __mSyncReadLength;
+        bool                  __mIsUsedSyncRead;
 
         /* Static Methods */
 
