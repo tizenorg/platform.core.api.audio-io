@@ -311,8 +311,10 @@ void CPulseAudioClient::finalize() {
     if (__mpMainloop != NULL) {
         pa_threaded_mainloop_stop(__mpMainloop);
     }
+
     if (__mpStream != NULL) {
         pa_stream_disconnect(__mpStream);
+        pa_stream_unref(__mpStream);
         __mpStream = NULL;
     }
 
@@ -335,14 +337,30 @@ void CPulseAudioClient::finalize() {
     __mIsInit = false;
 }
 
+void CPulseAudioClient::mainloopLock() {
+    assert(__mpMainloop);
+    pa_threaded_mainloop_lock(__mpMainloop);
+}
+
+void CPulseAudioClient::mainloopUnlock() {
+    assert(__mpMainloop);
+    pa_threaded_mainloop_unlock(__mpMainloop);
+}
+
+void CPulseAudioClient::mainloopSignal() {
+    assert(__mpMainloop);
+    pa_threaded_mainloop_signal(__mpMainloop, 0);
+}
+
+void CPulseAudioClient::mainloopWait() {
+    assert(__mpMainloop);
+    pa_threaded_mainloop_wait(__mpMainloop);
+}
+
 int CPulseAudioClient::peek(const void** data, size_t* length) throw (CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
-
-#ifdef _AUDIO_IO_DEBUG_TIMING_
-    AUDIO_IO_LOGD("data:[%p], length:[%p]", data, length);
-#endif
 
     checkRunningState();
 
@@ -364,8 +382,12 @@ int CPulseAudioClient::peek(const void** data, size_t* length) throw (CAudioErro
         ret = pa_stream_peek(__mpStream, data, length);
     }
 
+#ifdef _AUDIO_IO_DEBUG_TIMING_
+    AUDIO_IO_LOGD("data:[%p], length:[%d]", *data, *length);
+#endif
+
     if (ret < 0) {
-        THROW_ERROR_MSG(CAudioError::EError::ERROR_FAILED_OPERATION, "Failed pa_stream_peek()");
+        THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_FAILED_OPERATION, "Failed pa_stream_peek() err:%d", ret);
     }
 
     return ret;
@@ -397,7 +419,7 @@ int CPulseAudioClient::drop() throw (CAudioError) {
     }
 
     if (ret < 0) {
-        THROW_ERROR_MSG(CAudioError::EError::ERROR_FAILED_OPERATION, "Failed pa_stream_drop()");
+        THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_FAILED_OPERATION, "Failed pa_stream_drop() err:%d", ret);
     }
 
     return ret;
@@ -407,10 +429,6 @@ int CPulseAudioClient::write(const void* data, size_t length) throw (CAudioError
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
-
-#ifdef _AUDIO_IO_DEBUG_TIMING_
-    AUDIO_IO_LOGD("data[%p], length:[%d]", data, length);
-#endif
 
     checkRunningState();
 
@@ -423,6 +441,10 @@ int CPulseAudioClient::write(const void* data, size_t length) throw (CAudioError
     }
 
     int ret = 0;
+
+#ifdef _AUDIO_IO_DEBUG_TIMING_
+    AUDIO_IO_LOGD("data[%p], length:[%d]", data, length);
+#endif
 
     if (isInThread() == false) {
         pa_threaded_mainloop_lock(__mpMainloop);

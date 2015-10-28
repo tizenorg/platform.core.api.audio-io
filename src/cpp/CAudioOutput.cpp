@@ -54,7 +54,7 @@ void CAudioOutput::onStream(CPulseAudioClient* pClient, size_t length) {
 #ifdef _AUDIO_IO_DEBUG_TIMING_
         AUDIO_IO_LOGD("Sync Write Mode! - signal! - pClient:[%p], length:[%d]", pClient, length);
 #endif
-        internalSignal();
+        mpPulseAudioClient->mainloopSignal();
         return;
     }
 
@@ -337,7 +337,7 @@ size_t CAudioOutput::write(const void* buffer, size_t length) throw (CAudioError
 
     try {
         /* For synchronization */
-        internalLock();
+        mpPulseAudioClient->mainloopLock();
 
         // Sets synchronous flag
         __mIsUsedSyncWrite = true;
@@ -351,7 +351,7 @@ size_t CAudioOutput::write(const void* buffer, size_t length) throw (CAudioError
 #ifdef _AUDIO_IO_DEBUG_TIMING_
                 AUDIO_IO_LOGD("writableSize is [%d].. wait", l);
 #endif
-                internalWait();
+                mpPulseAudioClient->mainloopWait();
             }
 
             if (l > lengthIter) {
@@ -373,11 +373,11 @@ size_t CAudioOutput::write(const void* buffer, size_t length) throw (CAudioError
 
         // Unsets synchronous flag
         __mIsUsedSyncWrite = false;
-        internalUnlock();
+        mpPulseAudioClient->mainloopUnlock();
     } catch (CAudioError e) {
         // Unsets synchronous flag
         __mIsUsedSyncWrite = false;
-        internalUnlock();
+        mpPulseAudioClient->mainloopUnlock();
         throw e;
     }
 
