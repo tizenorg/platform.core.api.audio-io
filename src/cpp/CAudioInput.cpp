@@ -59,7 +59,9 @@ void CAudioInput::onStream(CPulseAudioClient* pClient, size_t length) {
 #ifdef _AUDIO_IO_DEBUG_TIMING_
         AUDIO_IO_LOGD("Sync Read Mode! - signal! - pClient:[%p], length:[%d]", pClient, length);
 #endif
-        internalSignal();
+        AUDIO_IO_LOGD("onStream() - %p, %d", pClient, length);
+
+        mpPulseAudioClient->mainloopSignal();
         return;
     }
 
@@ -167,6 +169,11 @@ void CAudioInput::prepare() throw (CAudioError) {
         AUDIO_IO_LOGD("Set Stream Spec : CPulseStreamSpec::STREAM_LATENCY_INPUT_MID");
         CPulseStreamSpec::EStreamLatency streamSpec = CPulseStreamSpec::EStreamLatency::STREAM_LATENCY_INPUT_MID;
         CPulseStreamSpec spec(streamSpec, mAudioInfo);
+
+        // Reset the internal pointer
+        __mpSyncReadDataPtr = NULL;
+        __mSyncReadLength   = 0;
+        __mSyncReadIndex    = 0;
 
         // Create PulseAudio Handler
         mpPulseAudioClient = new CPulseAudioClient(CPulseAudioClient::EStreamDirection::STREAM_DIRECTION_RECORD, spec, this);
@@ -352,7 +359,7 @@ size_t CAudioInput::read(void* buffer, size_t length) throw (CAudioError) {
     int ret = 0;
 
     try {
-        internalLock();
+        mpPulseAudioClient->mainloopLock();
 
         while (lengthIter > 0) {
             size_t l;
@@ -367,7 +374,7 @@ size_t CAudioInput::read(void* buffer, size_t length) throw (CAudioError) {
 #ifdef _AUDIO_IO_DEBUG_TIMING_
                     AUDIO_IO_LOGD("readLength(%d byte) is not valid.. wait..", __mSyncReadLength);
 #endif
-                    internalWait();
+                    mpPulseAudioClient->mainloopWait();
                 } else if (__mpSyncReadDataPtr == NULL) {
                     /* There's a hole in the stream, skip it. We could generate
                      * silence, but that wouldn't work for compressed streams.
@@ -417,9 +424,9 @@ size_t CAudioInput::read(void* buffer, size_t length) throw (CAudioError) {
             }
         }  // End of while (length > 0)
 
-        internalUnlock();
+        mpPulseAudioClient->mainloopUnlock();
     } catch (CAudioError e) {
-        internalUnlock();
+        mpPulseAudioClient->mainloopUnlock();
         throw e;
     }
 

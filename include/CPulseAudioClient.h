@@ -54,6 +54,11 @@ namespace tizen_media_audio {
         void finalize();
 
         /* Methods */
+        void mainloopLock();
+        void mainloopUnlock();
+        void mainloopSignal();
+        void mainloopWait();
+
         int  peek(const void** data, size_t* length) throw (CAudioError);
         int  drop() throw (CAudioError);
         int  write(const void* data, size_t length) throw (CAudioError);
