@@ -27,7 +27,8 @@ using namespace tizen_media_audio;
  */
 CAudioInput::CAudioInput(CAudioInfo& info) :
     CAudioIO(info),
-    __mIsUsedSyncRead(true) {
+    __mIsUsedSyncRead(true),
+    __mIsInit(false) {
 }
 
 CAudioInput::CAudioInput(
@@ -35,7 +36,8 @@ CAudioInput::CAudioInput(
         CAudioInfo::EChannel    channel,
         CAudioInfo::ESampleType type,
         CAudioInfo::EAudioType  audioType) :
-    __mIsUsedSyncRead(true) {
+    __mIsUsedSyncRead(true),
+    __mIsInit(false) {
     mAudioInfo = CAudioInfo(sampleRate, channel, type, audioType, -1);
 }
 
