@@ -124,19 +124,18 @@ namespace tizen_media_audio {
         EAudioSessionType           __mAudioSession;
         MMSessionType               __mMultimediaSession;
 
-        mm_sound_focus_type_e       __mFocusType;        /* For audio focus */
-        mm_sound_focus_state_e      __mState;            /* For audio focus */
-        char*                       __mReasonForChange;  /* For audio focus */
-        char*                       __mAdditionalInfo;   /* For audio focus */
-
         CAudioInfo                  __mAudioInfo;        /* Referenced from CAudioIO */
 
         IAudioSessionEventListener* __mpEventListener;
 
         bool                        __mIsInit;
+        int                         __mSubscribeId;
 
         bool                        __mUseFocus;
-        int                         __mSubscribeId;
+        mm_sound_focus_type_e       __mFocusType;        /* For audio focus */
+        mm_sound_focus_state_e      __mState;            /* For audio focus */
+        char*                       __mReasonForChange;  /* For audio focus */
+        char*                       __mAdditionalInfo;   /* For audio focus */
     };
 
 

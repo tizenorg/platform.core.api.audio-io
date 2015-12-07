@@ -88,8 +88,12 @@ CAudioSessionHandler::CAudioSessionHandler(EAudioSessionType sessionType, CAudio
     __mMultimediaSession(MM_SESSION_TYPE_MEDIA),
     __mpEventListener(listener),
     __mIsInit(false),
+    __mSubscribeId(-1),
     __mUseFocus(false),
-    __mSubscribeId(-1) {
+    __mFocusType(FOCUS_NONE),
+    __mState(FOCUS_IS_RELEASED),
+    __mReasonForChange(NULL),
+    __mAdditionalInfo(NULL) {
     __mAudioInfo = audioInfo;
 }
 
