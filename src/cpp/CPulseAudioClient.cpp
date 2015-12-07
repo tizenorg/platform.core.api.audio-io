@@ -59,6 +59,9 @@ void CPulseAudioClient::__contextStateChangeCb(pa_context* c, void* user_data) {
     switch (pa_context_get_state(c)) {
     case PA_CONTEXT_READY:
         AUDIO_IO_LOGD("The context is ready!");
+        pa_threaded_mainloop_signal(pClient->__mpMainloop, 0);
+        break;
+
     case PA_CONTEXT_FAILED:
     case PA_CONTEXT_TERMINATED:
         pa_threaded_mainloop_signal(pClient->__mpMainloop, 0);
@@ -93,13 +96,15 @@ void CPulseAudioClient::__streamStateChangeCb(pa_stream* s, void* user_data) {
     case PA_STREAM_READY:
         AUDIO_IO_LOGD("The stream is ready!");
         pClient->__mpListener->onStateChanged(CAudioInfo::EAudioIOState::AUDIO_IO_STATE_RUNNING);
+        pa_threaded_mainloop_signal(pClient->__mpMainloop, 0);
+        break;
+
     case PA_STREAM_FAILED:
     case PA_STREAM_TERMINATED:
         pa_threaded_mainloop_signal(pClient->__mpMainloop, 0);
         break;
 
     case PA_STREAM_UNCONNECTED:
-        break;
     case PA_STREAM_CREATING:
         break;
     }
@@ -516,7 +521,7 @@ int CPulseAudioClient::write(const void* data, size_t length) throw (CAudioError
 
     checkRunningState();
 
-    if (data == NULL || length < 0) {
+    if (data == NULL) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_INVALID_ARGUMENT, "The parameter is invalid");
     }
 
