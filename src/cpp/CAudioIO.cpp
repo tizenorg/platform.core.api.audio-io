@@ -32,6 +32,8 @@ using namespace tizen_media_audio;
 CAudioIO::CAudioIO() :
     mpAudioSessionHandler(NULL),
     mpPulseAudioClient(NULL),
+    __mMutex(PTHREAD_MUTEX_INITIALIZER),
+    __mCond(PTHREAD_COND_INITIALIZER),
     __mIsInit(false),
     __mForceIgnore(false) {
     mState = CAudioInfo::EAudioIOState::AUDIO_IO_STATE_NONE;
@@ -39,7 +41,13 @@ CAudioIO::CAudioIO() :
     mByPolicy = false;
 }
 
-CAudioIO::CAudioIO(CAudioInfo& audioInfo) : mpAudioSessionHandler(NULL), mpPulseAudioClient(NULL), __mIsInit(false), __mForceIgnore(false) {
+CAudioIO::CAudioIO(CAudioInfo& audioInfo) :
+    mpAudioSessionHandler(NULL),
+    mpPulseAudioClient(NULL),
+    __mMutex(PTHREAD_MUTEX_INITIALIZER),
+    __mCond(PTHREAD_COND_INITIALIZER),
+    __mIsInit(false),
+    __mForceIgnore(false) {
     mAudioInfo = audioInfo;
     mState = CAudioInfo::EAudioIOState::AUDIO_IO_STATE_NONE;
     mStatePrev = CAudioInfo::EAudioIOState::AUDIO_IO_STATE_NONE;
