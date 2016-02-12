@@ -206,38 +206,30 @@ void CAudioSessionHandler::initialize() throw (CAudioError) {
 
     CAudioError err = __getAsmInformation(&currentSession, &sessionOptions);
     if (err == CAudioError::EError::ERROR_NONE) {
-        // Session was configured before, use focus callback
-        __mUseFocus = true;
-        AUDIO_IO_LOGD("Use audio focus concept internally!");
+        if (currentSession == MM_SESSION_TYPE_REPLACED_BY_STREAM) {
+            __mUseFocus = false;
+            AUDIO_IO_LOGD("Stream info. was created outside, skip audio focus concept internally!");
+        } else {
+            // Session was configured before, use focus callback
+            __mUseFocus = true;
+            AUDIO_IO_LOGD("Use audio focus concept internally!");
+        }
     } else {
         if (err == CAudioError::EError::ERROR_INVALID_HANDLE) {
-            int value = 0;
+            // No session, No stream_info, No focus watch callback before
+            // Use focus watch callback with signal subscribe
             unsigned int subscribe_id;
-
-            int errorCode = mm_sound_get_signal_value(MM_SOUND_SIGNAL_RELEASE_INTERNAL_FOCUS, &value);
+            int errorCode = mm_sound_subscribe_signal(MM_SOUND_SIGNAL_RELEASE_INTERNAL_FOCUS, &subscribe_id, __sound_pcm_signal_cb, static_cast<void*>(this));
             if (errorCode != MM_ERROR_NONE) {
-                THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_POLICY_BLOCKED, "Failed mm_sound_get_signal_value() err:0x%x", errorCode);
+                THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_POLICY_BLOCKED, "Failed mm_sound_subscribe_signal() err:0x%x", errorCode);
             }
 
-            if (value == 1) {
-                // stream_info was created or focus watch callback was configured before
-                __mUseFocus = false;
-                AUDIO_IO_LOGD("Skip audio focus concept!");
-            } else if (value == 0) {
-                // No session, No stream_info, No focus watch callback before
-                // Use focus watch callback with signal subscribe
-                errorCode = mm_sound_subscribe_signal(MM_SOUND_SIGNAL_RELEASE_INTERNAL_FOCUS, &subscribe_id, __sound_pcm_signal_cb, static_cast<void*>(this));
-                if (errorCode != MM_ERROR_NONE) {
-                    THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_POLICY_BLOCKED, "Failed mm_sound_get_signal_value() err:0x%x", errorCode);
-                }
+            __mSubscribeId = (int)subscribe_id;
+            AUDIO_IO_LOGD("Subscribed mm_sound signal");
 
-                __mSubscribeId = (int)subscribe_id;
-                AUDIO_IO_LOGD("Subscribed mm_sound signal");
-
-                sessionOptions = 0;  // Mix with others by default
-                __mUseFocus = true;
-                AUDIO_IO_LOGD("Use audio focus(watch) concept internally!");
-            }
+            sessionOptions = 0;  // Mix with others by default
+            __mUseFocus = true;
+            AUDIO_IO_LOGD("Use audio focus(watch) concept internally!");
         } else {
             __mUseFocus = false;
             AUDIO_IO_LOGD("Skip audio focus concept!");
