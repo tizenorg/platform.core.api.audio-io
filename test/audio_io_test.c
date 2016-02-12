@@ -22,9 +22,6 @@
 #include <sound_manager.h>
 #include <audio_io.h>
 
-//#define _NEW_SOUND_MANAGER_API_
-#define _SESSION_SOUND_MANAGER_API_
-
 #ifndef M_PI
 #define M_PI  (3.14159265)
 #endif
@@ -302,59 +299,21 @@ audio_out_h output;
 
 FILE *fp_w = NULL;
 
-#ifdef _NEW_SOUND_MANAGER_API_
 sound_stream_info_h g_stream_info_read_h = NULL;
 sound_stream_info_h g_stream_info_write_h = NULL;
 
-static void focus_callback_read(sound_stream_info_h stream_info, sound_stream_focus_change_reason_e reason_for_change, const char *additional_info, void *user_data)
+static void focus_callback(sound_stream_info_h stream_info, sound_stream_focus_change_reason_e reason_for_change, const char *additional_info, void *user_data)
 {
 	int ret = 0;
 	sound_stream_focus_state_e playback_focus_state;
 	sound_stream_focus_state_e recording_focus_state;
-	printf("*** focus_callback_read is called, stream_info(%p) ***\n", stream_info);
+	printf("*** focus_callback_read is called, stream_info(%p, read(%p)/write(%p)) ***\n", stream_info, g_stream_info_read_h, g_stream_info_write_h);
 	printf(" - reason_for_change(%d), additional_info(%s), user_data(%p)\n", reason_for_change, additional_info, user_data);
 	ret = sound_manager_get_focus_state(stream_info, &playback_focus_state, &recording_focus_state);
 	if (!ret)
 		printf(" - focus_state(playback_focus:%d, recording_focus:%d)\n", playback_focus_state, recording_focus_state);
-	if (playback_focus_state == SOUND_STREAM_FOCUS_STATE_ACQUIRED) {
-		printf(" -- PLAYBACK_FOCUS acquired\n");
-	}
-	if (recording_focus_state == SOUND_STREAM_FOCUS_STATE_ACQUIRED) {
-		printf(" -- FOCUS_RECORDING acquired\n");
-	}
-	printf("*** focus_callback_read is ended, stream_info(%p) ****\n", stream_info);
+
 	return;
-}
-
-static void focus_callback_write(sound_stream_info_h stream_info, sound_stream_focus_change_reason_e reason_for_change, const char *additional_info, void *user_data)
-{
-	int ret = 0;
-	sound_stream_focus_state_e playback_focus_state;
-	sound_stream_focus_state_e recording_focus_state;
-	printf("*** focus_callback_write is called, stream_info(%p) ***\n", stream_info);
-	printf(" - reason_for_change(%d), additional_info(%s), user_data(%p)\n", reason_for_change, additional_info, user_data);
-	ret = sound_manager_get_focus_state(stream_info, &playback_focus_state, &recording_focus_state);
-	if (!ret)
-		printf(" - focus_state(playback_focus:%d, recording_focus:%d)\n", playback_focus_state, recording_focus_state);
-	if (playback_focus_state == SOUND_STREAM_FOCUS_STATE_ACQUIRED) {
-		printf(" -- PLAYBACK_FOCUS acquired\n");
-	}
-	if (recording_focus_state == SOUND_STREAM_FOCUS_STATE_ACQUIRED) {
-		printf(" -- FOCUS_RECORDING acquired\n");
-	}
-	printf("*** focus_callback_write is ended, stream_info(%p) ****\n", stream_info);
-	return;
-}
-#endif
-
-static void interrupted_callback_read(audio_io_interrupted_code_e code, void *user_data)
-{
-	printf("*** interrupted_callback_read is called, code(%d), user_data(%p) ***\n", code, user_data);
-}
-
-static void interrupted_callback_write(audio_io_interrupted_code_e code, void *user_data)
-{
-	printf("*** interrupted_callback_write is called, code(%d), user_data(%p) ***\n", code, user_data);
 }
 
 static void _audio_io_stream_read_cb(audio_in_h handle, size_t nbytes, void *user_data)
@@ -459,22 +418,10 @@ int _convert_cmd_and_run(char cmd, int mode)
 			ret = audio_in_flush(input);
 		break;
 	case 'i':
-#ifdef _NEW_SOUND_MANAGER_API_
-		ret = sound_manager_create_stream_information(SOUND_STREAM_TYPE_MEDIA, focus_callback_write, NULL, &g_stream_info_write_h);
+		ret = sound_manager_create_stream_information(SOUND_STREAM_TYPE_MEDIA, focus_callback, NULL, &g_stream_info_write_h);
 		if (ret) {
 			printf("fail to sound_manager_create_stream_information(), ret(0x%x)\n", ret);
 		}
-#endif
-#ifdef _SESSION_SOUND_MANAGER_API_
-		ret = sound_manager_set_session_type(SOUND_SESSION_TYPE_MEDIA);
-		if (ret) {
-			printf("fail to sound_manager_set_session_type(), ret(0x%x)\n", ret);
-		}
-		ret = sound_manager_set_media_session_option(SOUND_SESSION_OPTION_PAUSE_OTHERS_WHEN_START, SOUND_SESSION_OPTION_INTERRUPTIBLE_DURING_PLAY);
-		if (ret) {
-			printf("fail to sound_manager_set_media_session_option(), ret(0x%x)\n", ret);
-		}
-#endif
 		break;
 	case 'q':					/* quit */
 		ret = 1;
@@ -498,26 +445,15 @@ int audio_io_async_test(int mode)
 	int write_mode = (mode & 0x01);
 	int read_mode = (mode & 0x02);
 
+	sound_stream_focus_state_e playback_focus_state;
+	sound_stream_focus_state_e recording_focus_state;
+
 	if ((write_mode == 0) && (read_mode == 0)) {
 		printf("not vaild mode.\n");
 		return 0;
 	}
 
 	if (read_mode) {
-
-#ifdef _SESSION_SOUND_MANAGER_API_
-		printf("set session for capture.\n");
-
-		ret = sound_manager_set_session_type(SOUND_SESSION_TYPE_MEDIA);
-		if (ret) {
-			printf("fail to sound_manager_set_session_type(), ret(0x%x)\n", ret);
-		}
-
-		ret = sound_manager_set_media_session_option(SOUND_SESSION_OPTION_PAUSE_OTHERS_WHEN_START, SOUND_SESSION_OPTION_INTERRUPTIBLE_DURING_PLAY);
-		if (ret) {
-			printf("fail to sound_manager_set_media_session_option(), ret(0x%x)\n", ret);
-		}
-#endif
 
 		printf("audio_in_create\n");
 		ret = audio_in_create(44100, AUDIO_CHANNEL_STEREO, AUDIO_SAMPLE_TYPE_S16_LE, &input);
@@ -530,82 +466,76 @@ int audio_io_async_test(int mode)
 		ret = audio_in_set_stream_cb(input, _audio_io_stream_read_cb, NULL);
 		if (ret != AUDIO_IO_ERROR_NONE) {
 			printf("audio_in_set_stream_cb failed. \n");
-			return 0;
+			goto EXIT;
 		}
 		printf("audio_in_set_stream_cb success!!! [%p]\n", input);
 
 		ret = audio_in_set_state_changed_cb(input, _audio_in_state_cb, NULL);
 		if (ret != AUDIO_IO_ERROR_NONE) {
 			printf("audio_out_set_state_changed_cb failed. \n");
-			return 0;
+			goto EXIT;
 		}
 		printf("audio_out_set_state_changed_cb success!!! [%p]\n", input);
 
-		fp_w = fopen("/tmp/pcm_w.raw", "w");
-
-#ifdef _NEW_SOUND_MANAGER_API_
-		//set stream type as SOUND_STREAM_TYPE_MEDIA
-		ret = sound_manager_create_stream_information(SOUND_STREAM_TYPE_MEDIA, focus_callback_read, NULL, &g_stream_info_read_h);
+		ret = sound_manager_create_stream_information(SOUND_STREAM_TYPE_MEDIA, focus_callback, NULL, &g_stream_info_read_h);
 		if (ret) {
 			printf("fail to sound_manager_create_stream_information(), ret(0x%x)\n", ret);
+			goto EXIT;
 		}
 		ret = audio_in_set_stream_info(input, g_stream_info_read_h);
-#endif
+		if (ret)
+			printf("fail to audio_in_set_stream_info(), ret(0x%x)\n", ret);
 
-		ret = audio_in_set_interrupted_cb(input, interrupted_callback_read, NULL);
+		ret = sound_manager_acquire_focus(g_stream_info_read_h, SOUND_STREAM_FOCUS_FOR_RECORDING, NULL);
+		if (ret) {
+			printf("fail to sound_manager_acquire_focus() for RECORDING, ret(0x%x)\n", ret);
+			goto EXIT;
+		}
+
+		fp_w = fopen("/tmp/pcm_w.raw", "w");
 	}
 
 	if (write_mode) {
 		printf("before audio_out_create\n");
 		getchar();
 
-#ifdef _SESSION_SOUND_MANAGER_API_
-		printf("set session for playback.\n");
-
-		ret = sound_manager_set_session_type(SOUND_SESSION_TYPE_MEDIA);
-		if (ret) {
-			printf("fail to sound_manager_set_session_type(), ret(0x%x)\n", ret);
-		}
-
-		ret = sound_manager_set_media_session_option(SOUND_SESSION_OPTION_PAUSE_OTHERS_WHEN_START, SOUND_SESSION_OPTION_INTERRUPTIBLE_DURING_PLAY);
-		if (ret) {
-			printf("fail to sound_manager_set_media_session_option(), ret(0x%x)\n", ret);
-		}
-#endif
-
 		printf("audio_out_create\n");
 		//ret = audio_out_create(44100, AUDIO_CHANNEL_STEREO , AUDIO_SAMPLE_TYPE_S16_LE, SOUND_TYPE_MEDIA, &output);
 		ret = audio_out_create_new(44100, AUDIO_CHANNEL_STEREO, AUDIO_SAMPLE_TYPE_S16_LE, &output);
 		if (ret != AUDIO_IO_ERROR_NONE) {
 			printf("audio_out_create failed. \n");
-			return 0;
+			goto EXIT;
 		}
 		printf("audio_out_create success!!! [%p]\n", output);
 
 		ret = audio_out_set_stream_cb(output, _audio_io_stream_write_cb, NULL);
 		if (ret != AUDIO_IO_ERROR_NONE) {
 			printf("audio_out_set_stream_cb failed. \n");
-			return 0;
+			goto EXIT;
 		}
 		printf("audio_out_set_stream_cb success!!! [%p]\n", output);
 
 		ret = audio_out_set_state_changed_cb(output, _audio_out_state_cb, NULL);
 		if (ret != AUDIO_IO_ERROR_NONE) {
 			printf("audio_out_set_state_changed_cb failed. \n");
-			return 0;
+			goto EXIT;
 		}
 		printf("audio_out_set_state_changed_cb success!!! [%p]\n", output);
 
-#ifdef _NEW_SOUND_MANAGER_API_
-		//set stream type as SOUND_STREAM_TYPE_MEDIA
-		ret = sound_manager_create_stream_information(SOUND_STREAM_TYPE_MEDIA, focus_callback_write, NULL, &g_stream_info_write_h);
+		ret = sound_manager_create_stream_information(SOUND_STREAM_TYPE_MEDIA, focus_callback, NULL, &g_stream_info_write_h);
 		if (ret) {
 			printf("fail to sound_manager_create_stream_information(), ret(0x%x)\n", ret);
+			goto EXIT;
 		}
 		ret = audio_out_set_stream_info(output, g_stream_info_write_h);
-#endif
+		if (ret)
+			printf("fail to audio_out_set_stream_info(), ret(0x%x)\n", ret);
 
-		ret = audio_out_set_interrupted_cb(output, interrupted_callback_write, NULL);
+		ret = sound_manager_acquire_focus(g_stream_info_write_h, SOUND_STREAM_FOCUS_FOR_PLAYBACK, NULL);
+		if (ret) {
+			printf("fail to sound_manager_acquire_focus() for PLAYBACK, ret(0x%x)\n", ret);
+			goto EXIT;
+		}
 
 		//generate wave data
 		for (i = 0; i < TABLE_SIZE; i++) {
@@ -622,12 +552,12 @@ int audio_io_async_test(int mode)
 		if (ret != 0) {
 			printf("audio_in_prepare failed.\n");
 			audio_in_destroy(input);
-			return 0;
+			goto EXIT;
 		} else {
 			ret = audio_in_get_buffer_size(input, &size);
 			if (ret != AUDIO_IO_ERROR_NONE) {
 				printf("audio_in_get_buffer_size failed.\n");
-				return 0;
+				goto EXIT;
 			} else {
 				printf("size(%d)\n", size);
 				buffer = alloca(size);
@@ -636,7 +566,7 @@ int audio_io_async_test(int mode)
 
 		if (buffer == NULL) {
 			printf("buffer is null\n");
-			return 0;
+			goto EXIT;
 		}
 	}
 
@@ -648,7 +578,7 @@ int audio_io_async_test(int mode)
 		if (ret != 0) {
 			printf("audio_out_prepare failed.\n");
 			audio_out_destroy(output);
-			return 0;
+			goto EXIT;
 		}
 	}
 
@@ -669,40 +599,56 @@ int audio_io_async_test(int mode)
 
 	//getchar();
 
+EXIT:
 	if (read_mode) {
-		printf("audio_in_unprepare\n");
-		audio_in_unprepare(input);
-		printf("audio_in_destroy\n");
-		audio_in_destroy(input);
+		if (input) {
+			printf("audio_in_unprepare\n");
+			audio_in_unprepare(input);
+			printf("audio_in_destroy\n");
+			audio_in_destroy(input);
+			input = NULL;
+		}
 
-		fclose(fp_w);
-		fp_w = NULL;
+		if (fp_w) {
+			fclose(fp_w);
+			fp_w = NULL;
+		}
 
-#ifdef _NEW_SOUND_MANAGER_API_
-		ret = sound_manager_destroy_stream_information(g_stream_info_read_h);
-		if (ret) {
-			printf("fail to sound_manager_destroy_stream_information(), ret(0x%x)\n", ret);
-		} else {
+		if (g_stream_info_read_h) {
+			ret = sound_manager_get_focus_state(g_stream_info_read_h, NULL, &recording_focus_state);
+			if (recording_focus_state == SOUND_STREAM_FOCUS_STATE_ACQUIRED) {
+				ret = sound_manager_release_focus(g_stream_info_read_h, SOUND_STREAM_FOCUS_FOR_RECORDING, NULL);
+				if (ret)
+					printf("fail to sound_manager_release_focus() for recording, ret(0x%x)\n", ret);
+			}
+			ret = sound_manager_destroy_stream_information(g_stream_info_read_h);
+			if (ret)
+				printf("fail to sound_manager_destroy_stream_information(), ret(0x%x)\n", ret);
 			g_stream_info_read_h = NULL;
 		}
-#endif
 	}
 	//getchar();
 
 	if (write_mode) {
-		printf("audio_out_unprepare\n");
-		audio_out_unprepare(output);
-		printf("audio_out_destroy\n");
-		audio_out_destroy(output);
+		if (output) {
+			printf("audio_out_unprepare\n");
+			audio_out_unprepare(output);
+			printf("audio_out_destroy\n");
+			audio_out_destroy(output);
+		}
 
-#ifdef _NEW_SOUND_MANAGER_API_
-		ret = sound_manager_destroy_stream_information(g_stream_info_write_h);
-		if (ret) {
-			printf("fail to sound_manager_destroy_stream_information(), ret(0x%x)\n", ret);
-		} else {
+		if (g_stream_info_write_h) {
+			ret = sound_manager_get_focus_state(g_stream_info_write_h, &playback_focus_state, NULL);
+			if (playback_focus_state == SOUND_STREAM_FOCUS_STATE_ACQUIRED) {
+				ret = sound_manager_release_focus(g_stream_info_write_h, SOUND_STREAM_FOCUS_FOR_PLAYBACK, NULL);
+				if (ret)
+					printf("fail to sound_manager_release_focus() for playback, ret(0x%x)\n", ret);
+			}
+			ret = sound_manager_destroy_stream_information(g_stream_info_write_h);
+			if (ret)
+				printf("fail to sound_manager_destroy_stream_information(), ret(0x%x)\n", ret);
 			g_stream_info_write_h = NULL;
 		}
-#endif
 	}
 
 	return 0;
