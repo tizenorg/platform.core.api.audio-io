@@ -1043,7 +1043,7 @@ int audio_out_ignore_session(audio_out_h output);
  *
  * @details @a callback will be called when you can write a PCM data.
  * It might cause dead lock if change the state of audio handle in callback.
- * (ex: audio_in_destroy, audio_in_prepare, audio_in_unprepare)
+ * (ex: audio_out_destroy, audio_out_prepare, audio_out_unprepare)
  * Recommend to use as a VOIP only.
  * Recommend not to hold callback too long.(it affects latency)
  *
@@ -1061,7 +1061,7 @@ int audio_out_ignore_session(audio_out_h output);
  * @retval #AUDIO_IO_ERROR_DEVICE_NOT_OPENED Device not opened
  * @retval #AUDIO_IO_ERROR_SOUND_POLICY Sound policy error
  *
- * @see audio_in_set_stream_cb()
+ * @see audio_out_unset_stream_cb()
  */
 int audio_out_set_stream_cb(audio_out_h output, audio_out_stream_cb callback, void* user_data);
 
