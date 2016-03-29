@@ -184,6 +184,7 @@ CAudioInfo CAudioSessionHandler::getAudioInfo() {
     return __mAudioInfo;
 }
 
+//LCOV_EXCL_START
 void CAudioSessionHandler::__sound_pcm_signal_cb(mm_sound_signal_name_t signal, int value, void *user_data) {
     assert(user_data);
 
@@ -194,6 +195,7 @@ void CAudioSessionHandler::__sound_pcm_signal_cb(mm_sound_signal_name_t signal, 
         pHandler->__mpEventListener->onSignal(pHandler, signal, value);
     }
 }
+//LCOV_EXCL_STOP
 
 void CAudioSessionHandler::initialize() throw(CAudioError) {
     AUDIO_IO_LOGD("");
@@ -313,6 +315,7 @@ bool CAudioSessionHandler::isSkipSessionEvent() throw(CAudioError) {
     return ret;
 }
 
+//LCOV_EXCL_START
 void CAudioSessionHandler::__sound_pcm_focus_cb(int id, mm_sound_focus_type_e focus_type, mm_sound_focus_state_e state, const char *reason_for_change, const char *additional_info, void *user_data) {
     assert(user_data);
 
@@ -330,7 +333,9 @@ void CAudioSessionHandler::__sound_pcm_focus_cb(int id, mm_sound_focus_type_e fo
 
     return;
 }
+//LCOV_EXCL_STOP
 
+//LCOV_EXCL_START
 void CAudioSessionHandler::__sound_pcm_focus_watch_cb(int id, mm_sound_focus_type_e focus_type, mm_sound_focus_state_e state, const char *reason_for_change, const char *additional_info, void *user_data) {
     AUDIO_IO_LOGD("[id:%d], [focus_type:%d], [state:%d], [reason_for_change:%s], [additional_info:%s], [user_data:0x%x]", id, focus_type, state, reason_for_change, additional_info, user_data);
 
@@ -338,6 +343,8 @@ void CAudioSessionHandler::__sound_pcm_focus_watch_cb(int id, mm_sound_focus_typ
 
     return;
 }
+//LCOV_EXCL_STOP
+
 
 void CAudioSessionHandler::registerSound() throw(CAudioError) {
     if (__mIsInit == false) {
@@ -460,16 +467,19 @@ void CAudioSessionHandler::updateStop() throw(CAudioError) {
     }
 }
 
+//LCOV_EXCL_START
 void CAudioSessionHandler::disableSessionHandler() throw(CAudioError) {
     CAudioSessionHandler::updateStop();
     CAudioSessionHandler::unregisterSound();
 
     CAudioSessionHandler::__mUseFocus = false;
 }
+//LCOV_EXCL_STOP
 
 /**
  * class IAudioSessionEventListener
  */
+//LCOV_EXCL_START
 IAudioSessionEventListener::EInterruptCode IAudioSessionEventListener::convertInterruptedCode(int code, const char *reason_for_change) {
     EInterruptCode e = EInterruptCode::INTERRUPT_COMPLETED;
 
@@ -498,3 +508,4 @@ IAudioSessionEventListener::EInterruptCode IAudioSessionEventListener::convertIn
 
     return e;
 }
+//LCOV_EXCL_STOP

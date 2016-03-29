@@ -739,6 +739,7 @@ int cpp_audio_in_get_sample_type(audio_in_h input, audio_sample_type_e *type) {
     return AUDIO_IO_ERROR_NONE;
 }
 
+//LCOV_EXCL_START
 static void __interrupt_cb_internal(IAudioSessionEventListener::EInterruptCode _code, void* user_data) {
     audio_io_s* handle = static_cast<audio_io_s*>(user_data);
     audio_io_interrupted_code_e code = __convert_interrupted_code(_code);
@@ -749,6 +750,7 @@ static void __interrupt_cb_internal(IAudioSessionEventListener::EInterruptCode _
         handle->interrupt_callback.onInterrupt(code, handle->interrupt_callback.user_data);
     }
 }
+//LCOV_EXCL_STOP
 
 int cpp_audio_in_set_interrupted_cb(audio_in_h input, audio_io_interrupted_cb callback, void *user_data) {
     audio_io_s* handle = static_cast<audio_io_s*>(input);
@@ -834,6 +836,7 @@ static void __stream_cb_internal(size_t nbytes, void *user_data) {
     }
 }
 
+//LCOV_EXCL_START
 static void __state_changed_cb_internal(CAudioInfo::EAudioIOState state, CAudioInfo::EAudioIOState state_prev, bool by_policy, void *user_data) {
     audio_io_s* audioIo = static_cast<audio_io_s*>(user_data);
     assert(audioIo);
@@ -842,6 +845,7 @@ static void __state_changed_cb_internal(CAudioInfo::EAudioIOState state, CAudioI
         audioIo->state_changed_callback.onStateChanged(audioIo, __convert_state_type(state_prev), __convert_state_type(state), by_policy, audioIo->state_changed_callback.user_data);
     }
 }
+//LCOV_EXCL_STOP
 
 int cpp_audio_in_set_stream_cb(audio_in_h input, audio_in_stream_cb callback, void* user_data) {
     audio_io_s* handle = static_cast<audio_io_s*>(input);
