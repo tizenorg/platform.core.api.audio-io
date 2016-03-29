@@ -197,6 +197,7 @@ void CAudioIO::onStateChanged(CAudioInfo::EAudioIOState state) {
 }
 
 void CAudioIO::onInterrupt(CAudioSessionHandler* pHandler, int id, mm_sound_focus_type_e focus_type, mm_sound_focus_state_e state, const char *reason_for_change, const char *additional_info) {
+    //LCOV_EXCL_START
     assert(pHandler);
 
     int session_option = pHandler->getOptions();
@@ -286,9 +287,11 @@ void CAudioIO::onInterrupt(CAudioSessionHandler* pHandler, int id, mm_sound_focu
         e = IAudioSessionEventListener::convertInterruptedCode(state, reason_for_change);
         mInterruptCallback.onInterrupt(e, mInterruptCallback.mUserData);
     }
+    //LCOV_EXCL_STOP
 }
 
 void CAudioIO::onSignal(CAudioSessionHandler* pHandler, mm_sound_signal_name_t signal, int value) {
+    //LCOV_EXCL_START
     assert(pHandler);
 
     if (signal == MM_SOUND_SIGNAL_RELEASE_INTERNAL_FOCUS) {
@@ -300,6 +303,7 @@ void CAudioIO::onSignal(CAudioSessionHandler* pHandler, mm_sound_signal_name_t s
             // Currently do nothing...
         }
     }
+    //LCOV_EXCL_STOP
 }
 
 void CAudioIO::prepare() throw (CAudioError) {
