@@ -69,15 +69,19 @@ void CAudioOutput::onStream(CPulseAudioClient* pClient, size_t length) {
 }
 
 void CAudioOutput::onInterrupt(CAudioSessionHandler* pHandler, int id, mm_sound_focus_type_e focus_type, mm_sound_focus_state_e state, const char *reason_for_change, const char *additional_info) {
+    //LCOV_EXCL_START
     assert(pHandler);
     AUDIO_IO_LOGD("[pHandler:0x%x], [focus_type:%d], [state:%d], [reason_for_change:%s], [additional_info:%s]", pHandler, focus_type, state, reason_for_change, additional_info);
     CAudioIO::onInterrupt(pHandler, id, focus_type, state, reason_for_change, additional_info);
+    //LCOV_EXCL_STOP
 }
 
 void CAudioOutput::onSignal(CAudioSessionHandler* pHandler, mm_sound_signal_name_t signal, int value) {
+    //LCOV_EXCL_START
     assert(pHandler);
     AUDIO_IO_LOGD("[pHandler:0x%x], [signal:%d], [value:%d]", pHandler, signal, value);
     CAudioIO::onSignal(pHandler, signal, value);
+    //LCOV_EXCL_STOP
 }
 
 void CAudioOutput::__setInit(bool flag) {

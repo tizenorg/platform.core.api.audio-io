@@ -185,6 +185,7 @@ CAudioInfo CAudioSessionHandler::getAudioInfo() {
 }
 
 void CAudioSessionHandler::__sound_pcm_signal_cb(mm_sound_signal_name_t signal, int value, void *user_data) {
+    //LCOV_EXCL_START
     assert(user_data);
 
     AUDIO_IO_LOGD("[signal:%d], [value:%d], [user_data:0x%x]", signal, value, user_data);
@@ -193,6 +194,7 @@ void CAudioSessionHandler::__sound_pcm_signal_cb(mm_sound_signal_name_t signal, 
     if (pHandler->__mpEventListener != NULL) {
         pHandler->__mpEventListener->onSignal(pHandler, signal, value);
     }
+    //LCOV_EXCL_STOP
 }
 
 void CAudioSessionHandler::initialize() throw (CAudioError) {
@@ -315,6 +317,7 @@ bool CAudioSessionHandler::isSkipSessionEvent() throw (CAudioError) {
 }
 
 void CAudioSessionHandler::__sound_pcm_focus_cb(int id, mm_sound_focus_type_e focus_type, mm_sound_focus_state_e state, const char *reason_for_change, const char *additional_info, void *user_data) {
+    //LCOV_EXCL_START
     assert(user_data);
 
     AUDIO_IO_LOGD("[id:%d], [focus_type:%d], [state:%d], [reason_for_change:%s], [additional_info:%s], [user_data:0x%x]", id, focus_type, state, reason_for_change, additional_info, user_data);
@@ -330,14 +333,17 @@ void CAudioSessionHandler::__sound_pcm_focus_cb(int id, mm_sound_focus_type_e fo
     }
 
     return;
+    //LCOV_EXCL_STOP
 }
 
 void CAudioSessionHandler::__sound_pcm_focus_watch_cb(int id, mm_sound_focus_type_e focus_type, mm_sound_focus_state_e state, const char *reason_for_change, const char *additional_info, void *user_data) {
+    //LCOV_EXCL_START
     AUDIO_IO_LOGD("[id:%d], [focus_type:%d], [state:%d], [reason_for_change:%s], [additional_info:%s], [user_data:0x%x]", id, focus_type, state, reason_for_change, additional_info, user_data);
 
     CAudioSessionHandler::__sound_pcm_focus_cb(-1, focus_type, state, reason_for_change, additional_info, user_data);
 
     return;
+    //LCOV_EXCL_STOP
 }
 
 void CAudioSessionHandler::registerSound() throw (CAudioError) {
@@ -462,16 +468,19 @@ void CAudioSessionHandler::updateStop() throw (CAudioError) {
 }
 
 void CAudioSessionHandler::disableSessionHandler() throw (CAudioError) {
+    //LCOV_EXCL_START
     CAudioSessionHandler::updateStop();
     CAudioSessionHandler::unregisterSound();
 
     CAudioSessionHandler::__mUseFocus = false;
+    //LCOV_EXCL_STOP
 }
 
 /**
  * class IAudioSessionEventListener
  */
 IAudioSessionEventListener::EInterruptCode IAudioSessionEventListener::convertInterruptedCode(int code, const char *reason_for_change) {
+    //LCOV_EXCL_START
     EInterruptCode e = EInterruptCode::INTERRUPT_COMPLETED;
 
     switch (code)
@@ -499,4 +508,5 @@ IAudioSessionEventListener::EInterruptCode IAudioSessionEventListener::convertIn
     }
 
     return e;
+    //LCOV_EXCL_STOP
 }
