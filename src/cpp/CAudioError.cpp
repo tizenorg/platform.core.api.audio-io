@@ -35,6 +35,7 @@ CAudioError::CAudioError(EError err) :
     __mLastError = __mError;
 }
 
+//LCOV_EXCL_START
 CAudioError::CAudioError(EError err, const char* fileName, const char* parentFunc, int lineNum) :
     __mError(err) {
     __mLastError = __mError;
@@ -68,6 +69,7 @@ CAudioError::CAudioError(EError err, const char* msg, const char* fileName, cons
 
     snprintf(__mLastErrorMsg, CAudioError::MSG_LENGTH, "LastError:%s", __mErrorMsg);
 }
+//LCOV_EXCL_STOP
 
 //CAudioError::CAudioError(CAudioError& err) {
 //    __mError = err.__mError;
@@ -103,7 +105,7 @@ const char* CAudioError::__convertErrorToString(EError err) {
     case EError::ERROR_POLICY_DUPLICATED:   return COLOR_RED   "ERROR_POLICY_DUPLICATED"  COLOR_END;
     }
 }
-
+//LCOV_EXCL_START
 CAudioError::EError CAudioError::getLastError() {
     return __mLastError;
 }
@@ -111,6 +113,7 @@ CAudioError::EError CAudioError::getLastError() {
 const char* CAudioError::getLastErrorMsg() {
     return __mLastErrorMsg;
 }
+//LCOV_EXCL_STOP
 
 CAudioError::EError CAudioError::getError() {
     return __mError;
@@ -120,6 +123,7 @@ const char* CAudioError::getErrorMsg() {
     return __mErrorMsg;
 }
 
+//LCOV_EXCL_START
 CAudioError& CAudioError::operator = (const EError err) {
     __mError = err;
     __mLastError = __mError;
@@ -137,6 +141,7 @@ CAudioError& CAudioError::operator = (const CAudioError& err) {
 bool CAudioError::operator != (const EError err) {
     return (__mError != err);
 }
+//LCOV_EXCL_STOP
 
 bool CAudioError::operator == (const EError err) {
     return (__mError == err);

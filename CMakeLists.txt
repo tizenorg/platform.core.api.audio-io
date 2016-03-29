@@ -19,10 +19,10 @@ FOREACH(flag ${${fw_name}_CFLAGS})
     SET(EXTRA_CXXFLAGS "${EXTRA_CXXFLAGS} ${flag}")
 ENDFOREACH(flag)
 
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -fPIC -Wall -Werror")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -fPIC -Wall -Werror -fprofile-arcs -ftest-coverage")
 SET(CMAKE_C_FLAGS_DEBUG "-O0 -g")
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EXTRA_CXXFLAGS} -fPIC -Wall -Werror -std=c++0x")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EXTRA_CXXFLAGS} -fPIC -Wall -Werror -std=c++0x -fprofile-arcs -ftest-coverage")
 SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
 
 IF("${ARCH}" STREQUAL "arm")
@@ -50,7 +50,8 @@ SET_TARGET_PROPERTIES(${fw_name}
      CLEAN_DIRECT_OUTPUT 1
 )
 
-TARGET_LINK_LIBRARIES(${fw_name} ${${fw_name}_LDFLAGS})
+TARGET_LINK_LIBRARIES(${fw_name} ${${fw_name}_LDFLAGS} "-lgcov")
+#TARGET_LINK_LIBRARIES(${fw_name} ${${fw_name}_LDFLAGS})
 
 SET_TARGET_PROPERTIES(${fw_name}
      PROPERTIES

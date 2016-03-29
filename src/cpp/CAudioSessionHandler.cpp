@@ -51,10 +51,12 @@ int CAudioSessionHandler::__pcmCaptureCountDec() {
     return __sCaptureRef;
 }
 
+//LCOV_EXCL_START
 int CAudioSessionHandler::__pcmCaptureCountGet() {
     AUDIO_IO_LOGD("CaptureRefCount > [%d]", __sCaptureRef);
     return __sCaptureRef;
 }
+//LCOV_EXCL_STOP
 
 int CAudioSessionHandler::__sFocusRef = 0;
 
@@ -100,6 +102,7 @@ CAudioSessionHandler::CAudioSessionHandler(EAudioSessionType sessionType, CAudio
 CAudioSessionHandler::~CAudioSessionHandler() {
 }
 
+//LCOV_EXCL_START
 CAudioError CAudioSessionHandler::__convertStreamType(EAudioSessionType type1, MMSessionType type2, int *index) {
     unsigned int i;
     int idx = -1;
@@ -128,6 +131,7 @@ CAudioError CAudioSessionHandler::__convertStreamType(EAudioSessionType type1, M
     *index = idx;
     RET_ERROR(CAudioError::EError::ERROR_NONE);
 }
+//LCOV_EXCL_STOP
 
 CAudioError CAudioSessionHandler::__getAsmInformation(MMSessionType *type, int *options) {
     assert(type != NULL);
@@ -168,6 +172,7 @@ int CAudioSessionHandler::getOptions() {
     return __mOptions;
 }
 
+//LCOV_EXCL_START
 CAudioSessionHandler::EAudioSessionType CAudioSessionHandler::getAudioSession() {
     return __mAudioSession;
 }
@@ -175,11 +180,13 @@ CAudioSessionHandler::EAudioSessionType CAudioSessionHandler::getAudioSession() 
 MMSessionType CAudioSessionHandler::getMultimediaSession() {
     return __mMultimediaSession;
 }
+//LCOV_EXCL_STOP
 
 int CAudioSessionHandler::getSubscribeId() {
     return __mSubscribeId;
 }
 
+//LCOV_EXCL_START
 CAudioInfo CAudioSessionHandler::getAudioInfo() {
     return __mAudioInfo;
 }
@@ -194,6 +201,7 @@ void CAudioSessionHandler::__sound_pcm_signal_cb(mm_sound_signal_name_t signal, 
         pHandler->__mpEventListener->onSignal(pHandler, signal, value);
     }
 }
+//LCOV_EXCL_STOP
 
 void CAudioSessionHandler::initialize() throw(CAudioError) {
     AUDIO_IO_LOGD("");
@@ -313,6 +321,7 @@ bool CAudioSessionHandler::isSkipSessionEvent() throw(CAudioError) {
     return ret;
 }
 
+//LCOV_EXCL_START
 void CAudioSessionHandler::__sound_pcm_focus_cb(int id, mm_sound_focus_type_e focus_type, mm_sound_focus_state_e state, const char *reason_for_change, const char *additional_info, void *user_data) {
     assert(user_data);
 
@@ -330,7 +339,9 @@ void CAudioSessionHandler::__sound_pcm_focus_cb(int id, mm_sound_focus_type_e fo
 
     return;
 }
+//LCOV_EXCL_STOP
 
+//LCOV_EXCL_START
 void CAudioSessionHandler::__sound_pcm_focus_watch_cb(int id, mm_sound_focus_type_e focus_type, mm_sound_focus_state_e state, const char *reason_for_change, const char *additional_info, void *user_data) {
     AUDIO_IO_LOGD("[id:%d], [focus_type:%d], [state:%d], [reason_for_change:%s], [additional_info:%s], [user_data:0x%x]", id, focus_type, state, reason_for_change, additional_info, user_data);
 
@@ -338,6 +349,8 @@ void CAudioSessionHandler::__sound_pcm_focus_watch_cb(int id, mm_sound_focus_typ
 
     return;
 }
+//LCOV_EXCL_STOP
+
 
 void CAudioSessionHandler::registerSound() throw(CAudioError) {
     if (__mIsInit == false) {
@@ -352,6 +365,7 @@ void CAudioSessionHandler::registerSound() throw(CAudioError) {
         int errorCode = 0;
 
         if (__isFocusRequired(__mMultimediaSession, __mOptions)) {
+//LCOV_EXCL_START
             int index = 0;
             CAudioError err = __convertStreamType(__mAudioSession, __mMultimediaSession, &index);
             if (err != CAudioError::EError::ERROR_NONE) {
@@ -376,6 +390,7 @@ void CAudioSessionHandler::registerSound() throw(CAudioError) {
             __focusIdCountInc();
 
             AUDIO_IO_LOGD("Focus callback registered successfully [id:%d]", __mId);
+//LCOV_EXCL_STOP
         } else if (!(__mOptions & MM_SESSION_OPTION_UNINTERRUPTIBLE)) {
             // Register focus watch callback
             errorCode = mm_sound_set_focus_watch_callback_for_session(getpid(), FOCUS_FOR_BOTH, __sound_pcm_focus_watch_cb, static_cast<void*>(this), &__mId);
@@ -460,16 +475,19 @@ void CAudioSessionHandler::updateStop() throw(CAudioError) {
     }
 }
 
+//LCOV_EXCL_START
 void CAudioSessionHandler::disableSessionHandler() throw(CAudioError) {
     CAudioSessionHandler::updateStop();
     CAudioSessionHandler::unregisterSound();
 
     CAudioSessionHandler::__mUseFocus = false;
 }
+//LCOV_EXCL_STOP
 
 /**
  * class IAudioSessionEventListener
  */
+//LCOV_EXCL_START
 IAudioSessionEventListener::EInterruptCode IAudioSessionEventListener::convertInterruptedCode(int code, const char *reason_for_change) {
     EInterruptCode e = EInterruptCode::INTERRUPT_COMPLETED;
 
@@ -498,3 +516,4 @@ IAudioSessionEventListener::EInterruptCode IAudioSessionEventListener::convertIn
 
     return e;
 }
+//LCOV_EXCL_STOP
