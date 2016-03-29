@@ -199,6 +199,7 @@ void CAudioIO::onStateChanged(CAudioInfo::EAudioIOState state) {
     onStateChanged(state, false);
 }
 
+//LCOV_EXCL_START
 void CAudioIO::onInterrupt(CAudioSessionHandler* pHandler, int id, mm_sound_focus_type_e focus_type, mm_sound_focus_state_e state, const char *reason_for_change, const char *additional_info) {
     assert(pHandler);
 
@@ -290,7 +291,9 @@ void CAudioIO::onInterrupt(CAudioSessionHandler* pHandler, int id, mm_sound_focu
         mInterruptCallback.onInterrupt(e, mInterruptCallback.mUserData);
     }
 }
+//LCOV_EXCL_STOP
 
+//LCOV_EXCL_START
 void CAudioIO::onSignal(CAudioSessionHandler* pHandler, mm_sound_signal_name_t signal, int value) {
     assert(pHandler);
 
@@ -304,6 +307,7 @@ void CAudioIO::onSignal(CAudioSessionHandler* pHandler, mm_sound_signal_name_t s
         }
     }
 }
+//LCOV_EXCL_STOP
 
 void CAudioIO::prepare() throw(CAudioError) {
     if (__mIsInit == false) {

@@ -79,6 +79,8 @@ void CPulseAudioClient::__contextStateChangeCb(pa_context* c, void* user_data) {
     }
 }
 
+//LCOV_EXCL_START
+/* dead code */
 void CPulseAudioClient::__successContextCb(pa_context* c, int success, void* user_data) {
     AUDIO_IO_LOGD("pa_context[%p], success[%d], user_data[%p]", c, success, user_data);
     assert(c);
@@ -89,7 +91,9 @@ void CPulseAudioClient::__successContextCb(pa_context* c, int success, void* use
 
     pa_threaded_mainloop_signal(pClient->__mpMainloop, 0);
 }
+//LCOV_EXCL_START
 
+//LCOV_EXCL_START
 static bool __is_microphone_restricted(void) {
     int state = 1;
 #ifdef ENABLE_DPM
@@ -113,6 +117,7 @@ static bool __is_microphone_restricted(void) {
 #endif
     return (state ? false : true);
 }
+//LCOV_EXCL_STOP
 
 void CPulseAudioClient::__streamStateChangeCb(pa_stream* s, void* user_data) {
     assert(s);
@@ -750,6 +755,8 @@ bool CPulseAudioClient::isInThread() throw(CAudioError) {
     return static_cast<bool>(ret);
 }
 
+//LCOV_EXCL_START
+/* dead code */
 size_t CPulseAudioClient::getReadableSize() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
@@ -773,6 +780,7 @@ size_t CPulseAudioClient::getReadableSize() throw(CAudioError) {
 
     return ret;
 }
+//LCOV_EXCL_STOP
 
 size_t CPulseAudioClient::getBufferSize() throw(CAudioError) {
     if (__mIsInit == false) {
@@ -815,6 +823,7 @@ size_t CPulseAudioClient::getBufferSize() throw(CAudioError) {
     return ret;
 }
 
+//LCOV_EXCL_START
 pa_usec_t CPulseAudioClient::getLatency() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
@@ -860,7 +869,9 @@ pa_usec_t CPulseAudioClient::getLatency() throw(CAudioError) {
 
     return negative ? 0 : ret;
 }
+//LCOV_EXCL_STOP
 
+//LCOV_EXCL_START
 pa_usec_t CPulseAudioClient::getFinalLatency() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
@@ -910,6 +921,7 @@ pa_usec_t CPulseAudioClient::getFinalLatency() throw(CAudioError) {
 
     return ret;
 }
+//LCOV_EXCL_STOP
 
 CPulseAudioClient::EStreamDirection CPulseAudioClient::getStreamDirection() {
     return __mDirection;
