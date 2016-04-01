@@ -213,7 +213,7 @@ typedef void (*audio_in_state_changed_cb)(audio_in_h handle, audio_io_state_e pr
  *       audio_in_set_stream_info() is recommended to be called after this API.
  * @see audio_in_destroy()
  */
-int audio_in_create(int sample_rate, audio_channel_e channel, audio_sample_type_e type, audio_in_h *input);
+EXPORT_API int audio_in_create(int sample_rate, audio_channel_e channel, audio_sample_type_e type, audio_in_h *input);
 
 /**
  * @deprecated Deprecated since 3.0. Use sound_manager_create_stream_information() instead.
@@ -243,7 +243,7 @@ int audio_in_create(int sample_rate, audio_channel_e channel, audio_sample_type_
  *
  * @see audio_in_destroy()
  */
-int audio_in_create_loopback(int sample_rate, audio_channel_e channel, audio_sample_type_e type , audio_in_h* input);
+EXPORT_API int audio_in_create_loopback(int sample_rate, audio_channel_e channel, audio_sample_type_e type , audio_in_h* input);
 
 /**
  * @brief Releases the audio input handle and all its resources associated with an audio stream.
@@ -260,7 +260,7 @@ int audio_in_create_loopback(int sample_rate, audio_channel_e channel, audio_sam
  *
  * @see audio_in_create()
  */
-int audio_in_destroy(audio_in_h input);
+EXPORT_API int audio_in_destroy(audio_in_h input);
 
 /**
  * @brief Sets the sound stream information to the audio input.
@@ -287,7 +287,7 @@ int audio_in_destroy(audio_in_h input);
  * @see sound_manager_create_stream_information()
  * @see sound_manager_destroy_stream_information()
  */
-int audio_in_set_stream_info(audio_in_h input, sound_stream_info_h stream_info);
+EXPORT_API int audio_in_set_stream_info(audio_in_h input, sound_stream_info_h stream_info);
 
 /**
  * @brief Prepares the audio input for reading audio data by starting buffering of audio data from the device.
@@ -305,7 +305,7 @@ int audio_in_set_stream_info(audio_in_h input, sound_stream_info_h stream_info);
  * @post The state will be #AUDIO_IO_STATE_RUNNING.
  * @see audio_in_unprepare()
  */
-int audio_in_prepare(audio_in_h input);
+EXPORT_API int audio_in_prepare(audio_in_h input);
 
 /**
  * @brief Unprepares the audio input.
@@ -323,7 +323,7 @@ int audio_in_prepare(audio_in_h input);
  * @post The state will be #AUDIO_IO_STATE_IDLE.
  * @see audio_in_prepare()
  */
-int audio_in_unprepare(audio_in_h input);
+EXPORT_API int audio_in_unprepare(audio_in_h input);
 
 /**
  * @brief Pauses buffering of audio data from the device.
@@ -342,7 +342,7 @@ int audio_in_unprepare(audio_in_h input);
  * @post The state will be #AUDIO_IO_STATE_PAUSED.
  * @see audio_in_resume()
  */
-int audio_in_pause(audio_in_h input);
+EXPORT_API int audio_in_pause(audio_in_h input);
 
 /**
  * @brief Resumes buffering audio data from the device.
@@ -361,7 +361,7 @@ int audio_in_pause(audio_in_h input);
  * @post The state will be #AUDIO_IO_STATE_RUNNING.
  * @see audio_in_pause()
  */
-int audio_in_resume(audio_in_h input);
+EXPORT_API int audio_in_resume(audio_in_h input);
 
 /**
  * @brief Flushes and discards buffered audio data from the input stream.
@@ -378,7 +378,7 @@ int audio_in_resume(audio_in_h input);
  *
  * @pre The state should be #AUDIO_IO_STATE_RUNNING or #AUDIO_IO_STATE_PAUSED.
  */
-int audio_in_flush(audio_in_h input);
+EXPORT_API int audio_in_flush(audio_in_h input);
 
 /**
  * @brief Reads audio data from the audio input buffer.
@@ -398,7 +398,7 @@ int audio_in_flush(audio_in_h input);
  *
  * @pre The state should be #AUDIO_IO_STATE_RUNNING.
  */
-int audio_in_read(audio_in_h input, void *buffer, unsigned int length);
+EXPORT_API int audio_in_read(audio_in_h input, void *buffer, unsigned int length);
 
 /**
  * @brief Gets the size to be allocated for the audio input buffer.
@@ -414,7 +414,7 @@ int audio_in_read(audio_in_h input, void *buffer, unsigned int length);
  * @retval #AUDIO_IO_ERROR_NOT_SUPPORTED Not supported
  * @see audio_in_read()
  */
-int audio_in_get_buffer_size(audio_in_h input, int *size);
+EXPORT_API int audio_in_get_buffer_size(audio_in_h input, int *size);
 
 /**
  * @brief Gets the sample rate of the audio input data stream.
@@ -429,7 +429,7 @@ int audio_in_get_buffer_size(audio_in_h input, int *size);
  * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #AUDIO_IO_ERROR_NOT_SUPPORTED Not supported
  */
-int audio_in_get_sample_rate(audio_in_h input, int *sample_rate);
+EXPORT_API int audio_in_get_sample_rate(audio_in_h input, int *sample_rate);
 
 /**
  * @brief Gets the channel type of the audio input data stream.
@@ -446,7 +446,7 @@ int audio_in_get_sample_rate(audio_in_h input, int *sample_rate);
  * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #AUDIO_IO_ERROR_NOT_SUPPORTED Not supported
  */
-int audio_in_get_channel(audio_in_h input, audio_channel_e *channel);
+EXPORT_API int audio_in_get_channel(audio_in_h input, audio_channel_e *channel);
 
 /**
  * @brief Gets the sample audio format (8-bit or 16-bit) of the audio input data stream.
@@ -461,7 +461,7 @@ int audio_in_get_channel(audio_in_h input, audio_channel_e *channel);
  * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #AUDIO_IO_ERROR_NOT_SUPPORTED Not supported
  */
-int audio_in_get_sample_type(audio_in_h input, audio_sample_type_e *type);
+EXPORT_API int audio_in_get_sample_type(audio_in_h input, audio_sample_type_e *type);
 
 /**
  * @deprecated Deprecated since 3.0. Use sound_manager_create_stream_information() instead.
@@ -483,7 +483,7 @@ int audio_in_get_sample_type(audio_in_h input, audio_sample_type_e *type);
  * @see audio_in_unset_interrupted_cb()
  * @see audio_io_interrupted_cb()
  */
-int audio_in_set_interrupted_cb(audio_in_h input, audio_io_interrupted_cb callback, void *user_data);
+EXPORT_API int audio_in_set_interrupted_cb(audio_in_h input, audio_io_interrupted_cb callback, void *user_data);
 
 /**
  * @deprecated Deprecated since 3.0
@@ -501,7 +501,7 @@ int audio_in_set_interrupted_cb(audio_in_h input, audio_io_interrupted_cb callba
  *
  * @see audio_in_set_interrupted_cb()
  */
-int audio_in_unset_interrupted_cb(audio_in_h input);
+EXPORT_API int audio_in_unset_interrupted_cb(audio_in_h input);
 
 /**
  * @deprecated Deprecated since 3.0
@@ -517,7 +517,7 @@ int audio_in_unset_interrupted_cb(audio_in_h input);
  * @retval #AUDIO_IO_ERROR_INVALID_OPERATION Invalid operation
  * @retval #AUDIO_IO_ERROR_NOT_SUPPORTED Not supported
  */
-int audio_in_ignore_session(audio_in_h input);
+EXPORT_API int audio_in_ignore_session(audio_in_h input);
 
 /**
  * @brief Sets an asynchronous(event) callback function to handle recording PCM (pulse-code modulation) data.
@@ -546,7 +546,7 @@ int audio_in_ignore_session(audio_in_h input);
  *
  * @see audio_out_set_stream_cb()
  */
-int audio_in_set_stream_cb(audio_in_h input, audio_in_stream_cb callback, void* user_data);
+EXPORT_API int audio_in_set_stream_cb(audio_in_h input, audio_in_stream_cb callback, void* user_data);
 
 /**
  * @brief Unregisters the callback function.
@@ -563,7 +563,7 @@ int audio_in_set_stream_cb(audio_in_h input, audio_in_stream_cb callback, void* 
  *
  * @see audio_in_set_interrupted_cb()
  */
-int audio_in_unset_stream_cb(audio_in_h input);
+EXPORT_API int audio_in_unset_stream_cb(audio_in_h input);
 
 /**
  * @brief peek from audio in buffer
@@ -588,7 +588,7 @@ int audio_in_unset_stream_cb(audio_in_h input);
  * @pre The state should be #AUDIO_IO_STATE_RUNNING.
  * @see audio_in_drop()
  */
-int audio_in_peek(audio_in_h input, const void **buffer, unsigned int *length);
+EXPORT_API int audio_in_peek(audio_in_h input, const void **buffer, unsigned int *length);
 
 /**
  * @brief drop peeked audio buffer.
@@ -610,7 +610,7 @@ int audio_in_peek(audio_in_h input, const void **buffer, unsigned int *length);
  * @pre The state should be #AUDIO_IO_STATE_RUNNING.
  * @see audio_in_peek()
  */
-int audio_in_drop(audio_in_h input);
+EXPORT_API int audio_in_drop(audio_in_h input);
 
 /**
  * @brief Sets the state changed callback function to the audio input handle.
@@ -630,7 +630,7 @@ int audio_in_drop(audio_in_h input);
  *
  * @see audio_in_unset_state_changed_cb()
  */
-int audio_in_set_state_changed_cb(audio_in_h input, audio_in_state_changed_cb callback, void* user_data);
+EXPORT_API int audio_in_set_state_changed_cb(audio_in_h input, audio_in_state_changed_cb callback, void* user_data);
 
 /**
  * @brief Unregisters the state changed callback function of the audio input handle.
@@ -646,7 +646,7 @@ int audio_in_set_state_changed_cb(audio_in_h input, audio_in_state_changed_cb ca
  *
  * @see audio_in_set_state_changed_cb()
  */
-int audio_in_unset_state_changed_cb(audio_in_h input);
+EXPORT_API int audio_in_unset_state_changed_cb(audio_in_h input);
 
 /**
  * @}
@@ -712,7 +712,7 @@ typedef void (*audio_out_state_changed_cb)(audio_out_h handle, audio_io_state_e 
  *
  * @see audio_out_destroy()
  */
-int audio_out_create(int sample_rate, audio_channel_e channel, audio_sample_type_e type, sound_type_e sound_type, audio_out_h *output);
+EXPORT_API int audio_out_create(int sample_rate, audio_channel_e channel, audio_sample_type_e type, sound_type_e sound_type, audio_out_h *output);
 
 /**
  * @brief Creates an audio device instance and returns an output handle to play PCM (pulse-code modulation) data.
@@ -740,7 +740,7 @@ int audio_out_create(int sample_rate, audio_channel_e channel, audio_sample_type
  *       audio_out_set_stream_info() is recommended to be called after this API.
  * @see audio_out_destroy()
  */
-int audio_out_create_new(int sample_rate, audio_channel_e channel, audio_sample_type_e type, audio_out_h *output);
+EXPORT_API int audio_out_create_new(int sample_rate, audio_channel_e channel, audio_sample_type_e type, audio_out_h *output);
 
 /**
  * @brief Releases the audio output handle, along with all its resources.
@@ -757,7 +757,7 @@ int audio_out_create_new(int sample_rate, audio_channel_e channel, audio_sample_
  *
  * @see audio_out_create()
  */
-int audio_out_destroy(audio_out_h output);
+EXPORT_API int audio_out_destroy(audio_out_h output);
 
 /**
  * @brief Sets the sound stream information to the audio output.
@@ -784,7 +784,7 @@ int audio_out_destroy(audio_out_h output);
  * @see sound_manager_create_stream_information()
  * @see sound_manager_destroy_stream_information()
  */
-int audio_out_set_stream_info(audio_out_h output, sound_stream_info_h stream_info);
+EXPORT_API int audio_out_set_stream_info(audio_out_h output, sound_stream_info_h stream_info);
 
 /**
  * @brief Prepares the audio output for playback, this must be called before audio_out_write().
@@ -801,7 +801,7 @@ int audio_out_set_stream_info(audio_out_h output, sound_stream_info_h stream_inf
  * @post The state will be #AUDIO_IO_STATE_RUNNING.
  * @see audio_out_unprepare()
  */
-int audio_out_prepare(audio_out_h output);
+EXPORT_API int audio_out_prepare(audio_out_h output);
 
 /**
  * @brief Unprepares the audio output.
@@ -818,7 +818,7 @@ int audio_out_prepare(audio_out_h output);
  * @post The state will be #AUDIO_IO_STATE_IDLE.
  * @see audio_out_prepare()
  */
-int audio_out_unprepare(audio_out_h output);
+EXPORT_API int audio_out_unprepare(audio_out_h output);
 
 /**
  * @brief Pauses feeding of audio data to the device.
@@ -836,7 +836,7 @@ int audio_out_unprepare(audio_out_h output);
  * @post The state will be #AUDIO_IO_STATE_PAUSED.
  * @see audio_out_resume()
  */
-int audio_out_pause(audio_out_h output);
+EXPORT_API int audio_out_pause(audio_out_h output);
 
 /**
  * @brief Resumes feeding of audio data to the device.
@@ -854,7 +854,7 @@ int audio_out_pause(audio_out_h output);
  * @post The state will be #AUDIO_IO_STATE_RUNNING.
  * @see audio_out_pause()
  */
-int audio_out_resume(audio_out_h output);
+EXPORT_API int audio_out_resume(audio_out_h output);
 
 /**
  * @brief Drains buffered audio data from the output stream.
@@ -873,7 +873,7 @@ int audio_out_resume(audio_out_h output);
  * @pre The state should be #AUDIO_IO_STATE_RUNNING or #AUDIO_IO_STATE_PAUSED.
  * @see audio_out_flush()
  */
-int audio_out_drain(audio_out_h output);
+EXPORT_API int audio_out_drain(audio_out_h output);
 
 /**
  * @brief Flushes and discards buffered audio data from the output stream.
@@ -890,7 +890,7 @@ int audio_out_drain(audio_out_h output);
  * @pre The state should be #AUDIO_IO_STATE_RUNNING or #AUDIO_IO_STATE_PAUSED.
  * @see audio_out_drain()
  */
-int audio_out_flush(audio_out_h output);
+EXPORT_API int audio_out_flush(audio_out_h output);
 
 /**
  * @brief Starts writing the audio data to the device.
@@ -909,7 +909,7 @@ int audio_out_flush(audio_out_h output);
  *
  * @pre The state should be #AUDIO_IO_STATE_RUNNING.
  */
-int audio_out_write(audio_out_h output, void *buffer, unsigned int length);
+EXPORT_API int audio_out_write(audio_out_h output, void *buffer, unsigned int length);
 
 /**
  * @brief Gets the size to be allocated for the audio output buffer.
@@ -925,7 +925,7 @@ int audio_out_write(audio_out_h output, void *buffer, unsigned int length);
  *
  * @see audio_out_write()
  */
-int audio_out_get_buffer_size(audio_out_h output, int *size);
+EXPORT_API int audio_out_get_buffer_size(audio_out_h output, int *size);
 
 /**
  * @brief Gets the sample rate of the audio output data stream.
@@ -939,7 +939,7 @@ int audio_out_get_buffer_size(audio_out_h output, int *size);
  * @retval  #AUDIO_IO_ERROR_NONE Successful
  * @retval  #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
  */
-int audio_out_get_sample_rate(audio_out_h output, int *sample_rate);
+EXPORT_API int audio_out_get_sample_rate(audio_out_h output, int *sample_rate);
 
 /**
  * @brief Gets the channel type of the audio output data stream.
@@ -955,7 +955,7 @@ int audio_out_get_sample_rate(audio_out_h output, int *sample_rate);
  * @retval #AUDIO_IO_ERROR_NONE Successful
  * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
  */
-int audio_out_get_channel(audio_out_h output, audio_channel_e *channel);
+EXPORT_API int audio_out_get_channel(audio_out_h output, audio_channel_e *channel);
 
 /**
  * @brief Gets the sample audio format (8-bit or 16-bit) of the audio output data stream.
@@ -969,7 +969,7 @@ int audio_out_get_channel(audio_out_h output, audio_channel_e *channel);
  * @retval #AUDIO_IO_ERROR_NONE Successful
  * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
  */
-int audio_out_get_sample_type(audio_out_h output, audio_sample_type_e *type);
+EXPORT_API int audio_out_get_sample_type(audio_out_h output, audio_sample_type_e *type);
 
 /**
  * @brief Gets the sound type supported by the audio output device.
@@ -983,7 +983,7 @@ int audio_out_get_sample_type(audio_out_h output, audio_sample_type_e *type);
  * @retval #AUDIO_IO_ERROR_NONE Successful
  * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
  */
-int audio_out_get_sound_type(audio_out_h output, sound_type_e *type);
+EXPORT_API int audio_out_get_sound_type(audio_out_h output, sound_type_e *type);
 
 /**
  * @deprecated Deprecated since 3.0. Use sound_manager_create_stream_information() instead.
@@ -1004,7 +1004,7 @@ int audio_out_get_sound_type(audio_out_h output, sound_type_e *type);
  * @see audio_out_unset_interrupted_cb()
  * @see audio_io_interrupted_cb()
  */
-int audio_out_set_interrupted_cb(audio_out_h output, audio_io_interrupted_cb callback, void *user_data);
+EXPORT_API int audio_out_set_interrupted_cb(audio_out_h output, audio_io_interrupted_cb callback, void *user_data);
 
 /**
  * @deprecated Deprecated since 3.0
@@ -1021,7 +1021,7 @@ int audio_out_set_interrupted_cb(audio_out_h output, audio_io_interrupted_cb cal
  *
  * @see audio_out_set_interrupted_cb()
  */
-int audio_out_unset_interrupted_cb(audio_out_h output);
+EXPORT_API int audio_out_unset_interrupted_cb(audio_out_h output);
 
 /**
  * @deprecated Deprecated since 3.0
@@ -1036,7 +1036,7 @@ int audio_out_unset_interrupted_cb(audio_out_h output);
  * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #AUDIO_IO_ERROR_INVALID_OPERATION Invalid operation
  */
-int audio_out_ignore_session(audio_out_h output);
+EXPORT_API int audio_out_ignore_session(audio_out_h output);
 
 /**
  * @brief Sets an asynchronous(event) callback function to handle playing PCM (pulse-code modulation) data.
@@ -1063,7 +1063,7 @@ int audio_out_ignore_session(audio_out_h output);
  *
  * @see audio_out_unset_stream_cb()
  */
-int audio_out_set_stream_cb(audio_out_h output, audio_out_stream_cb callback, void* user_data);
+EXPORT_API int audio_out_set_stream_cb(audio_out_h output, audio_out_stream_cb callback, void* user_data);
 
 /**
  * @brief Unregisters the callback function.
@@ -1078,7 +1078,7 @@ int audio_out_set_stream_cb(audio_out_h output, audio_out_stream_cb callback, vo
  *
  * @see audio_out_set_stream_cb()
  */
-int audio_out_unset_stream_cb(audio_out_h output);
+EXPORT_API int audio_out_unset_stream_cb(audio_out_h output);
 
 /**
  * @brief Sets the state changed callback function to the audio output handle.
@@ -1097,7 +1097,7 @@ int audio_out_unset_stream_cb(audio_out_h output);
  *
  * @see audio_out_unset_state_changed_cb()
  */
-int audio_out_set_state_changed_cb(audio_out_h output, audio_out_state_changed_cb callback, void* user_data);
+EXPORT_API int audio_out_set_state_changed_cb(audio_out_h output, audio_out_state_changed_cb callback, void* user_data);
 
 /**
  * @brief Unregisters the state changed callback function of the audio output handle.
@@ -1112,7 +1112,7 @@ int audio_out_set_state_changed_cb(audio_out_h output, audio_out_state_changed_c
  *
  * @see audio_out_set_state_changed_cb()
  */
-int audio_out_unset_state_changed_cb(audio_out_h output);
+EXPORT_API int audio_out_unset_state_changed_cb(audio_out_h output);
 
 /**
  * @}
