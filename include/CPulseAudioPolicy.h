@@ -51,7 +51,7 @@ namespace tizen_media_audio {
         ~CPulseAudioPolicy();
 
         /* getter & setter */
-        void setPolicy(EPolicy policy) throw (CAudioError);
+        void setPolicy(EPolicy policy) throw(CAudioError);
         EPolicy getPolicy();
 
         /* Override */

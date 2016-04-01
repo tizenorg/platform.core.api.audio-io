@@ -46,9 +46,9 @@ namespace tizen_media_audio {
         };
 
         /* Constructor & Destructor */
-        CPulseStreamSpec() throw (CAudioError);
-        CPulseStreamSpec(EStreamLatency latency, CAudioInfo& audioInfo) throw (CAudioError);
-        CPulseStreamSpec(EStreamLatency latency, CAudioInfo& audioInfo, int customLatency) throw (CAudioError);
+        CPulseStreamSpec() throw(CAudioError);
+        CPulseStreamSpec(EStreamLatency latency, CAudioInfo& audioInfo) throw(CAudioError);
+        CPulseStreamSpec(EStreamLatency latency, CAudioInfo& audioInfo, int customLatency) throw(CAudioError);
         ~CPulseStreamSpec();
 
         /* Setter & Getter */
@@ -61,7 +61,7 @@ namespace tizen_media_audio {
 
     private:
         /* Private Methods */
-        void __adjustSpec() throw (CAudioError);
+        void __adjustSpec() throw(CAudioError);
 
         /* Members */
         EStreamLatency __mLatency;

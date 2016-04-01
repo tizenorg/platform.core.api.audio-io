@@ -46,22 +46,22 @@ namespace tizen_media_audio {
         virtual void onSignal(CAudioSessionHandler* pHandler, mm_sound_signal_name_t signal, int value);
 
         /* Implemented Methods */
-        virtual void initialize() throw (CAudioError);
+        virtual void initialize() throw(CAudioError);
         virtual void finalize();
 
-        virtual void prepare() throw (CAudioError);
-        virtual void unprepare() throw (CAudioError);
+        virtual void prepare() throw(CAudioError);
+        virtual void unprepare() throw(CAudioError);
 
-        virtual void pause() throw (CAudioError);
-        virtual void resume() throw (CAudioError);
+        virtual void pause() throw(CAudioError);
+        virtual void resume() throw(CAudioError);
 
-        virtual void drain() throw (CAudioError);
-        virtual void flush() throw (CAudioError);
+        virtual void drain() throw(CAudioError);
+        virtual void flush() throw(CAudioError);
 
-        virtual int  getBufferSize() throw (CAudioError);
+        virtual int  getBufferSize() throw(CAudioError);
 
         /* Methods */
-        size_t write(const void* buffer, size_t length) throw (CAudioError);
+        size_t write(const void* buffer, size_t length) throw(CAudioError);
 
     private:
         /* Private Methods */

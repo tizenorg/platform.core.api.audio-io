@@ -62,19 +62,19 @@ namespace tizen_media_audio {
         virtual ~CAudioIO();
 
         /* Pure Virtual Methods */
-        virtual void initialize() throw (CAudioError) = 0;
+        virtual void initialize() throw(CAudioError) = 0;
         virtual void finalize() = 0;
 
-        virtual void prepare() throw (CAudioError)   = 0;
-        virtual void unprepare() throw (CAudioError) = 0;
+        virtual void prepare() throw(CAudioError)   = 0;
+        virtual void unprepare() throw(CAudioError) = 0;
 
-        virtual void pause() throw (CAudioError) = 0;
-        virtual void resume() throw (CAudioError) = 0;
+        virtual void pause() throw(CAudioError) = 0;
+        virtual void resume() throw(CAudioError) = 0;
 
-        virtual void drain() throw (CAudioError) = 0;
-        virtual void flush() throw (CAudioError) = 0;
+        virtual void drain() throw(CAudioError) = 0;
+        virtual void flush() throw(CAudioError) = 0;
 
-        virtual int  getBufferSize() throw (CAudioError) = 0;
+        virtual int  getBufferSize() throw(CAudioError) = 0;
 
         /* Implemented Handlers */
         virtual void onStream(CPulseAudioClient* pClient, size_t length);
@@ -84,18 +84,18 @@ namespace tizen_media_audio {
         virtual void onSignal(CAudioSessionHandler* pHandler, mm_sound_signal_name_t signal, int value);
 
         /* Methods */
-        CAudioInfo& getAudioInfo() throw (CAudioError);
+        CAudioInfo& getAudioInfo() throw(CAudioError);
 
-        virtual void setStreamCallback(SStreamCallback callback) throw (CAudioError);
-        SStreamCallback getStreamCallback() throw (CAudioError);
+        virtual void setStreamCallback(SStreamCallback callback) throw(CAudioError);
+        SStreamCallback getStreamCallback() throw(CAudioError);
 
-        virtual void setStateChangedCallback(SStateChangedCallback callback) throw (CAudioError);
-        SStateChangedCallback getStateChangedCallback() throw (CAudioError);
+        virtual void setStateChangedCallback(SStateChangedCallback callback) throw(CAudioError);
+        SStateChangedCallback getStateChangedCallback() throw(CAudioError);
 
-        void setInterruptCallback(SInterruptCallback callback) throw (CAudioError);
-        SInterruptCallback getInterruptCallback() throw (CAudioError);
+        void setInterruptCallback(SInterruptCallback callback) throw(CAudioError);
+        SInterruptCallback getInterruptCallback() throw(CAudioError);
 
-        void ignoreSession() throw (CAudioError);
+        void ignoreSession() throw(CAudioError);
 
     protected:
         /* Protected Methods */
@@ -103,10 +103,10 @@ namespace tizen_media_audio {
         virtual bool isInit();
         virtual bool IsReady();
 
-        void internalLock()   throw (CAudioError);
-        void internalUnlock() throw (CAudioError);
-        void internalWait()   throw (CAudioError);
-        void internalSignal() throw (CAudioError);
+        void internalLock()   throw(CAudioError);
+        void internalUnlock() throw(CAudioError);
+        void internalWait()   throw(CAudioError);
+        void internalSignal() throw(CAudioError);
 
         bool isForceIgnore();
 

@@ -195,7 +195,7 @@ void CAudioSessionHandler::__sound_pcm_signal_cb(mm_sound_signal_name_t signal, 
     }
 }
 
-void CAudioSessionHandler::initialize() throw (CAudioError) {
+void CAudioSessionHandler::initialize() throw(CAudioError) {
     AUDIO_IO_LOGD("");
     if (__mIsInit == true) {
         return;
@@ -272,7 +272,7 @@ void CAudioSessionHandler::finalize() {
     __mIsInit = false;
 }
 
-bool CAudioSessionHandler::isSkipSessionEvent() throw (CAudioError) {
+bool CAudioSessionHandler::isSkipSessionEvent() throw(CAudioError) {
     bool ret = false;
 
     // To be regarded...
@@ -281,7 +281,6 @@ bool CAudioSessionHandler::isSkipSessionEvent() throw (CAudioError) {
     if (mEvent != ASM_EVENT_CALL              && mEvent != ASM_EVENT_VOIP              &&
         mEvent != ASM_EVENT_VIDEOCALL         && mEvent != ASM_EVENT_VOICE_RECOGNITION &&
         mEvent != ASM_EVENT_MMCAMCORDER_AUDIO && mEvent != ASM_EVENT_MMCAMCORDER_VIDEO) {
-
         // Check AudioType
         switch (__mAudioInfo.getAudioType()) {
         case CAudioInfo::AUDIO_IN_TYPE_MEDIA:
@@ -340,7 +339,7 @@ void CAudioSessionHandler::__sound_pcm_focus_watch_cb(int id, mm_sound_focus_typ
     return;
 }
 
-void CAudioSessionHandler::registerSound() throw (CAudioError) {
+void CAudioSessionHandler::registerSound() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioSessionHandler");
     }
@@ -391,7 +390,7 @@ void CAudioSessionHandler::registerSound() throw (CAudioError) {
     }
 }
 
-void CAudioSessionHandler::unregisterSound() throw (CAudioError) {
+void CAudioSessionHandler::unregisterSound() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioSessionHandler");
     }
@@ -429,7 +428,7 @@ void CAudioSessionHandler::unregisterSound() throw (CAudioError) {
     }
 }
 
-void CAudioSessionHandler::updatePlaying() throw (CAudioError) {
+void CAudioSessionHandler::updatePlaying() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioSessionHandler");
     }
@@ -445,7 +444,7 @@ void CAudioSessionHandler::updatePlaying() throw (CAudioError) {
     }
 }
 
-void CAudioSessionHandler::updateStop() throw (CAudioError) {
+void CAudioSessionHandler::updateStop() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioSessionHandler");
     }
@@ -461,7 +460,7 @@ void CAudioSessionHandler::updateStop() throw (CAudioError) {
     }
 }
 
-void CAudioSessionHandler::disableSessionHandler() throw (CAudioError) {
+void CAudioSessionHandler::disableSessionHandler() throw(CAudioError) {
     CAudioSessionHandler::updateStop();
     CAudioSessionHandler::unregisterSound();
 

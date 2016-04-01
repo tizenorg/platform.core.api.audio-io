@@ -37,7 +37,7 @@ CPulseAudioPolicy::CPulseAudioPolicy(EPolicy policy) :
 CPulseAudioPolicy::~CPulseAudioPolicy() {
 }
 
-void CPulseAudioPolicy::setPolicy(EPolicy policy) throw (CAudioError) {
+void CPulseAudioPolicy::setPolicy(EPolicy policy) throw(CAudioError) {
     if (policy < EPolicy::POLICY_DEFAULT || policy >= EPolicy::POLICY_MAX) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_INVALID_ARGUMENT, "The argument is out of range");
     }

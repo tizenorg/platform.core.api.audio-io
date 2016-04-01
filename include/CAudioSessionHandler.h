@@ -44,17 +44,17 @@ namespace tizen_media_audio {
         virtual ~CAudioSessionHandler();
 
         /* Methods */
-        virtual void initialize() throw (CAudioError);
+        virtual void initialize() throw(CAudioError);
         virtual void finalize();
 
-        bool isSkipSessionEvent() throw (CAudioError);
+        bool isSkipSessionEvent() throw(CAudioError);
 
-        void registerSound() throw (CAudioError);
-        void unregisterSound() throw (CAudioError);
+        void registerSound() throw(CAudioError);
+        void unregisterSound() throw(CAudioError);
 
-        void updatePlaying() throw (CAudioError);
-        void updateStop() throw (CAudioError);
-        void disableSessionHandler() throw (CAudioError);
+        void updatePlaying() throw(CAudioError);
+        void updateStop() throw(CAudioError);
+        void disableSessionHandler() throw(CAudioError);
 
         /* Setter & Getter */
         int getId();

@@ -38,20 +38,20 @@ static const char* STREAM_LATENCY_HIGH = "high";
 static const char* STREAM_LATENCY_VOIP = "voip";
 
 
-CPulseStreamSpec::CPulseStreamSpec() throw (CAudioError) :
+CPulseStreamSpec::CPulseStreamSpec() throw(CAudioError) :
     __mLatency(EStreamLatency::STREAM_LATENCY_INPUT_MID),
     __mStreamName(NULL) {
     __adjustSpec();
 }
 
-CPulseStreamSpec::CPulseStreamSpec(EStreamLatency latency, CAudioInfo& audioInfo) throw (CAudioError) :
+CPulseStreamSpec::CPulseStreamSpec(EStreamLatency latency, CAudioInfo& audioInfo) throw(CAudioError) :
     __mLatency(latency),
     __mAudioInfo(audioInfo),
     __mStreamName(NULL) {
     __adjustSpec();
 }
 
-CPulseStreamSpec::CPulseStreamSpec(EStreamLatency latency, CAudioInfo& audioInfo, int customLatency) throw (CAudioError) :
+CPulseStreamSpec::CPulseStreamSpec(EStreamLatency latency, CAudioInfo& audioInfo, int customLatency) throw(CAudioError) :
     __mLatency(latency),
     __mAudioInfo(audioInfo),
     __mStreamName(NULL) {
@@ -61,7 +61,7 @@ CPulseStreamSpec::CPulseStreamSpec(EStreamLatency latency, CAudioInfo& audioInfo
 CPulseStreamSpec::~CPulseStreamSpec() {
 }
 
-void CPulseStreamSpec::__adjustSpec() throw (CAudioError) {
+void CPulseStreamSpec::__adjustSpec() throw(CAudioError) {
     // Sets a sampleRate
     __mSampleSpec.rate = __mAudioInfo.getSampleRate();
 

@@ -92,7 +92,7 @@ bool CAudioOutput::__IsReady() {
     return CAudioIO::IsReady();
 }
 
-void CAudioOutput::initialize() throw (CAudioError) {
+void CAudioOutput::initialize() throw(CAudioError) {
     if (__IsInit() == true) {
         return;
     }
@@ -131,7 +131,7 @@ void CAudioOutput::finalize() {
     __setInit(false);
 }
 
-void CAudioOutput::prepare() throw (CAudioError) {
+void CAudioOutput::prepare() throw(CAudioError) {
     if (__IsInit() == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioOutput");
     }
@@ -186,7 +186,7 @@ void CAudioOutput::prepare() throw (CAudioError) {
     }
 }
 
-void CAudioOutput::unprepare() throw (CAudioError) {
+void CAudioOutput::unprepare() throw(CAudioError) {
     if (__IsInit() == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioOutput");
     }
@@ -225,7 +225,7 @@ void CAudioOutput::unprepare() throw (CAudioError) {
     }
 }
 
-void CAudioOutput::pause() throw (CAudioError) {
+void CAudioOutput::pause() throw(CAudioError) {
     if (__IsInit() == false || __IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioOutput");
     }
@@ -249,7 +249,7 @@ void CAudioOutput::pause() throw (CAudioError) {
     }
 }
 
-void CAudioOutput::resume() throw (CAudioError) {
+void CAudioOutput::resume() throw(CAudioError) {
     if (__IsInit() == false || __IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioOutput");
     }
@@ -258,7 +258,6 @@ void CAudioOutput::resume() throw (CAudioError) {
         internalLock();
 
         if (isForceIgnore() == false && mpAudioSessionHandler->isSkipSessionEvent() == false) {
-
             /* Updates ASM to PLAYING */
             mpAudioSessionHandler->updatePlaying();
         }
@@ -274,7 +273,7 @@ void CAudioOutput::resume() throw (CAudioError) {
     }
 }
 
-void CAudioOutput::drain() throw (CAudioError) {
+void CAudioOutput::drain() throw(CAudioError) {
     if (__IsInit() == false || __IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioOutput");
     }
@@ -286,7 +285,7 @@ void CAudioOutput::drain() throw (CAudioError) {
     }
 }
 
-void CAudioOutput::flush() throw (CAudioError) {
+void CAudioOutput::flush() throw(CAudioError) {
     if (__IsInit() == false || __IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioOutput");
     }
@@ -298,7 +297,7 @@ void CAudioOutput::flush() throw (CAudioError) {
     }
 }
 
-int CAudioOutput::getBufferSize() throw (CAudioError) {
+int CAudioOutput::getBufferSize() throw(CAudioError) {
     if (__IsInit() == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CAudioOutput");
     }
@@ -319,7 +318,7 @@ int CAudioOutput::getBufferSize() throw (CAudioError) {
     return size;
 }
 
-size_t CAudioOutput::write(const void* buffer, size_t length) throw (CAudioError) {
+size_t CAudioOutput::write(const void* buffer, size_t length) throw(CAudioError) {
     if (__IsInit() == false || __IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioOutput");
     }

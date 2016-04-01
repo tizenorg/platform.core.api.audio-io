@@ -90,7 +90,7 @@ namespace tizen_media_audio {
 
         /* Constructors */
         CAudioInfo();
-        CAudioInfo(unsigned int sampleRate, EChannel channel, ESampleType sampleType, EAudioType audioType, int audioIndex) throw (CAudioError);
+        CAudioInfo(unsigned int sampleRate, EChannel channel, ESampleType sampleType, EAudioType audioType, int audioIndex) throw(CAudioError);
 
         /* Setter & Getter */
         unsigned int getSampleRate();
@@ -100,9 +100,9 @@ namespace tizen_media_audio {
         void setAudioType(EAudioType audioType);
         int getAudioIndex();
         void setAudioIndex(int audioIndex);
-        void convertAudioType2StreamType (CAudioInfo::EAudioType audioType, char **streamType);
-        void convertInputStreamType2AudioType (char *streamType, CAudioInfo::EAudioType *audioType);
-        void convertOutputStreamType2AudioType (char *streamType, CAudioInfo::EAudioType *audioType);
+        void convertAudioType2StreamType(CAudioInfo::EAudioType audioType, char **streamType);
+        void convertInputStreamType2AudioType(char *streamType, CAudioInfo::EAudioType *audioType);
+        void convertOutputStreamType2AudioType(char *streamType, CAudioInfo::EAudioType *audioType);
 
     private:
         const char *__STREAM_TYPE_TABLE[(unsigned int)EAudioType::AUDIO_TYPE_MAX] = {

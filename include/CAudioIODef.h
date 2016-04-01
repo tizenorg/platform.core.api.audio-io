@@ -103,7 +103,6 @@
 
 #define VALID_POINTER_START(_x_) { \
     if ((_x_) != NULL) {
-
 #define VALID_POINTER_END } \
 }
 

@@ -166,7 +166,7 @@ void CPulseAudioClient::__successStreamCb(pa_stream* s, int success, void* user_
     pa_threaded_mainloop_signal(pClient->__mpMainloop, 0);
 }
 
-void CPulseAudioClient::initialize() throw (CAudioError) {
+void CPulseAudioClient::initialize() throw(CAudioError) {
     AUDIO_IO_LOGD("");
     if (__mIsInit == true) {
         return;
@@ -351,7 +351,7 @@ void CPulseAudioClient::finalize() {
     __mIsInit = false;
 }
 
-int CPulseAudioClient::read(void* buffer, size_t length) throw (CAudioError) {
+int CPulseAudioClient::read(void* buffer, size_t length) throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
@@ -446,7 +446,7 @@ int CPulseAudioClient::read(void* buffer, size_t length) throw (CAudioError) {
     return length;
 }
 
-int CPulseAudioClient::peek(const void** buffer, size_t* length) throw (CAudioError) {
+int CPulseAudioClient::peek(const void** buffer, size_t* length) throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
@@ -482,7 +482,7 @@ int CPulseAudioClient::peek(const void** buffer, size_t* length) throw (CAudioEr
     return ret;
 }
 
-int CPulseAudioClient::drop() throw (CAudioError) {
+int CPulseAudioClient::drop() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
@@ -514,7 +514,7 @@ int CPulseAudioClient::drop() throw (CAudioError) {
     return ret;
 }
 
-int CPulseAudioClient::write(const void* data, size_t length) throw (CAudioError) {
+int CPulseAudioClient::write(const void* data, size_t length) throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
@@ -550,7 +550,7 @@ int CPulseAudioClient::write(const void* data, size_t length) throw (CAudioError
     return ret;
 }
 
-void CPulseAudioClient::cork(bool cork) throw (CAudioError) {
+void CPulseAudioClient::cork(bool cork) throw(CAudioError) {
     AUDIO_IO_LOGD("cork[%d]", cork);
 
     if (__mIsInit == false) {
@@ -574,7 +574,7 @@ void CPulseAudioClient::cork(bool cork) throw (CAudioError) {
     return;
 }
 
-bool CPulseAudioClient::isCorked() throw (CAudioError) {
+bool CPulseAudioClient::isCorked() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
@@ -595,7 +595,7 @@ bool CPulseAudioClient::isCorked() throw (CAudioError) {
     return static_cast<bool>(isCork);
 }
 
-bool CPulseAudioClient::drain() throw (CAudioError) {
+bool CPulseAudioClient::drain() throw(CAudioError) {
     AUDIO_IO_LOGD("drain");
 
     if (__mIsInit == false) {
@@ -615,7 +615,7 @@ bool CPulseAudioClient::drain() throw (CAudioError) {
     return true;
 }
 
-bool CPulseAudioClient::flush() throw (CAudioError) {
+bool CPulseAudioClient::flush() throw(CAudioError) {
     AUDIO_IO_LOGD("flush");
 
     if (__mIsInit == false) {
@@ -635,7 +635,7 @@ bool CPulseAudioClient::flush() throw (CAudioError) {
     return true;
 }
 
-size_t CPulseAudioClient::getWritableSize() throw (CAudioError) {
+size_t CPulseAudioClient::getWritableSize() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
@@ -659,7 +659,7 @@ size_t CPulseAudioClient::getWritableSize() throw (CAudioError) {
     return ret;
 }
 
-void CPulseAudioClient::checkRunningState() throw (CAudioError) {
+void CPulseAudioClient::checkRunningState() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
@@ -679,7 +679,7 @@ void CPulseAudioClient::checkRunningState() throw (CAudioError) {
 #endif
 }
 
-bool CPulseAudioClient::isInThread() throw (CAudioError) {
+bool CPulseAudioClient::isInThread() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
@@ -692,7 +692,7 @@ bool CPulseAudioClient::isInThread() throw (CAudioError) {
     return static_cast<bool>(ret);
 }
 
-size_t CPulseAudioClient::getReadableSize() throw (CAudioError) {
+size_t CPulseAudioClient::getReadableSize() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
@@ -716,7 +716,7 @@ size_t CPulseAudioClient::getReadableSize() throw (CAudioError) {
     return ret;
 }
 
-size_t CPulseAudioClient::getBufferSize() throw (CAudioError) {
+size_t CPulseAudioClient::getBufferSize() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
@@ -757,7 +757,7 @@ size_t CPulseAudioClient::getBufferSize() throw (CAudioError) {
     return ret;
 }
 
-pa_usec_t CPulseAudioClient::getLatency() throw (CAudioError) {
+pa_usec_t CPulseAudioClient::getLatency() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }
@@ -803,7 +803,7 @@ pa_usec_t CPulseAudioClient::getLatency() throw (CAudioError) {
     return negative ? 0 : ret;
 }
 
-pa_usec_t CPulseAudioClient::getFinalLatency() throw (CAudioError) {
+pa_usec_t CPulseAudioClient::getFinalLatency() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize CPulseAudioClient");
     }

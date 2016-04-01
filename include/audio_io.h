@@ -71,8 +71,8 @@ typedef struct audio_io_s *audio_out_h;
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
 typedef enum {
-    AUDIO_SAMPLE_TYPE_U8 = 0x70,    /**< Unsigned 8-bit audio samples */
-    AUDIO_SAMPLE_TYPE_S16_LE,       /**< Signed 16-bit audio samples */
+	AUDIO_SAMPLE_TYPE_U8 = 0x70,    /**< Unsigned 8-bit audio samples */
+	AUDIO_SAMPLE_TYPE_S16_LE,       /**< Signed 16-bit audio samples */
 } audio_sample_type_e;
 
 /**
@@ -80,8 +80,8 @@ typedef enum {
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
 typedef enum {
-    AUDIO_CHANNEL_MONO = 0x80,                  /**< 1 channel, mono */
-    AUDIO_CHANNEL_STEREO,                       /**< 2 channel, stereo */
+	AUDIO_CHANNEL_MONO = 0x80,                  /**< 1 channel, mono */
+	AUDIO_CHANNEL_STEREO,                       /**< 2 channel, stereo */
 } audio_channel_e;
 
 /**
@@ -89,9 +89,9 @@ typedef enum {
  * @since_tizen 3.0
  */
 typedef enum {
-    AUDIO_IO_STATE_IDLE,      /**< Audio-io handle is created, but not prepared */
-    AUDIO_IO_STATE_RUNNING,   /**< Audio-io handle is ready and the stream is running */
-    AUDIO_IO_STATE_PAUSED,    /**< Audio-io handle is ready and the stream is paused */
+	AUDIO_IO_STATE_IDLE,      /**< Audio-io handle is created, but not prepared */
+	AUDIO_IO_STATE_RUNNING,   /**< Audio-io handle is ready and the stream is running */
+	AUDIO_IO_STATE_PAUSED,    /**< Audio-io handle is ready and the stream is paused */
 } audio_io_state_e;
 
 /**
@@ -99,18 +99,18 @@ typedef enum {
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
 typedef enum {
-    AUDIO_IO_ERROR_NONE                = TIZEN_ERROR_NONE,              /**< Successful */
-    AUDIO_IO_ERROR_OUT_OF_MEMORY       = TIZEN_ERROR_OUT_OF_MEMORY,     /**< Out of memory */
-    AUDIO_IO_ERROR_INVALID_PARAMETER   = TIZEN_ERROR_INVALID_PARAMETER, /**< Invalid parameter */
-    AUDIO_IO_ERROR_INVALID_OPERATION   = TIZEN_ERROR_INVALID_OPERATION, /**< Invalid operation */
-    AUDIO_IO_ERROR_PERMISSION_DENIED   = TIZEN_ERROR_PERMISSION_DENIED, /**< Device open error by security */
-    AUDIO_IO_ERROR_NOT_SUPPORTED       = TIZEN_ERROR_NOT_SUPPORTED,     /**< Not supported */
-    AUDIO_IO_ERROR_DEVICE_NOT_OPENED   = TIZEN_ERROR_AUDIO_IO | 0x01,   /**< Device open error */
-    AUDIO_IO_ERROR_DEVICE_NOT_CLOSED   = TIZEN_ERROR_AUDIO_IO | 0x02,   /**< Device close error */
-    AUDIO_IO_ERROR_INVALID_BUFFER      = TIZEN_ERROR_AUDIO_IO | 0x03,   /**< Invalid buffer pointer */
-    AUDIO_IO_ERROR_SOUND_POLICY        = TIZEN_ERROR_AUDIO_IO | 0x04,   /**< Sound policy error */
-    AUDIO_IO_ERROR_INVALID_STATE       = TIZEN_ERROR_AUDIO_IO | 0x05,   /**< Invalid state (Since 3.0) */
-    AUDIO_IO_ERROR_NOT_SUPPORTED_TYPE  = TIZEN_ERROR_AUDIO_IO | 0x06,   /**< Not supported stream type (Since 3.0) */
+	AUDIO_IO_ERROR_NONE                = TIZEN_ERROR_NONE,              /**< Successful */
+	AUDIO_IO_ERROR_OUT_OF_MEMORY       = TIZEN_ERROR_OUT_OF_MEMORY,     /**< Out of memory */
+	AUDIO_IO_ERROR_INVALID_PARAMETER   = TIZEN_ERROR_INVALID_PARAMETER, /**< Invalid parameter */
+	AUDIO_IO_ERROR_INVALID_OPERATION   = TIZEN_ERROR_INVALID_OPERATION, /**< Invalid operation */
+	AUDIO_IO_ERROR_PERMISSION_DENIED   = TIZEN_ERROR_PERMISSION_DENIED, /**< Device open error by security */
+	AUDIO_IO_ERROR_NOT_SUPPORTED       = TIZEN_ERROR_NOT_SUPPORTED,     /**< Not supported */
+	AUDIO_IO_ERROR_DEVICE_NOT_OPENED   = TIZEN_ERROR_AUDIO_IO | 0x01,   /**< Device open error */
+	AUDIO_IO_ERROR_DEVICE_NOT_CLOSED   = TIZEN_ERROR_AUDIO_IO | 0x02,   /**< Device close error */
+	AUDIO_IO_ERROR_INVALID_BUFFER      = TIZEN_ERROR_AUDIO_IO | 0x03,   /**< Invalid buffer pointer */
+	AUDIO_IO_ERROR_SOUND_POLICY        = TIZEN_ERROR_AUDIO_IO | 0x04,   /**< Sound policy error */
+	AUDIO_IO_ERROR_INVALID_STATE       = TIZEN_ERROR_AUDIO_IO | 0x05,   /**< Invalid state (Since 3.0) */
+	AUDIO_IO_ERROR_NOT_SUPPORTED_TYPE  = TIZEN_ERROR_AUDIO_IO | 0x06,   /**< Not supported stream type (Since 3.0) */
 } audio_io_error_e;
 
 /**
@@ -119,14 +119,14 @@ typedef enum {
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
 typedef enum {
-    AUDIO_IO_INTERRUPTED_COMPLETED = 0,         /**< Interrupt completed */
-    AUDIO_IO_INTERRUPTED_BY_MEDIA,              /**< Interrupted by a media application */
-    AUDIO_IO_INTERRUPTED_BY_CALL,               /**< Interrupted by an incoming call */
-    AUDIO_IO_INTERRUPTED_BY_EARJACK_UNPLUG,     /**< Interrupted by unplugging headphones */
-    AUDIO_IO_INTERRUPTED_BY_RESOURCE_CONFLICT,  /**< Interrupted by a resource conflict */
-    AUDIO_IO_INTERRUPTED_BY_ALARM,              /**< Interrupted by an alarm */
-    AUDIO_IO_INTERRUPTED_BY_EMERGENCY,          /**< Interrupted by an emergency */
-    AUDIO_IO_INTERRUPTED_BY_NOTIFICATION,       /**< Interrupted by a notification */
+	AUDIO_IO_INTERRUPTED_COMPLETED = 0,         /**< Interrupt completed */
+	AUDIO_IO_INTERRUPTED_BY_MEDIA,              /**< Interrupted by a media application */
+	AUDIO_IO_INTERRUPTED_BY_CALL,               /**< Interrupted by an incoming call */
+	AUDIO_IO_INTERRUPTED_BY_EARJACK_UNPLUG,     /**< Interrupted by unplugging headphones */
+	AUDIO_IO_INTERRUPTED_BY_RESOURCE_CONFLICT,  /**< Interrupted by a resource conflict */
+	AUDIO_IO_INTERRUPTED_BY_ALARM,              /**< Interrupted by an alarm */
+	AUDIO_IO_INTERRUPTED_BY_EMERGENCY,          /**< Interrupted by an emergency */
+	AUDIO_IO_INTERRUPTED_BY_NOTIFICATION,       /**< Interrupted by a notification */
 } audio_io_interrupted_code_e;
 
 /**

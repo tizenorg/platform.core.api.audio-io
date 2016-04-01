@@ -34,7 +34,7 @@ CAudioInfo::CAudioInfo() :
     __mAudioIndex(-1) {
 }
 
-CAudioInfo::CAudioInfo(unsigned int sampleRate, EChannel channel, ESampleType sampleType, EAudioType audioType, int audioIndex) throw (CAudioError) :
+CAudioInfo::CAudioInfo(unsigned int sampleRate, EChannel channel, ESampleType sampleType, EAudioType audioType, int audioIndex) throw(CAudioError) :
     __mSampleRate(sampleRate),
     __mChannel(channel),
     __mSampleType(sampleType),
@@ -88,7 +88,7 @@ void CAudioInfo::setAudioIndex(int audioIndex) {
     return;
 }
 
-void CAudioInfo::convertAudioType2StreamType (CAudioInfo::EAudioType audioType, char **streamType) {
+void CAudioInfo::convertAudioType2StreamType(CAudioInfo::EAudioType audioType, char **streamType) {
     if (audioType < CAudioInfo::EAudioType::AUDIO_IN_TYPE_MEDIA || audioType >= CAudioInfo::EAudioType::AUDIO_TYPE_MAX) {
         THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_NOT_SUPPORTED_TYPE, "The audioType is not supported [audioType:%d]", audioType);
     }
@@ -96,7 +96,7 @@ void CAudioInfo::convertAudioType2StreamType (CAudioInfo::EAudioType audioType, 
     return;
 }
 
-void CAudioInfo::convertInputStreamType2AudioType (char *streamType, CAudioInfo::EAudioType *audioType) {
+void CAudioInfo::convertInputStreamType2AudioType(char *streamType, CAudioInfo::EAudioType *audioType) {
     for (unsigned int i = (unsigned int)CAudioInfo::EAudioType::AUDIO_IN_TYPE_MEDIA ; i < (unsigned int)CAudioInfo::EAudioType::AUDIO_OUT_TYPE_MEDIA ; i++) {
         if (!strcmp((char *)__STREAM_TYPE_TABLE[i], streamType)) {
             *audioType = (CAudioInfo::EAudioType)i;
@@ -107,7 +107,7 @@ void CAudioInfo::convertInputStreamType2AudioType (char *streamType, CAudioInfo:
     return;
 }
 
-void CAudioInfo::convertOutputStreamType2AudioType (char *streamType, CAudioInfo::EAudioType *audioType) {
+void CAudioInfo::convertOutputStreamType2AudioType(char *streamType, CAudioInfo::EAudioType *audioType) {
     for (unsigned int i = (unsigned int)CAudioInfo::EAudioType::AUDIO_OUT_TYPE_MEDIA ; i < (unsigned int)CAudioInfo::EAudioType::AUDIO_TYPE_MAX ; i++) {
         if (!strcmp((char *)__STREAM_TYPE_TABLE[i], streamType)) {
             *audioType = (CAudioInfo::EAudioType)i;

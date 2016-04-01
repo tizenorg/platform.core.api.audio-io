@@ -277,7 +277,7 @@ static audio_io_state_e __convert_state_type(const CAudioInfo::EAudioIOState src
     return dst_state;
 }
 
-static void __check_audio_param(int sample_rate, audio_channel_e channel, audio_sample_type_e type)  throw (CAudioError) {
+static void __check_audio_param(int sample_rate, audio_channel_e channel, audio_sample_type_e type) throw(CAudioError) {
     if (sample_rate < 0) {
         THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Invalid sample rate :%d", sample_rate);
     }
@@ -291,7 +291,7 @@ static void __check_audio_param(int sample_rate, audio_channel_e channel, audio_
     }
 }
 
-static void __check_audio_param(int sample_rate, audio_channel_e channel, audio_sample_type_e type, sound_type_e sound_type) throw (CAudioError) {
+static void __check_audio_param(int sample_rate, audio_channel_e channel, audio_sample_type_e type, sound_type_e sound_type) throw(CAudioError) {
     __check_audio_param(sample_rate, channel, type);
 
     if (sound_type < SOUND_TYPE_SYSTEM || sound_type > SOUND_TYPE_VOICE) {
@@ -299,7 +299,7 @@ static void __check_audio_param(int sample_rate, audio_channel_e channel, audio_
     }
 }
 
-static CAudioInfo __generate_audio_input_info(int sampleRate, audio_channel_e channel, audio_sample_type_e sample_type) throw (CAudioError) {
+static CAudioInfo __generate_audio_input_info(int sampleRate, audio_channel_e channel, audio_sample_type_e sample_type) throw(CAudioError) {
     CAudioInfo::EChannel     dstChannel;
     CAudioInfo::ESampleType dstSampleType;
     CAudioInfo::EAudioType  dstAudioType = CAudioInfo::EAudioType::AUDIO_IN_TYPE_MEDIA;
@@ -310,7 +310,7 @@ static CAudioInfo __generate_audio_input_info(int sampleRate, audio_channel_e ch
     return CAudioInfo(sampleRate, dstChannel, dstSampleType, dstAudioType, -1);
 }
 
-static CAudioInfo __generate_audio_input_loopback_info(int sampleRate, audio_channel_e channel, audio_sample_type_e sample_type) throw (CAudioError) {
+static CAudioInfo __generate_audio_input_loopback_info(int sampleRate, audio_channel_e channel, audio_sample_type_e sample_type) throw(CAudioError) {
     CAudioInfo::EChannel     dstChannel;
     CAudioInfo::ESampleType dstSampleType;
     CAudioInfo::EAudioType  dstAudioType = CAudioInfo::EAudioType::AUDIO_IN_TYPE_LOOPBACK;
@@ -321,7 +321,7 @@ static CAudioInfo __generate_audio_input_loopback_info(int sampleRate, audio_cha
     return CAudioInfo(sampleRate, dstChannel, dstSampleType, dstAudioType, -1);
 }
 
-static CAudioInfo __generate_audio_output_info(int sampleRate, audio_channel_e channel, audio_sample_type_e sample_type, sound_type_e sound_type) throw (CAudioError) {
+static CAudioInfo __generate_audio_output_info(int sampleRate, audio_channel_e channel, audio_sample_type_e sample_type, sound_type_e sound_type) throw(CAudioError) {
     CAudioInfo::EChannel     dstChannel;
     CAudioInfo::ESampleType dstSampleType;
     CAudioInfo::EAudioType  dstAudioType;
@@ -400,7 +400,6 @@ int cpp_audio_in_create(int sample_rate, audio_channel_e channel, audio_sample_t
     }
 
     return AUDIO_IO_ERROR_NONE;
-
 }
 
 int cpp_audio_in_create_loopback(int sample_rate, audio_channel_e channel, audio_sample_type_e type , audio_in_h* input) {
@@ -488,13 +487,13 @@ int cpp_audio_in_set_stream_info(audio_in_h input, sound_stream_info_h stream_in
         }
 
         if (avail) {
-            if ((errorCode = sound_manager_get_type_from_stream_information (stream_info, &type)) != SOUND_MANAGER_ERROR_NONE) {
+            if ((errorCode = sound_manager_get_type_from_stream_information(stream_info, &type)) != SOUND_MANAGER_ERROR_NONE) {
                 THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameter stream_info->stream_type is invalid [ret:%d]", errorCode);
             }
             handle->audioIoHandle->getAudioInfo().convertInputStreamType2AudioType(type, &audioType);
             handle->audioIoHandle->getAudioInfo().setAudioType(audioType);
 
-            if ((errorCode = sound_manager_get_index_from_stream_information (stream_info, &index)) != SOUND_MANAGER_ERROR_NONE) {
+            if ((errorCode = sound_manager_get_index_from_stream_information(stream_info, &index)) != SOUND_MANAGER_ERROR_NONE) {
                 THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameter stream_info->index is invalid [ret:%d]", errorCode);
             }
             handle->audioIoHandle->getAudioInfo().setAudioIndex(index);
@@ -1115,13 +1114,13 @@ int cpp_audio_out_set_stream_info(audio_out_h output, sound_stream_info_h stream
         }
 
         if (avail) {
-            if ((errorCode = sound_manager_get_type_from_stream_information (stream_info, &type)) != SOUND_MANAGER_ERROR_NONE) {
+            if ((errorCode = sound_manager_get_type_from_stream_information(stream_info, &type)) != SOUND_MANAGER_ERROR_NONE) {
                 THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameter stream_info->stream_type is invalid [ret:%d]", errorCode);
             }
             handle->audioIoHandle->getAudioInfo().convertOutputStreamType2AudioType(type, &audioType);
             handle->audioIoHandle->getAudioInfo().setAudioType(audioType);
 
-            if ((errorCode = sound_manager_get_index_from_stream_information (stream_info, &index)) != SOUND_MANAGER_ERROR_NONE) {
+            if ((errorCode = sound_manager_get_index_from_stream_information(stream_info, &index)) != SOUND_MANAGER_ERROR_NONE) {
                 THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameter stream_info->index is invalid [ret:%d]", errorCode);
             }
             handle->audioIoHandle->getAudioInfo().setAudioIndex(index);

@@ -69,7 +69,7 @@ bool CAudioIO::IsReady() {
     return ((mState == CAudioInfo::EAudioIOState::AUDIO_IO_STATE_RUNNING || mState == CAudioInfo::EAudioIOState::AUDIO_IO_STATE_PAUSED)? true : false);
 }
 
-void CAudioIO::internalLock() throw (CAudioError) {
+void CAudioIO::internalLock() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
@@ -82,7 +82,7 @@ void CAudioIO::internalLock() throw (CAudioError) {
 #endif
 }
 
-void CAudioIO::internalUnlock() throw (CAudioError) {
+void CAudioIO::internalUnlock() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
@@ -95,7 +95,7 @@ void CAudioIO::internalUnlock() throw (CAudioError) {
 #endif
 }
 
-void CAudioIO::internalWait() throw (CAudioError) {
+void CAudioIO::internalWait() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
@@ -107,7 +107,7 @@ void CAudioIO::internalWait() throw (CAudioError) {
     pthread_cond_wait(&__mCond, &__mMutex);
 }
 
-void CAudioIO::internalSignal() throw (CAudioError) {
+void CAudioIO::internalSignal() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
@@ -123,7 +123,7 @@ bool CAudioIO::isForceIgnore() {
     return __mForceIgnore;
 }
 
-void CAudioIO::initialize() throw (CAudioError) {
+void CAudioIO::initialize() throw(CAudioError) {
     if (__mIsInit == true) {
         return;
     }
@@ -302,7 +302,7 @@ void CAudioIO::onSignal(CAudioSessionHandler* pHandler, mm_sound_signal_name_t s
     }
 }
 
-void CAudioIO::prepare() throw (CAudioError) {
+void CAudioIO::prepare() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
@@ -315,7 +315,7 @@ void CAudioIO::prepare() throw (CAudioError) {
     }
 }
 
-void CAudioIO::unprepare() throw (CAudioError) {
+void CAudioIO::unprepare() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
@@ -328,7 +328,7 @@ void CAudioIO::unprepare() throw (CAudioError) {
     }
 }
 
-void CAudioIO::pause() throw (CAudioError) {
+void CAudioIO::pause() throw(CAudioError) {
     if (__mIsInit == false || IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioIO");
     }
@@ -344,7 +344,7 @@ void CAudioIO::pause() throw (CAudioError) {
     }
 }
 
-void CAudioIO::resume() throw (CAudioError) {
+void CAudioIO::resume() throw(CAudioError) {
     if (__mIsInit == false || IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioIO");
     }
@@ -360,7 +360,7 @@ void CAudioIO::resume() throw (CAudioError) {
     }
 }
 
-void CAudioIO::drain() throw (CAudioError) {
+void CAudioIO::drain() throw(CAudioError) {
     if (__mIsInit == false || IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioIO");
     }
@@ -376,7 +376,7 @@ void CAudioIO::drain() throw (CAudioError) {
     }
 }
 
-void CAudioIO::flush() throw (CAudioError) {
+void CAudioIO::flush() throw(CAudioError) {
     if (__mIsInit == false || IsReady() == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Did not initialize or prepare CAudioIO");
     }
@@ -392,7 +392,7 @@ void CAudioIO::flush() throw (CAudioError) {
     }
 }
 
-CAudioInfo& CAudioIO::getAudioInfo() throw (CAudioError) {
+CAudioInfo& CAudioIO::getAudioInfo() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
@@ -400,7 +400,7 @@ CAudioInfo& CAudioIO::getAudioInfo() throw (CAudioError) {
     return mAudioInfo;
 }
 
-void CAudioIO::setStreamCallback(SStreamCallback callback) throw (CAudioError) {
+void CAudioIO::setStreamCallback(SStreamCallback callback) throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
@@ -408,7 +408,7 @@ void CAudioIO::setStreamCallback(SStreamCallback callback) throw (CAudioError) {
     mStreamCallback = callback;
 }
 
-CAudioIO::SStreamCallback CAudioIO::getStreamCallback() throw (CAudioError) {
+CAudioIO::SStreamCallback CAudioIO::getStreamCallback() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
@@ -416,7 +416,7 @@ CAudioIO::SStreamCallback CAudioIO::getStreamCallback() throw (CAudioError) {
     return mStreamCallback;
 }
 
-void CAudioIO::setStateChangedCallback(SStateChangedCallback callback) throw (CAudioError) {
+void CAudioIO::setStateChangedCallback(SStateChangedCallback callback) throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
@@ -424,7 +424,7 @@ void CAudioIO::setStateChangedCallback(SStateChangedCallback callback) throw (CA
     mStateChangedCallback = callback;
 }
 
-CAudioIO::SStateChangedCallback CAudioIO::getStateChangedCallback() throw (CAudioError) {
+CAudioIO::SStateChangedCallback CAudioIO::getStateChangedCallback() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
@@ -432,7 +432,7 @@ CAudioIO::SStateChangedCallback CAudioIO::getStateChangedCallback() throw (CAudi
     return mStateChangedCallback;
 }
 
-void CAudioIO::setInterruptCallback(SInterruptCallback callback) throw (CAudioError) {
+void CAudioIO::setInterruptCallback(SInterruptCallback callback) throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
@@ -440,7 +440,7 @@ void CAudioIO::setInterruptCallback(SInterruptCallback callback) throw (CAudioEr
     mInterruptCallback = callback;
 }
 
-CAudioIO::SInterruptCallback CAudioIO::getInterruptCallback() throw (CAudioError) {
+CAudioIO::SInterruptCallback CAudioIO::getInterruptCallback() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }
@@ -449,7 +449,7 @@ CAudioIO::SInterruptCallback CAudioIO::getInterruptCallback() throw (CAudioError
 }
 
 
-void CAudioIO::ignoreSession() throw (CAudioError) {
+void CAudioIO::ignoreSession() throw(CAudioError) {
     if (__mIsInit == false) {
         THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_INITIALIZED, "Doesn't initialize CAudioIO");
     }

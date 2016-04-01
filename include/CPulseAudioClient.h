@@ -50,31 +50,31 @@ namespace tizen_media_audio {
         ~CPulseAudioClient();
 
         /* Implemented Methods */
-        void initialize() throw (CAudioError);
+        void initialize() throw(CAudioError);
         void finalize();
 
         /* Methods */
-        int read(void* buffer, size_t length) throw (CAudioError);
-        int peek(const void** buffer, size_t* length) throw (CAudioError);
-        int drop() throw (CAudioError);
-        int write(const void* buffer, size_t length) throw (CAudioError);
+        int read(void* buffer, size_t length) throw(CAudioError);
+        int peek(const void** buffer, size_t* length) throw(CAudioError);
+        int drop() throw(CAudioError);
+        int write(const void* buffer, size_t length) throw(CAudioError);
 
-        void cork(bool cork) throw (CAudioError);
-        bool isCorked() throw (CAudioError);
+        void cork(bool cork) throw(CAudioError);
+        bool isCorked() throw(CAudioError);
 
-        bool drain() throw (CAudioError);
-        bool flush() throw (CAudioError);
+        bool drain() throw(CAudioError);
+        bool flush() throw(CAudioError);
 
-        void checkRunningState() throw (CAudioError);
-        bool isInThread() throw (CAudioError);
+        void checkRunningState() throw(CAudioError);
+        bool isInThread() throw(CAudioError);
 
-        size_t getWritableSize() throw (CAudioError);
-        size_t getReadableSize() throw (CAudioError);
+        size_t getWritableSize() throw(CAudioError);
+        size_t getReadableSize() throw(CAudioError);
 
-        size_t getBufferSize() throw (CAudioError);
+        size_t getBufferSize() throw(CAudioError);
 
-        pa_usec_t getLatency() throw (CAudioError);
-        pa_usec_t getFinalLatency() throw (CAudioError);
+        pa_usec_t getLatency() throw(CAudioError);
+        pa_usec_t getFinalLatency() throw(CAudioError);
 
         /* Setter & Getter */
         EStreamDirection getStreamDirection();
