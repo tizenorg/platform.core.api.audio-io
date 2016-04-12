@@ -94,8 +94,7 @@ static audio_io_error_e __convert_CAudioError(CAudioError& error) {
     audio_io_error_e    ret = AUDIO_IO_ERROR_NONE;
     CAudioError::EError err = error.getError();
 
-    switch (err)
-    {
+    switch (err) {
     case CAudioError::EError::ERROR_NONE:
         ret = AUDIO_IO_ERROR_NONE;
         break;

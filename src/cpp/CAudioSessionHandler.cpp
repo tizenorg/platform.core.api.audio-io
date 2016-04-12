@@ -473,8 +473,7 @@ void CAudioSessionHandler::disableSessionHandler() throw(CAudioError) {
 IAudioSessionEventListener::EInterruptCode IAudioSessionEventListener::convertInterruptedCode(int code, const char *reason_for_change) {
     EInterruptCode e = EInterruptCode::INTERRUPT_COMPLETED;
 
-    switch (code)
-    {
+    switch (code) {
     case FOCUS_IS_ACQUIRED:
         e = EInterruptCode::INTERRUPT_COMPLETED;
         break;

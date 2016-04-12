@@ -23,8 +23,7 @@
 #ifdef __cplusplus
 
 
-extern "C"
-{
+extern "C" {
 #endif
 
 int cpp_audio_in_create(int sample_rate, audio_channel_e channel, audio_sample_type_e type, audio_in_h *input);
