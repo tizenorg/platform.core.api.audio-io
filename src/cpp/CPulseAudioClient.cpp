@@ -17,7 +17,10 @@
 
 #include <mm.h>
 #include "CAudioIODef.h"
-
+ #ifdef ENABLE_DPM
+#include <dpm/context.h>
+#include <dpm/restriction.h>
+ #endif
 
 using namespace std;
 using namespace tizen_media_audio;
@@ -87,6 +90,28 @@ void CPulseAudioClient::__successContextCb(pa_context* c, int success, void* use
     pa_threaded_mainloop_signal(pClient->__mpMainloop, 0);
 }
 
+static int __get_microphone_state(void) {
+    int state = 1;
+#ifdef ENABLE_DPM
+    dpm_context_h dpm_ctx_h;
+    dpm_restriction_policy_h dpm_policy_h;
+    int ret = 0;
+
+    if ((dpm_ctx_h = dpm_context_create())) {
+        if ((dpm_policy_h = dpm_context_acquire_restriction_policy(dpm_ctx_h))) {
+            /* state: 0(disallowed), 1(allowed) */
+            if ((ret = dpm_restriction_get_microphone_state(dpm_policy_h, &state)))
+                AUDIO_IO_LOGE("Failed to dpm_restriction_get_microphone_state(), ret(0x%x)", ret);
+            dpm_context_release_restriction_policy(dpm_ctx_h, dpm_policy_h);
+        } else
+            AUDIO_IO_LOGE("Failed to dpm_context_acquire_restriction_policy()");
+        dpm_context_destroy(dpm_ctx_h);
+    } else
+        AUDIO_IO_LOGE("Failed to dpm_context_create()");
+#endif
+    return state;
+}
+
 void CPulseAudioClient::__streamStateChangeCb(pa_stream* s, void* user_data) {
     assert(s);
     assert(user_data);
@@ -102,7 +127,8 @@ void CPulseAudioClient::__streamStateChangeCb(pa_stream* s, void* user_data) {
 
     case PA_STREAM_FAILED:
         AUDIO_IO_LOGD("The stream is failed");
-        pClient->__mpListener->onStateChanged(CAudioInfo::EAudioIOState::AUDIO_IO_STATE_IDLE);
+        pClient->__mpListener->onStateChanged(CAudioInfo::EAudioIOState::AUDIO_IO_STATE_IDLE,
+                                              __get_microphone_state() ? false : true);
         pa_threaded_mainloop_signal(pClient->__mpMainloop, 0);
         break;
 
