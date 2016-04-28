@@ -185,6 +185,9 @@ void CAudioIO::onStateChanged(CAudioInfo::EAudioIOState state, bool byPolicy) {
     mState     = state;
     mByPolicy  = byPolicy;
 
+    if (mState == mStatePrev)
+        return;
+
     AUDIO_IO_LOGD("current(%d), previous(%d), by_policy(%d)", mState, mStatePrev, mByPolicy);
 
     if (mStateChangedCallback.onStateChanged != NULL) {

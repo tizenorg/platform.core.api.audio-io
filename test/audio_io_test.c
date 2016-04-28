@@ -324,7 +324,6 @@ static void _audio_io_stream_read_cb(audio_in_h handle, size_t nbytes, void *use
 static void _audio_io_stream_write_cb(audio_out_h handle, size_t nbytes, void *user_data)
 {
 	short *buffer = NULL;
-	int ret = 0;
 	int i = 0;
 
 	if (nbytes > 0) {
@@ -346,7 +345,7 @@ static void _audio_io_stream_write_cb(audio_out_h handle, size_t nbytes, void *u
 				test_wav.right_channel -= TABLE_SIZE;
 		}
 
-		ret = audio_out_write(handle, buffer, nbytes);
+		audio_out_write(handle, buffer, nbytes);
 
 		free(buffer);
 	}

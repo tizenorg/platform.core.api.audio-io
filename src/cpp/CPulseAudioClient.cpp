@@ -58,12 +58,13 @@ void CPulseAudioClient::__contextStateChangeCb(pa_context* c, void* user_data) {
 
     switch (pa_context_get_state(c)) {
     case PA_CONTEXT_READY:
-        AUDIO_IO_LOGD("The context is ready!");
+        AUDIO_IO_LOGD("The context is ready");
         pa_threaded_mainloop_signal(pClient->__mpMainloop, 0);
         break;
 
     case PA_CONTEXT_FAILED:
     case PA_CONTEXT_TERMINATED:
+        AUDIO_IO_LOGD("The context is lost");
         pa_threaded_mainloop_signal(pClient->__mpMainloop, 0);
         break;
 
@@ -94,13 +95,20 @@ void CPulseAudioClient::__streamStateChangeCb(pa_stream* s, void* user_data) {
 
     switch (pa_stream_get_state(s)) {
     case PA_STREAM_READY:
-        AUDIO_IO_LOGD("The stream is ready!");
+        AUDIO_IO_LOGD("The stream is ready");
         pClient->__mpListener->onStateChanged(CAudioInfo::EAudioIOState::AUDIO_IO_STATE_RUNNING);
         pa_threaded_mainloop_signal(pClient->__mpMainloop, 0);
         break;
 
     case PA_STREAM_FAILED:
+        AUDIO_IO_LOGD("The stream is failed");
+        pClient->__mpListener->onStateChanged(CAudioInfo::EAudioIOState::AUDIO_IO_STATE_IDLE);
+        pa_threaded_mainloop_signal(pClient->__mpMainloop, 0);
+        break;
+
     case PA_STREAM_TERMINATED:
+        AUDIO_IO_LOGD("The stream is terminated");
+        pClient->__mpListener->onStateChanged(CAudioInfo::EAudioIOState::AUDIO_IO_STATE_IDLE);
         pa_threaded_mainloop_signal(pClient->__mpMainloop, 0);
         break;
 
