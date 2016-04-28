@@ -9,7 +9,7 @@ SET(PREFIX ${CMAKE_INSTALL_PREFIX})
 SET(INC_DIR include)
 INCLUDE_DIRECTORIES(${INC_DIR})
 
-SET(dependents "dlog mm-sound capi-base-common capi-media-sound-manager mm-common mm-session libpulse vconf")
+SET(dependents "dlog mm-sound capi-base-common capi-media-sound-manager mm-common mm-session libpulse vconf dpm")
 SET(pc_dependents "capi-base-common capi-media-sound-manager")
 
 INCLUDE(FindPkgConfig)
@@ -31,6 +31,7 @@ ENDIF("${ARCH}" STREQUAL "arm")
 
 ADD_DEFINITIONS("-DPREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
 ADD_DEFINITIONS("-DTIZEN_DEBUG")
+ADD_DEFINITIONS("-DENABLE_DPM")
 #ADD_DEFINITIONS("-D_AUDIO_IO_DEBUG_TIMING_")
 
 SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--as-needed -Wl,--rpath=${LIB_INSTALL_DIR}")

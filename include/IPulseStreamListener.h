@@ -35,6 +35,7 @@ namespace tizen_media_audio {
     public:
         virtual void onStream(CPulseAudioClient* pClient, size_t length) = 0;
         virtual void onStateChanged(CAudioInfo::EAudioIOState state) = 0;
+        virtual void onStateChanged(CAudioInfo::EAudioIOState state, bool policy) = 0;
     };
 
 
