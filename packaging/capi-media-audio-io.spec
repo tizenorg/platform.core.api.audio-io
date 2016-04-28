@@ -1,6 +1,6 @@
 Name:           capi-media-audio-io
 Summary:        An Audio Input & Audio Output library in Tizen Native API
-Version:        0.3.30
+Version:        0.3.31
 Release:        0
 Group:          Multimedia/API
 License:        Apache-2.0
@@ -15,6 +15,7 @@ BuildRequires:  pkgconfig(vconf)
 BuildRequires:  pkgconfig(capi-media-sound-manager)
 BuildRequires:  pkgconfig(capi-base-common)
 BuildRequires:  pkgconfig(libpulse)
+BuildRequires:  pkgconfig(dpm)
 
 %description
 An Audio Input & Audio Output library in Tizen Native API
