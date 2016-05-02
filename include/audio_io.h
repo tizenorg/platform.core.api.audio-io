@@ -365,7 +365,7 @@ int audio_in_resume(audio_in_h input);
 /**
  * @brief Flushes and discards buffered audio data from the input stream.
  *
- * @since_tizen 2.4
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  *
  * @param[in] input The handle to the audio input
  * @return @c 0 on success,
@@ -860,7 +860,7 @@ int audio_out_resume(audio_out_h output);
  *
  * @details This function waits until drains stream buffer completely. (e.g end of playback)
  *
- * @since_tizen 2.4
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  *
  * @param[in] output The handle to the audio output
  * @return @c 0 on success,
@@ -877,7 +877,7 @@ int audio_out_drain(audio_out_h output);
 /**
  * @brief Flushes and discards buffered audio data from the output stream.
  *
- * @since_tizen 2.4
+ * @since_tizen @if MOBILE 2.4 @elseif WEARABLE 3.0 @endif
  *
  * @param[in] output The handle to the audio output
  * @return @c 0 on success,
