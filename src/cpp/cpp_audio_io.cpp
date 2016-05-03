@@ -633,6 +633,9 @@ int cpp_audio_in_read(audio_in_h input, void *buffer, unsigned int length) {
         assert(handle->audioIoHandle);
 
         CAudioInput* inputHandle = dynamic_cast<CAudioInput*>(handle->audioIoHandle);
+        if (inputHandle == NULL) {
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_HANDLE, "Handle is NULL");
+        }
         size_t readn = inputHandle->read(buffer, static_cast<size_t>(length));
         ret = static_cast<int>(readn);
 #ifdef _AUDIO_IO_DEBUG_TIMING_
@@ -657,6 +660,9 @@ int cpp_audio_in_get_buffer_size(audio_in_h input, int *size) {
         assert(handle->audioIoHandle);
 
         CAudioIO* inputHandle = dynamic_cast<CAudioInput*>(handle->audioIoHandle);
+        if (inputHandle == NULL) {
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_HANDLE, "Handle is NULL");
+        }
         *size = inputHandle->getBufferSize();
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
@@ -1260,6 +1266,9 @@ int cpp_audio_out_write(audio_out_h output, void *buffer, unsigned int length) {
         assert(handle->audioIoHandle);
 
         CAudioOutput* outputHandle = dynamic_cast<CAudioOutput*>(handle->audioIoHandle);
+        if (outputHandle == NULL) {
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_HANDLE, "Handle is NULL");
+        }
         size_t writen = outputHandle->write(buffer, static_cast<size_t>(length));
         ret = static_cast<int>(writen);
 #ifdef _AUDIO_IO_DEBUG_TIMING_
@@ -1284,6 +1293,9 @@ int cpp_audio_out_get_buffer_size(audio_out_h output, int *size) {
         assert(handle->audioIoHandle);
 
         CAudioOutput* outputHandle = dynamic_cast<CAudioOutput*>(handle->audioIoHandle);
+        if (outputHandle == NULL) {
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_HANDLE, "Handle is NULL");
+        }
         *size = outputHandle->getBufferSize();
     } catch (CAudioError e) {
         AUDIO_IO_LOGE("%s", e.getErrorMsg());
