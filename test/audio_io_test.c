@@ -562,8 +562,11 @@ int audio_io_async_test(int mode)
 	}
 
 	do {
+		int gotchar;
 		printf("command(q:quit) : ");
-		cmd = (char)getchar();
+		gotchar = getchar();
+		if (gotchar == EOF)
+			goto EXIT;
 		if (cmd != '\n')
 			getchar();
 		cmd_ret = _convert_cmd_and_run(cmd, mode);
@@ -633,6 +636,11 @@ int main(int argc, char **argv)
 	} else if (argc == 3 && !strcmp(argv[1], "async")) {
 		audio_io_async_test(atoi(argv[2]));
 	} else if (argc == 4) {
+		int channel_idx = atoi(argv[3]);
+		if (channel_idx < 0 || channel_idx >2) {
+			printf("Invalid channel\n");
+			return 0;
+		}
 		printf("run with [%s][%s][%s]\n", argv[1], argv[2], argv[3]);
 		audio_io_test(atoi(argv[1]), atoi(argv[2]), atoi(argv[3]));
 	} else if (argc == 6) {
