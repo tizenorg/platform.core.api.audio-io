@@ -298,6 +298,7 @@ int audio_in_set_stream_info(audio_in_h input, sound_stream_info_h stream_info);
  *         otherwise a negative error value
  * @retval #AUDIO_IO_ERROR_NONE Successful
  * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #AUDIO_IO_ERROR_PERMISSION_DENIED Permission denied
  * @retval #AUDIO_IO_ERROR_NOT_SUPPORTED Not supported
  * @retval #AUDIO_IO_ERROR_INVALID_STATE Invalid state
  *
