@@ -114,6 +114,9 @@ static audio_io_error_e __convert_CAudioError(CAudioError& error) {
     case CAudioError::EError::ERROR_PERMISSION_DENIED:
         ret = AUDIO_IO_ERROR_PERMISSION_DENIED;
         break;
+    case CAudioError::EError::ERROR_DEVICE_POLICY_RESTRICTION:
+        ret = AUDIO_IO_ERROR_DEVICE_POLICY_RESTRICTION;
+        break;
     case CAudioError::EError::ERROR_NOT_SUPPORTED:
         ret = AUDIO_IO_ERROR_NOT_SUPPORTED;
         break;

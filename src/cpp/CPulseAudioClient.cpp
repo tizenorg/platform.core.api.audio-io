@@ -333,7 +333,11 @@ void CPulseAudioClient::initialize() throw(CAudioError) {
             if (!PA_STREAM_IS_GOOD(state)) {
                 err = pa_context_errno(__mpContext);
                 pa_threaded_mainloop_unlock(__mpMainloop);
-                THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INTERNAL_OPERATION, "pa_stream's state is not good : err[%d]", err);
+                if (err == PA_ERR_ACCESS) {
+                    THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_DEVICE_POLICY_RESTRICTION, "pa_stream's state is not good : err[%d]", err);
+                } else {
+                    THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INTERNAL_OPERATION, "pa_stream's state is not good : err[%d]", err);
+                }
             }
 
             /* Wait until the stream is ready */

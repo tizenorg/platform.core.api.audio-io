@@ -47,6 +47,7 @@ namespace tizen_media_audio {
 
             ERROR_PERMISSION_DENIED,
 
+            ERROR_DEVICE_POLICY_RESTRICTION,
             ERROR_DEVICE_NOT_OPENED,
             ERROR_DEVICE_NOT_CLOSED,
 
