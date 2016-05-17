@@ -246,13 +246,13 @@ int audio_io_loopback_test()
 
 	ret = audio_in_prepare(input);
 	if (ret != 0) {
-		printf("audio_in_prepare failed.\n");
+		printf("audio_in_prepare failed, err(0x%x)\n", ret);
 		audio_in_destroy(input);
 		return 0;
 	} else {
 		ret = audio_in_get_buffer_size(input, &size);
 		if (ret != AUDIO_IO_ERROR_NONE) {
-			printf("audio_in_get_buffer_size failed.\n");
+			printf("audio_in_get_buffer_size failed, err(0x%x)\n", ret);
 			return 0;
 		} else {
 			printf("size(%d)\n", size);
@@ -262,7 +262,7 @@ int audio_io_loopback_test()
 
 	ret = audio_out_prepare(output);
 	if (ret != 0) {
-		printf("audio_out_prepare failed.\n");
+		printf("audio_out_prepare failed, err(0x%x)\n", ret);
 		audio_out_destroy(output);
 		return 0;
 	}
@@ -529,13 +529,13 @@ int audio_io_async_test(int mode)
 		printf("audio_in_prepare\n");
 		ret = audio_in_prepare(input);
 		if (ret != 0) {
-			printf("audio_in_prepare failed.\n");
+			printf("audio_in_prepare failed, err(0x%x)\n", ret);
 			audio_in_destroy(input);
 			goto EXIT;
 		} else {
 			ret = audio_in_get_buffer_size(input, &size);
 			if (ret != AUDIO_IO_ERROR_NONE) {
-				printf("audio_in_get_buffer_size failed.\n");
+				printf("audio_in_get_buffer_size failed, err(0x%x)\n", ret);
 				goto EXIT;
 			} else {
 				printf("size(%d)\n", size);
@@ -555,7 +555,7 @@ int audio_io_async_test(int mode)
 		printf("audio_out_prepare\n");
 		ret = audio_out_prepare(output);
 		if (ret != 0) {
-			printf("audio_out_prepare failed.\n");
+			printf("audio_out_prepare failed, err(0x%x)\n", ret);
 			audio_out_destroy(output);
 			goto EXIT;
 		}
