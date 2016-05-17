@@ -104,6 +104,7 @@ typedef enum {
 	AUDIO_IO_ERROR_INVALID_OPERATION   = TIZEN_ERROR_INVALID_OPERATION, /**< Invalid operation */
 	AUDIO_IO_ERROR_PERMISSION_DENIED   = TIZEN_ERROR_PERMISSION_DENIED, /**< Device open error by security */
 	AUDIO_IO_ERROR_NOT_SUPPORTED       = TIZEN_ERROR_NOT_SUPPORTED,     /**< Not supported */
+	AUDIO_IO_ERROR_DEVICE_POLICY_RESTRICTION = TIZEN_ERROR_DEVICE_POLICY_RESTRICTION, /**< Device policy restriction (Since 3.0) */
 	AUDIO_IO_ERROR_DEVICE_NOT_OPENED   = TIZEN_ERROR_AUDIO_IO | 0x01,   /**< Device open error */
 	AUDIO_IO_ERROR_DEVICE_NOT_CLOSED   = TIZEN_ERROR_AUDIO_IO | 0x02,   /**< Device close error */
 	AUDIO_IO_ERROR_INVALID_BUFFER      = TIZEN_ERROR_AUDIO_IO | 0x03,   /**< Invalid buffer pointer */
@@ -299,6 +300,7 @@ int audio_in_set_stream_info(audio_in_h input, sound_stream_info_h stream_info);
  * @retval #AUDIO_IO_ERROR_NONE Successful
  * @retval #AUDIO_IO_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #AUDIO_IO_ERROR_NOT_SUPPORTED Not supported
+ * @retval #AUDIO_IO_ERROR_DEVICE_POLICY_RESTRICTION Device policy restriction
  * @retval #AUDIO_IO_ERROR_INVALID_STATE Invalid state
  *
  * @post The state will be #AUDIO_IO_STATE_RUNNING.
