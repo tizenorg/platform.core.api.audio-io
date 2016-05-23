@@ -15,12 +15,19 @@
  */
 
 
+#include <pulse/pulseaudio.h>
 #include "CAudioIODef.h"
 
+#define RECORDER_PRIVILEGE "http://tizen.org/privilege/recorder"
+#define CLIENT_NAME "AUDIO_IO_PA_CLIENT"
 
 using namespace std;
 using namespace tizen_media_audio;
 
+struct PrivilegeData {
+    bool isPrivilegeAllowed;
+    pa_threaded_mainloop *paMainloop;
+};
 
 /**
  * class CAudioInput inherited by CAudioIO
@@ -91,6 +98,97 @@ bool CAudioInput::__IsReady() {
     return CAudioIO::IsReady();
 }
 
+static void __contextStateChangeCb(pa_context* c, void* user_data) {
+    pa_threaded_mainloop *paMainloop = static_cast<pa_threaded_mainloop*>(user_data);
+    assert(paMainloop);
+    assert(c);
+
+    switch (pa_context_get_state(c)) {
+    case PA_CONTEXT_READY:
+        AUDIO_IO_LOGD("The context is ready");
+        pa_threaded_mainloop_signal(paMainloop, 0);
+        break;
+
+    case PA_CONTEXT_FAILED:
+    case PA_CONTEXT_TERMINATED:
+        AUDIO_IO_LOGD("The context is lost");
+        pa_threaded_mainloop_signal(paMainloop, 0);
+        break;
+
+    case PA_CONTEXT_UNCONNECTED:
+    case PA_CONTEXT_CONNECTING:
+    case PA_CONTEXT_AUTHORIZING:
+    case PA_CONTEXT_SETTING_NAME:
+        break;
+    }
+}
+
+static void __checkPrivilegeCb(pa_context *c, int success, void *user_data) {
+    AUDIO_IO_LOGD("pa_context[%p], success[%d], user_data[%p]", c, success, user_data);
+    assert(c);
+    assert(user_data);
+
+    PrivilegeData* prData= static_cast<PrivilegeData*>(user_data);
+    prData->isPrivilegeAllowed = success ? true : false;
+
+    pa_threaded_mainloop_signal(prData->paMainloop, 0);
+}
+
+static bool __IsPrivilegeAllowed() {
+    pa_operation *o;
+    pa_context *c;
+    int err = 0;
+    PrivilegeData prData;
+
+    prData.paMainloop = pa_threaded_mainloop_new();
+    if (prData.paMainloop == NULL)
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_OUT_OF_MEMORY, "Failed pa_threaded_mainloop_new()");
+    c = pa_context_new(pa_threaded_mainloop_get_api(prData.paMainloop), CLIENT_NAME);
+    if (c == NULL)
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_OUT_OF_MEMORY, "Failed pa_context_new()");
+
+    pa_context_set_state_callback(c, __contextStateChangeCb, prData.paMainloop);
+
+    if (pa_context_connect(c, NULL, PA_CONTEXT_NOFLAGS, NULL) < 0)
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_OUT_OF_MEMORY, "Failed pa_context_connect()");
+
+    pa_threaded_mainloop_lock(prData.paMainloop);
+
+    if (pa_threaded_mainloop_start(prData.paMainloop) < 0) {
+        pa_threaded_mainloop_unlock(prData.paMainloop);
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_FAILED_OPERATION, "Failed pa_threaded_mainloop_start()");
+    }
+
+    while (true) {
+        pa_context_state_t state;
+        state = pa_context_get_state(c);
+
+        if (state == PA_CONTEXT_READY)
+            break;
+
+        if (!PA_CONTEXT_IS_GOOD(state)) {
+            err = pa_context_errno(c);
+            pa_threaded_mainloop_unlock(prData.paMainloop);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INTERNAL_OPERATION, "pa_context's state is not good : err[%d]", err);
+        }
+
+        /* Wait until the context is ready */
+        pa_threaded_mainloop_wait(prData.paMainloop);
+    }
+
+    o = pa_context_check_privilege(c, RECORDER_PRIVILEGE, __checkPrivilegeCb, &prData);
+    while (pa_operation_get_state(o) == PA_OPERATION_RUNNING)
+        pa_threaded_mainloop_wait(prData.paMainloop);
+
+    pa_threaded_mainloop_unlock(prData.paMainloop);
+    pa_threaded_mainloop_stop(prData.paMainloop);
+    pa_context_disconnect(c);
+    pa_context_unref(c);
+    pa_threaded_mainloop_free(prData.paMainloop);
+
+    return prData.isPrivilegeAllowed;
+}
+
 void CAudioInput::initialize() throw(CAudioError) {
     if (__IsInit() == true) {
         return;
@@ -98,6 +196,9 @@ void CAudioInput::initialize() throw(CAudioError) {
 
     try {
         CAudioIO::initialize();
+        if (__IsPrivilegeAllowed() == false) {
+            THROW_ERROR_MSG(CAudioError::EError::ERROR_PERMISSION_DENIED, "No privilege for record");
+        }
 
         // Create ASM Handler
         mpAudioSessionHandler = new CAudioSessionHandler(CAudioSessionHandler::EAudioSessionType::AUDIO_SESSION_TYPE_CAPTURE, mAudioInfo, this);
