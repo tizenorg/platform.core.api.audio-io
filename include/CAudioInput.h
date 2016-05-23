@@ -71,9 +71,14 @@ namespace tizen_media_audio {
         void __setInit(bool flag);
         bool __IsInit();
         bool __IsReady();
+        static void __contextStateChangeCb(pa_context* c, void* user_data);
+        static void __checkPrivilegeCb(pa_context *c, int success, void *user_data);
+        bool __IsPrivilegeAllowed();
 
         bool __mIsUsedSyncRead;
         bool __mIsInit;
+        bool __mIsPrivilegeAllowed;
+        pa_threaded_mainloop *__mpMainloop;
     };
 
 

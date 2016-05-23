@@ -15,6 +15,7 @@
  */
 
 
+#include <pulse/pulseaudio.h>
 #include "CAudioIODef.h"
 
 
@@ -91,6 +92,97 @@ bool CAudioInput::__IsReady() {
     return CAudioIO::IsReady();
 }
 
+void CAudioInput::__contextStateChangeCb(pa_context* c, void* user_data) {
+    CAudioInput* pInput = static_cast<CAudioInput*>(user_data);
+    assert(pInput);
+    assert(c);
+
+    switch (pa_context_get_state(c)) {
+    case PA_CONTEXT_READY:
+        AUDIO_IO_LOGD("The context is ready");
+        pa_threaded_mainloop_signal(pInput->__mpMainloop, 0);
+        break;
+
+    case PA_CONTEXT_FAILED:
+    case PA_CONTEXT_TERMINATED:
+        AUDIO_IO_LOGD("The context is lost");
+        pa_threaded_mainloop_signal(pInput->__mpMainloop, 0);
+        break;
+
+    case PA_CONTEXT_UNCONNECTED:
+    case PA_CONTEXT_CONNECTING:
+    case PA_CONTEXT_AUTHORIZING:
+    case PA_CONTEXT_SETTING_NAME:
+        break;
+    }
+}
+
+void CAudioInput::__checkPrivilegeCb(pa_context *c, int success, void *user_data) {
+    AUDIO_IO_LOGD("pa_context[%p], success[%d], user_data[%p]", c, success, user_data);
+    assert(c);
+    assert(user_data);
+
+    CAudioInput* pInput = static_cast<CAudioInput*>(user_data);
+    pInput->__mIsPrivilegeAllowed = success ? true : false;
+
+    pa_threaded_mainloop_signal(pInput->__mpMainloop, 0);
+}
+
+bool CAudioInput::__IsPrivilegeAllowed() {
+    pa_operation *o;
+    pa_context *c;
+    int err = 0;
+
+    __mpMainloop = pa_threaded_mainloop_new();
+    if (__mpMainloop == NULL)
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_OUT_OF_MEMORY, "Failed pa_threaded_mainloop_new()");
+    c = pa_context_new(pa_threaded_mainloop_get_api(__mpMainloop), "AUDIO_IO_PA_CLIENT");
+    if (c == NULL)
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_OUT_OF_MEMORY, "Failed pa_context_new()");
+
+    pa_context_set_state_callback(c, __contextStateChangeCb, this);
+
+    if (pa_context_connect(c, NULL, PA_CONTEXT_NOFLAGS, NULL) < 0)
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_OUT_OF_MEMORY, "Failed pa_context_connect()");
+
+    pa_threaded_mainloop_lock(__mpMainloop);
+
+    if (pa_threaded_mainloop_start(__mpMainloop) < 0) {
+        pa_threaded_mainloop_unlock(__mpMainloop);
+        THROW_ERROR_MSG(CAudioError::EError::ERROR_FAILED_OPERATION, "Failed pa_threaded_mainloop_start()");
+    }
+
+    while (true) {
+        pa_context_state_t state;
+        state = pa_context_get_state(c);
+
+        if (state == PA_CONTEXT_READY)
+            break;
+
+        if (!PA_CONTEXT_IS_GOOD(state)) {
+            err = pa_context_errno(c);
+            pa_threaded_mainloop_unlock(__mpMainloop);
+            THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INTERNAL_OPERATION, "pa_context's state is not good : err[%d]", err);
+        }
+
+        /* Wait until the context is ready */
+        pa_threaded_mainloop_wait(__mpMainloop);
+    }
+
+    o = pa_context_check_privilege(c, "http://tizen.org/privilege/recorder", __checkPrivilegeCb, this);
+    while (pa_operation_get_state(o) == PA_OPERATION_RUNNING)
+        pa_threaded_mainloop_wait(__mpMainloop);
+
+    pa_threaded_mainloop_unlock(__mpMainloop);
+    pa_threaded_mainloop_stop(__mpMainloop);
+    pa_context_disconnect(c);
+    pa_context_unref(c);
+    pa_threaded_mainloop_free(__mpMainloop);
+    __mpMainloop = NULL;
+
+    return __mIsPrivilegeAllowed;
+}
+
 void CAudioInput::initialize() throw(CAudioError) {
     if (__IsInit() == true) {
         return;
@@ -98,6 +190,9 @@ void CAudioInput::initialize() throw(CAudioError) {
 
     try {
         CAudioIO::initialize();
+        if (__IsPrivilegeAllowed() == false) {
+            THROW_ERROR_MSG(CAudioError::EError::ERROR_PERMISSION_DENIED, "No privilege for record");
+        }
 
         // Create ASM Handler
         mpAudioSessionHandler = new CAudioSessionHandler(CAudioSessionHandler::EAudioSessionType::AUDIO_SESSION_TYPE_CAPTURE, mAudioInfo, this);
