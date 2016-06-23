@@ -460,7 +460,7 @@ void CAudioIO::ignoreSession() throw(CAudioError) {
     try {
         internalLock();
 
-        if (mpPulseAudioClient != NULL && mpPulseAudioClient->isCorked() == false) {
+        if (mpPulseAudioClient != NULL && mState == CAudioInfo::EAudioIOState::AUDIO_IO_STATE_RUNNING) {
             THROW_ERROR_MSG(CAudioError::EError::ERROR_INVALID_OPERATION, "An Operation is not permitted while started");
         }
 
