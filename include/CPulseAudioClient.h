@@ -111,6 +111,7 @@ namespace tizen_media_audio {
         static void __streamCaptureCb(pa_stream* s, size_t length, void* user_data);
         static void __streamPlaybackCb(pa_stream* s, size_t length, void* user_data);
         static void __streamLatencyUpdateCb(pa_stream* s, void* user_data);
+        static void __streamEventCb(pa_stream* s, const char *name, pa_proplist *pl, void *user_data);
         static void __successStreamCb(pa_stream* s, int success, void* user_data);
     };
 

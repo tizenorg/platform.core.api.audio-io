@@ -194,6 +194,19 @@ void CPulseAudioClient::__streamLatencyUpdateCb(pa_stream* s, void* user_data) {
     pa_threaded_mainloop_signal(pClient->__mpMainloop, 0);
 }
 
+void CPulseAudioClient::__streamEventCb(pa_stream* s, const char *name, pa_proplist *pl, void *user_data) {
+    assert(s);
+    assert(user_data);
+
+    AUDIO_IO_LOGE("NAME : %s, Prop : %p", name, pl);
+
+    CPulseAudioClient* pClient = static_cast<CPulseAudioClient*>(user_data);
+    if (strcmp(name, PA_STREAM_EVENT_POP_TIMEOUT) == 0) {
+        pa_operation_unref(pa_stream_cork(pClient->__mpStream, 1, NULL, NULL));
+    }
+}
+
+
 void CPulseAudioClient::__successStreamCb(pa_stream* s, int success, void* user_data) {
     AUDIO_IO_LOGD("pa_stream[%p], success[%d], user_data[%p]", s, success, user_data);
     assert(s);
@@ -301,6 +314,7 @@ void CPulseAudioClient::initialize() throw(CAudioError) {
         pa_stream_set_read_callback(__mpStream, __streamCaptureCb, this);
         pa_stream_set_write_callback(__mpStream, __streamPlaybackCb, this);
         pa_stream_set_latency_update_callback(__mpStream, __streamLatencyUpdateCb, this);
+        pa_stream_set_event_callback(__mpStream, __streamEventCb, this);
 
         // Connect stream with PA Server
 
@@ -577,6 +591,10 @@ int CPulseAudioClient::write(const void* data, size_t length) throw(CAudioError)
 #ifdef _AUDIO_IO_DEBUG_TIMING_
     AUDIO_IO_LOGD("data[%p], length[%d]", data, length);
 #endif
+    if (pa_stream_is_corked(__mpStream)) {
+        AUDIO_IO_LOGW("stream is corked...do uncork here first!!!!");
+        pa_operation_unref(pa_stream_cork(__mpStream, 0, NULL, this));
+    }
 
     if (isInThread() == false) {
         pa_threaded_mainloop_lock(__mpMainloop);
