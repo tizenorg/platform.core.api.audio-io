@@ -103,11 +103,13 @@ static bool __is_microphone_restricted(void) {
             if ((ret = dpm_restriction_get_microphone_state(dpm_policy_h, &state)))
                 AUDIO_IO_LOGE("Failed to dpm_restriction_get_microphone_state(), ret(0x%x)", ret);
             dpm_context_release_restriction_policy(dpm_ctx_h, dpm_policy_h);
-        } else
+        } else {
             AUDIO_IO_LOGE("Failed to dpm_context_acquire_restriction_policy()");
+        }
         dpm_context_destroy(dpm_ctx_h);
-    } else
+    } else {
         AUDIO_IO_LOGE("Failed to dpm_context_create()");
+    }
 #endif
     return (state ? false : true);
 }

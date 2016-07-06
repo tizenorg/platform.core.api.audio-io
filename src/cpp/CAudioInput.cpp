@@ -128,7 +128,7 @@ static void __checkPrivilegeCb(pa_context *c, int success, void *user_data) {
     assert(c);
     assert(user_data);
 
-    PrivilegeData* prData= static_cast<PrivilegeData*>(user_data);
+    PrivilegeData *prData = static_cast<PrivilegeData*>(user_data);
     prData->isPrivilegeAllowed = success ? true : false;
 
     pa_threaded_mainloop_signal(prData->paMainloop, 0);
