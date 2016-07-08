@@ -52,6 +52,7 @@ namespace tizen_media_audio {
             AUDIO_IN_TYPE_VOICE_RECOGNITION,
             //AUDIO_IN_TYPE_RINGTONE_VOIP,
             AUDIO_IN_TYPE_VOIP,
+            AUDIO_IN_TYPE_MEDIA_EXTERNAL_ONLY,
             //AUDIO_IN_TYPE_RINGTONE_CALL,
             //AUDIO_IN_TYPE_VOICE_CALL,
             //AUDIO_IN_TYPE_VIDEO_CALL,
@@ -68,6 +69,7 @@ namespace tizen_media_audio {
             //AUDIO_OUT_TYPE_VOICE_RECOGNITION,
             AUDIO_OUT_TYPE_RINGTONE_VOIP,
             AUDIO_OUT_TYPE_VOIP,
+            AUDIO_OUT_TYPE_MEDIA_EXTERNAL_ONLY,
             AUDIO_OUT_TYPE_RINGTONE_CALL,
             //AUDIO_OUT_TYPE_VOICE_CALL,
             //AUDIO_OUT_TYPE_VIDEO_CALL,
@@ -108,18 +110,19 @@ namespace tizen_media_audio {
         const char *__STREAM_TYPE_TABLE[(unsigned int)EAudioType::AUDIO_TYPE_MAX] = {
             /* Input Type */
             "media",                  /**< AUDIO_IN_TYPE_MEDIA */
-            //"system",                 /**< AUDIO_IN_TYPE_SYSTEM */
-            //"alarm",                  /**< AUDIO_IN_TYPE_ALARM */
-            //"notification",           /**< AUDIO_IN_TYPE_NOTIFICATION */
-            //"emergency",              /**< AUDIO_IN_TYPE_EMERGENCY */
-            //"voice-information",      /**< AUDIO_IN_TYPE_VOICE_INFORMATION */
+            //"system",               /**< AUDIO_IN_TYPE_SYSTEM */
+            //"alarm",                /**< AUDIO_IN_TYPE_ALARM */
+            //"notification",         /**< AUDIO_IN_TYPE_NOTIFICATION */
+            //"emergency",            /**< AUDIO_IN_TYPE_EMERGENCY */
+            //"voice-information",    /**< AUDIO_IN_TYPE_VOICE_INFORMATION */
             "voice-recognition",      /**< AUDIO_IN_TYPE_VOICE_RECOGNITION */
-            //"ringtone-voip",          /**< AUDIO_IN_TYPE_RINGTONE_VOIP */
+            //"ringtone-voip",        /**< AUDIO_IN_TYPE_RINGTONE_VOIP */
             "voip",                   /**< AUDIO_IN_TYPE_VOIP */
-            //"ringtone-call",          /**< AUDIO_IN_TYPE_RINGTONE_CALL */
-            //"call-voice",             /**< AUDIO_IN_TYPE_VOICE_CALL */
-            //"call-video",             /**< AUDIO_IN_TYPE_VIDEO_CALL */
-            //"radio",                  /**< AUDIO_IN_TYPE_RADIO */
+            "ext-media",              /**< AUDIO_IN_TYPE_MEDIA_EXTERNAL_ONLY */
+            //"ringtone-call",        /**< AUDIO_IN_TYPE_RINGTONE_CALL */
+            //"call-voice",           /**< AUDIO_IN_TYPE_VOICE_CALL */
+            //"call-video",           /**< AUDIO_IN_TYPE_VIDEO_CALL */
+            //"radio",                /**< AUDIO_IN_TYPE_RADIO */
             "loopback",               /**< AUDIO_IN_TYPE_LOOPBACK */
 
             /* Output Type */
@@ -129,14 +132,15 @@ namespace tizen_media_audio {
             "notification",           /**< AUDIO_OUT_TYPE_NOTIFICATION */
             "emergency",              /**< AUDIO_OUT_TYPE_EMERGENCY */
             "voice-information",      /**< AUDIO_OUT_TYPE_VOICE_INFORMATION */
-            //"voice-recognition",      /**< AUDIO_OUT_TYPE_VOICE_RECOGNITION */
+            //"voice-recognition",    /**< AUDIO_OUT_TYPE_VOICE_RECOGNITION */
             "ringtone-voip",          /**< AUDIO_OUT_TYPE_RINGTONE_VOIP */
             "voip",                   /**< AUDIO_OUT_TYPE_VOIP */
+            "ext-media",              /**< AUDIO_OUT_TYPE_MEDIA_EXTERNAL_ONLY */
             "ringtone-call",          /**< AUDIO_OUT_TYPE_RINGTONE_CALL */
-            //"call-voice",             /**< AUDIO_OUT_TYPE_VOICE_CALL */
-            //"call-video",             /**< AUDIO_OUT_TYPE_VIDEO_CALL */
-            //"radio",                  /**< AUDIO_OUT_TYPE_RADIO */
-            //"loopback",               /**< AUDIO_OUT_TYPE_LOOPBACK */
+            //"call-voice",           /**< AUDIO_OUT_TYPE_VOICE_CALL */
+            //"call-video",           /**< AUDIO_OUT_TYPE_VIDEO_CALL */
+            //"radio",                /**< AUDIO_OUT_TYPE_RADIO */
+            //"loopback",             /**< AUDIO_OUT_TYPE_LOOPBACK */
         };
 
         unsigned int __mSampleRate;
