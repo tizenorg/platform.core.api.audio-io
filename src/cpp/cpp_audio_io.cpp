@@ -20,6 +20,9 @@
 #include "audio_io.h"
 #include "CAudioIODef.h"
 
+#include <system_info.h>
+
+#define FEATURE_MICROPHONE          "http://tizen.org/feature/microphone"
 
 using namespace std;
 using namespace tizen_media_audio;
@@ -363,12 +366,21 @@ static audio_io_interrupted_code_e __convert_interrupted_code(IAudioSessionEvent
  */
 int cpp_audio_in_create(int sample_rate, audio_channel_e channel, audio_sample_type_e type, audio_in_h *input) {
     audio_io_s* handle = NULL;
+    bool mic_enable = false;
+    int ret = 0;
     try {
         if (input == NULL) {
             THROW_ERROR_MSG_FORMAT(CAudioError::EError::ERROR_INVALID_ARGUMENT, "Parameters are NULL input:%p", input);
         }
 
         __check_audio_param(sample_rate, channel, type);
+
+        /* MIC is not enabled, return false */
+        ret = system_info_get_platform_bool(FEATURE_MICROPHONE, &mic_enable);
+        AUDIO_IO_LOGD("system_info_platform [%s]=[%d], ret[%d]", FEATURE_MICROPHONE, mic_enable, ret);
+        if (ret != SYSTEM_INFO_ERROR_NONE || !mic_enable) {
+            THROW_ERROR_MSG(CAudioError::EError::ERROR_NOT_SUPPORTED, "System doesn't support microphone!");
+        }
 
         handle = new audio_io_s;
         if (handle == NULL) {

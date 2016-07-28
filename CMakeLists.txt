@@ -9,7 +9,7 @@ SET(PREFIX ${CMAKE_INSTALL_PREFIX})
 SET(INC_DIR include)
 INCLUDE_DIRECTORIES(${INC_DIR})
 
-SET(dependents "dlog mm-sound capi-base-common capi-media-sound-manager mm-common mm-session libpulse vconf dpm")
+SET(dependents "dlog mm-sound capi-base-common capi-media-sound-manager mm-common mm-session libpulse vconf dpm capi-system-info")
 SET(pc_dependents "capi-base-common capi-media-sound-manager")
 
 INCLUDE(FindPkgConfig)
