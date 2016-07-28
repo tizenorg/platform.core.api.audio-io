@@ -313,7 +313,7 @@ bool CAudioSessionHandler::isSkipSessionEvent() throw(CAudioError) {
     return ret;
 }
 
-void CAudioSessionHandler::__sound_pcm_focus_cb(int id, mm_sound_focus_type_e focus_type, mm_sound_focus_state_e state, const char *reason_for_change, const char *additional_info, void *user_data) {
+void CAudioSessionHandler::__sound_pcm_focus_cb(int id, mm_sound_focus_type_e focus_type, mm_sound_focus_state_e state, const char *reason_for_change, int option, const char *additional_info, void *user_data) {
     assert(user_data);
 
     AUDIO_IO_LOGD("[id:%d], [focus_type:%d], [state:%d], [reason_for_change:%s], [additional_info:%s], [user_data:0x%x]", id, focus_type, state, reason_for_change, additional_info, user_data);
@@ -334,7 +334,7 @@ void CAudioSessionHandler::__sound_pcm_focus_cb(int id, mm_sound_focus_type_e fo
 void CAudioSessionHandler::__sound_pcm_focus_watch_cb(int id, mm_sound_focus_type_e focus_type, mm_sound_focus_state_e state, const char *reason_for_change, const char *additional_info, void *user_data) {
     AUDIO_IO_LOGD("[id:%d], [focus_type:%d], [state:%d], [reason_for_change:%s], [additional_info:%s], [user_data:0x%x]", id, focus_type, state, reason_for_change, additional_info, user_data);
 
-    CAudioSessionHandler::__sound_pcm_focus_cb(-1, focus_type, state, reason_for_change, additional_info, user_data);
+    CAudioSessionHandler::__sound_pcm_focus_cb(-1, focus_type, state, reason_for_change, 0, additional_info, user_data);
 
     return;
 }

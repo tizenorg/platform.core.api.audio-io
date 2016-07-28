@@ -105,7 +105,7 @@ namespace tizen_media_audio {
         static int __focusIdCountGet();
 
         static void __sound_pcm_signal_cb(mm_sound_signal_name_t signal, int value, void *user_data);
-        static void __sound_pcm_focus_cb(int id, mm_sound_focus_type_e focus_type, mm_sound_focus_state_e state, const char *reason_for_change, const char *additional_info, void *user_data);
+        static void __sound_pcm_focus_cb(int id, mm_sound_focus_type_e focus_type, mm_sound_focus_state_e state, const char *reason_for_change, int option, const char *additional_info, void *user_data);
         static void __sound_pcm_focus_watch_cb(int id, mm_sound_focus_type_e focus_type, mm_sound_focus_state_e state, const char *reason_for_change, const char *additional_info, void *user_data);
 
         /* Private Method */
